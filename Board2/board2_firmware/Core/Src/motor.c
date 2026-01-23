@@ -1,39 +1,67 @@
-#include "gpio.h"
 #include "motor.h"
-#include "tim.h"
-#include "math.h"
+#include <math.h>
 
+/* -------------------- Helpers -------------------- */
 
-void motor_init(Motor_t* motor, TIM_HandleTypeDef* htim, uint32_t channel, uint16_t pwm_stop, uint16_t pwm_scale_forward, uint16_t pwm_scale_backward){
-	motor->htim = htim;
-	motor->channel = channel;
-	motor->pwm_stop = pwm_stop;
-	motor->pwm_scale_forward = pwm_scale_forward;
-	motor->pwm_scale_backward = pwm_scale_backward;
-	__HAL_TIM_SET_COMPARE(motor->htim, motor->channel, 0);
-	HAL_TIM_PWM_Start(motor->htim, motor->channel);
+static inline uint8_t clip_duty(uint8_t duty){
+    if (duty > MOTOR_MAX_DUTY) {
+    	return MOTOR_MAX_DUTY;
+    }
+
+    return duty;
+}
+
+static uint16_t compute_pwm(const Motor_t* m, uint8_t duty, Motor_Direction_t dir){
+    uint16_t pwm;
+
+    if (duty == MOTOR_MIN_DUTY){
+        pwm = m->calib.pwm_stop;
+    }
+
+    else if (dir == CLOCKWISE){
+        pwm = m->calib.pwm_stop + (uint16_t)roundf((float)duty * m->calib.pwm_scale_forward / MOTOR_MAX_DUTY);
+    }
+
+    else if (dir == COUNTERCLOCKWISE){
+        pwm = m->calib.pwm_stop - (uint16_t)roundf((float)duty * m->calib.pwm_scale_backward / MOTOR_MAX_DUTY);
+    }
+
+    else{
+        pwm = m->calib.pwm_stop;
+    }
+
+    return pwm;
 }
 
 
-void motor_set(Motor_t* motor, uint8_t duty, wise_t dir) {
-
-	uint16_t value = 0;
-
-	if(duty > MAX_DUTY){
-		duty = MAX_DUTY;
-	}
-
-	if(duty == MIN_DUTY){
-		value = motor->pwm_stop;
-	}
-	else if(dir == CLOCKWISE){
-		value = motor->pwm_stop + round((float)duty*motor->pwm_scale_forward/MAX_DUTY);
-	}
-	else if(dir == COUNTERCLOCKWISE){
-		value = motor->pwm_stop - round((float)duty*motor->pwm_scale_backward/MAX_DUTY);
-	}else{
-		value = motor->pwm_stop;
-	}
-	__HAL_TIM_SET_COMPARE(motor->htim, motor->channel, value);
+static inline void apply_pwm(const Motor_t* m, uint16_t value){
+    __HAL_TIM_SET_COMPARE(m->htim, m->channel, value);
 }
 
+/* -------------------- API -------------------- */
+
+Motor_Status_t motor_init(Motor_t* motor, TIM_HandleTypeDef* htim, uint32_t channel, const Motor_Calibration_t* calib){
+	if ((motor == NULL) || (htim == NULL) || (calib == NULL)){
+        return MOTOR_ERR;
+    }
+
+    motor->htim   = htim;
+    motor->channel = channel;
+    motor->calib  = *calib;
+
+    apply_pwm(motor, calib->pwm_stop);
+    HAL_TIM_PWM_Start(htim, channel);
+
+    return MOTOR_OK;
+}
+
+Motor_Status_t motor_set(Motor_t* motor, uint8_t duty, Motor_Direction_t dir){
+	if (motor == NULL){
+        return MOTOR_ERR;
+    }
+
+    duty = clip_duty(duty);
+    apply_pwm(motor, compute_pwm(motor, duty, dir));
+
+    return MOTOR_OK;
+}

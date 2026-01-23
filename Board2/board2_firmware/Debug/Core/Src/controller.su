@@ -1,0 +1,13 @@
+../Core/Src/controller.c:3:6:telecontrol_init	16	static
+../Core/Src/controller.c:22:19:telecontrol_read	24	static
+../Core/Src/controller.c:26:19:telecontrol_send_telemetry	24	static
+../Core/Src/controller.c:30:9:telecontrol_is_alive	16	static
+../Core/Src/controller.c:34:10:get_telecontrol_ay	16	static
+../Core/Src/controller.c:39:9:get_telecontrol_a_btn	16	static
+../Core/Src/controller.c:43:10:get_telecontrol_bx	16	static
+../Core/Src/controller.c:47:9:get_telecontrol_b_btn	16	static
+../Core/Src/controller.c:51:9:get_telecontrol_button_btn1	16	static
+../Core/Src/controller.c:55:9:get_telecontrol_button_btn2	16	static
+../Core/Src/controller.c:59:9:get_telecontrol_button_btn3	16	static
+../Core/Src/controller.c:63:9:get_telecontrol_button_btn4	16	static
+../Core/Src/controller.c:67:9:get_telecontrol_percentage	16	static

@@ -1,0 +1,10 @@
+../Core/Src/app_freertos.c:68:13:app_delay_us	16	static
+../Core/Src/app_freertos.c:79:24:ramp	24	static
+../Core/Src/app_freertos.c:205:6:MX_FREERTOS_Init	128	static
+../Core/Src/app_freertos.c:309:6:readSonarTask	48	static
+../Core/Src/app_freertos.c:373:6:supervisionTask	24	static
+../Core/Src/app_freertos.c:401:6:telemetryLoggerTask	136	static
+../Core/Src/app_freertos.c:488:13:supervision_read_inputs	8	static
+../Core/Src/app_freertos.c:509:6:executeSupervision	16	static
+../Core/Src/app_freertos.c:539:13:supervision_apply_actuation	32	static
+../Core/Src/app_freertos.c:606:6:deadlineProcedure	8	static,ignoring_inline_asm

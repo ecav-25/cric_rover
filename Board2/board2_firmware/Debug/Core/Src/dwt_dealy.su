@@ -1,0 +1,5 @@
+../Core/Src/dwt_dealy.c:5:14:DWT_Delay_Init	24	static,ignoring_inline_asm
+../Core/Src/dwt_dealy.c:28:9:DWT_Delay_IsReady	4	static
+../Core/Src/dwt_dealy.c:37:20:dwt_delay_cycles	24	static
+../Core/Src/dwt_dealy.c:43:14:DWT_Delay_us	48	static
+../Core/Src/dwt_dealy.c:55:14:DWT_Delay_ms	16	static

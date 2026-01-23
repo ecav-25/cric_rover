@@ -33,6 +33,7 @@
 #include "motor.h"
 #include "stdlib.h"
 #include "deadline_watchdog.h"
+#include "motor_config.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,21 +59,6 @@ typedef StaticTask_t osStaticThreadDef_t;
 #define OPENLOOP_STEP       	(OPENLOOP_RAMP_SLOPE * (SUPERVISION_PERIOD / 1000.0))
 
 #define NORMAL_BRK_COEFF		(0.5)
-
-#define PWM_STOP_FA 			(3230)
-#define PWM_STOP_FB 			(3230)
-#define PWM_STOP_BA 			(3215)
-#define PWM_STOP_BB 			(3215)
-
-#define PWM_SCALE_FORWARD_FA 	(690)
-#define PWM_SCALE_FORWARD_FB 	(710)
-#define PWM_SCALE_FORWARD_BA 	(690)
-#define PWM_SCALE_FORWARD_BB 	(690)
-
-#define PWM_SCALE_BACKWARD_FA 	(640)
-#define PWM_SCALE_BACKWARD_FB 	(630)
-#define PWM_SCALE_BACKWARD_BA 	(630)
-#define PWM_SCALE_BACKWARD_BB 	(620)
 
 #define SONAR_NUMBER			(3)
 /* USER CODE END PD */
@@ -254,10 +240,25 @@ void MX_FREERTOS_Init(void) {
 
 	mpu6050_init(&mpu_device, &hi2c1, 0, NULL);
 
-	motor_init(&motor_FA_openLoop, &htim1, TIM_CHANNEL_1, PWM_STOP_FA, PWM_SCALE_FORWARD_FA, PWM_SCALE_BACKWARD_FA);
-	motor_init(&motor_FB_openLoop, &htim1, TIM_CHANNEL_2, PWM_STOP_FB, PWM_SCALE_FORWARD_FB, PWM_SCALE_BACKWARD_FB);
-	motor_init(&motor_BA_openLoop, &htim1, TIM_CHANNEL_3, PWM_STOP_BA, PWM_SCALE_FORWARD_BA, PWM_SCALE_BACKWARD_BA);
-	motor_init(&motor_BB_openLoop, &htim1, TIM_CHANNEL_4, PWM_STOP_BB, PWM_SCALE_FORWARD_BB, PWM_SCALE_BACKWARD_BB);
+	motor_init(&motor_FA_openLoop,
+	           MOTOR_HW_CONFIG[MOTOR_FA].htim,
+	           MOTOR_HW_CONFIG[MOTOR_FA].channel,
+	           &MOTOR_HW_CONFIG[MOTOR_FA].calib);
+
+	motor_init(&motor_FB_openLoop,
+	           MOTOR_HW_CONFIG[MOTOR_FB].htim,
+	           MOTOR_HW_CONFIG[MOTOR_FB].channel,
+	           &MOTOR_HW_CONFIG[MOTOR_FB].calib);
+
+	motor_init(&motor_BA_openLoop,
+	           MOTOR_HW_CONFIG[MOTOR_BA].htim,
+	           MOTOR_HW_CONFIG[MOTOR_BA].channel,
+	           &MOTOR_HW_CONFIG[MOTOR_BA].calib);
+
+	motor_init(&motor_BB_openLoop,
+	           MOTOR_HW_CONFIG[MOTOR_BB].htim,
+	           MOTOR_HW_CONFIG[MOTOR_BB].channel,
+	           &MOTOR_HW_CONFIG[MOTOR_BB].calib);
 
 	Board2_initialize();
   /* USER CODE END Init */
@@ -584,16 +585,16 @@ static void supervision_apply_actuation(void)
     }
 
     /* ====== RPM -> duty % (0-100) ====== */
-    duty_FA = (uint8_T)(abs(rif_FA_r) * MAX_DUTY / MAX_RPM);
-    duty_FB = (uint8_T)(abs(rif_FB_r) * MAX_DUTY / MAX_RPM);
-    duty_BA = (uint8_T)(abs(rif_BA_r) * MAX_DUTY / MAX_RPM);
-    duty_BB = (uint8_T)(abs(rif_BB_r) * MAX_DUTY / MAX_RPM);
+    duty_FA = (uint8_T)(abs(rif_FA_r) * MOTOR_MAX_DUTY / MAX_RPM);
+    duty_FB = (uint8_T)(abs(rif_FB_r) * MOTOR_MAX_DUTY / MAX_RPM);
+    duty_BA = (uint8_T)(abs(rif_BA_r) * MOTOR_MAX_DUTY / MAX_RPM);
+    duty_BB = (uint8_T)(abs(rif_BB_r) * MOTOR_MAX_DUTY / MAX_RPM);
 
     /* ====== SATURAZIONE ====== */
-    if (duty_FA > MAX_DUTY) duty_FA = MAX_DUTY;
-    if (duty_FB > MAX_DUTY) duty_FB = MAX_DUTY;
-    if (duty_BA > MAX_DUTY) duty_BA = MAX_DUTY;
-    if (duty_BB > MAX_DUTY) duty_BB = MAX_DUTY;
+    if (duty_FA > MOTOR_MAX_DUTY) duty_FA = MOTOR_MAX_DUTY;
+    if (duty_FB > MOTOR_MAX_DUTY) duty_FB = MOTOR_MAX_DUTY;
+    if (duty_BA > MOTOR_MAX_DUTY) duty_BA = MOTOR_MAX_DUTY;
+    if (duty_BB > MOTOR_MAX_DUTY) duty_BB = MOTOR_MAX_DUTY;
 
     /* ====== COMANDO MOTORI ====== */
     motor_set(&motor_FA_openLoop, duty_FA, (rif_FA_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE);

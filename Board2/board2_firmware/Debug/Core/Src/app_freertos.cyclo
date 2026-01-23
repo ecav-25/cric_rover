@@ -1,0 +1,10 @@
+../Core/Src/app_freertos.c:68:13:app_delay_us	1
+../Core/Src/app_freertos.c:79:24:ramp	3
+../Core/Src/app_freertos.c:205:6:MX_FREERTOS_Init	1
+../Core/Src/app_freertos.c:309:6:readSonarTask	6
+../Core/Src/app_freertos.c:373:6:supervisionTask	1
+../Core/Src/app_freertos.c:401:6:telemetryLoggerTask	10
+../Core/Src/app_freertos.c:488:13:supervision_read_inputs	1
+../Core/Src/app_freertos.c:509:6:executeSupervision	12
+../Core/Src/app_freertos.c:539:13:supervision_apply_actuation	19
+../Core/Src/app_freertos.c:606:6:deadlineProcedure	1
