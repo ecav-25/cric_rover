@@ -50,7 +50,8 @@ Core/Src/app_freertos.o: ../Core/Src/app_freertos.c \
  ../Core/Inc/main.h ../Core/Inc/pid.h ../Core/Inc/motor.h \
  ../Core/Inc/led.h ../Core/Inc/gpio.h ../Core/Inc/led_stripes.h \
  ../Drivers/CMSIS/Device/ST/STM32G4xx/Include/stm32g474xx.h \
- ../Core/Inc/dma.h ../Core/Inc/deadline_watchdog.h
+ ../Core/Inc/dma.h ../Core/Inc/deadline_watchdog.h \
+ ../Core/Inc/motor_config.h ../Core/Inc/motor.h
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
@@ -114,3 +115,5 @@ Core/Src/app_freertos.o: ../Core/Src/app_freertos.c \
 ../Drivers/CMSIS/Device/ST/STM32G4xx/Include/stm32g474xx.h:
 ../Core/Inc/dma.h:
 ../Core/Inc/deadline_watchdog.h:
+../Core/Inc/motor_config.h:
+../Core/Inc/motor.h:

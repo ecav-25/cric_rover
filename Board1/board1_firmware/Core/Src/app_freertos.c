@@ -35,6 +35,8 @@
 #include "led.h"
 #include "led_stripes.h"
 #include "deadline_watchdog.h"
+#include "motor_config.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -68,20 +70,6 @@ typedef StaticEventGroup_t osStaticEventGroupDef_t;
 
 #define NORMAL_BRK_COEFF		(0.5)
 
-#define PWM_STOP_FA 			(3230)
-#define PWM_STOP_FB 			(3230)
-#define PWM_STOP_BA 			(3215)
-#define PWM_STOP_BB 			(3215)
-
-#define PWM_SCALE_FORWARD_FA 	(690)
-#define PWM_SCALE_FORWARD_FB 	(710)
-#define PWM_SCALE_FORWARD_BA 	(690)
-#define PWM_SCALE_FORWARD_BB 	(690)
-
-#define PWM_SCALE_BACKWARD_FA 	(640)
-#define PWM_SCALE_BACKWARD_FB 	(630)
-#define PWM_SCALE_BACKWARD_BA 	(630)
-#define PWM_SCALE_BACKWARD_BB 	(620)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -308,10 +296,25 @@ void MX_FREERTOS_Init(void) {
 	encoder_init(&encoder_BA_pid, &htim1, 0, 0, PID_PERIOD);
 	encoder_init(&encoder_BB_pid, &htim8, 0, 0, PID_PERIOD);
 
-	motor_init(&motor_FA, &htim3, TIM_CHANNEL_3, PWM_STOP_FA, PWM_SCALE_FORWARD_FA, PWM_SCALE_BACKWARD_FA);
-	motor_init(&motor_FB, &htim3, TIM_CHANNEL_2, PWM_STOP_FB, PWM_SCALE_FORWARD_FB, PWM_SCALE_BACKWARD_FB);
-	motor_init(&motor_BA, &htim3, TIM_CHANNEL_1, PWM_STOP_BA, PWM_SCALE_FORWARD_BA, PWM_SCALE_BACKWARD_BA);
-	motor_init(&motor_BB, &htim3, TIM_CHANNEL_4, PWM_STOP_BB, PWM_SCALE_FORWARD_BB, PWM_SCALE_BACKWARD_BB);
+	motor_init(&motor_FA,
+	           MOTOR_HW_CONFIG[MOTOR_FA].htim,
+	           MOTOR_HW_CONFIG[MOTOR_FA].channel,
+	           &MOTOR_HW_CONFIG[MOTOR_FA].calib);
+
+	motor_init(&motor_FB,
+	           MOTOR_HW_CONFIG[MOTOR_FB].htim,
+	           MOTOR_HW_CONFIG[MOTOR_FB].channel,
+	           &MOTOR_HW_CONFIG[MOTOR_FB].calib);
+
+	motor_init(&motor_BA,
+	           MOTOR_HW_CONFIG[MOTOR_BA].htim,
+	           MOTOR_HW_CONFIG[MOTOR_BA].channel,
+	           &MOTOR_HW_CONFIG[MOTOR_BA].calib);
+
+	motor_init(&motor_BB,
+	           MOTOR_HW_CONFIG[MOTOR_BB].htim,
+	           MOTOR_HW_CONFIG[MOTOR_BB].channel,
+	           &MOTOR_HW_CONFIG[MOTOR_BB].calib);
 
 	PID_init(&pid_FA, 0, 0, 0, 0, 0, a1, b0_FA, b1_FA);
 	PID_init(&pid_FB, 0, 0, 0, 0, 0, a1, b0_FB, b1_FB);
@@ -519,13 +522,13 @@ void pidTask(void *argument)
 	    }
 
 		control_FA = PID_compute_law(&pid_FA, rif_FA_r, encoder_FA_pid.velocity);
-		out_FA = abs(round(control_FA*MAX_DUTY/U_MAX));
+		out_FA = abs(round(control_FA*MOTOR_MAX_DUTY/U_MAX));
 		control_FB = PID_compute_law(&pid_FB, rif_FB_r, encoder_FB_pid.velocity);
-		out_FB = abs(round(control_FB*MAX_DUTY/U_MAX));
+		out_FB = abs(round(control_FB*MOTOR_MAX_DUTY/U_MAX));
 		control_BA = PID_compute_law(&pid_BA, rif_BA_r, encoder_BA_pid.velocity);
-		out_BA = abs(round(control_BA*MAX_DUTY/U_MAX));
+		out_BA = abs(round(control_BA*MOTOR_MAX_DUTY/U_MAX));
 		control_BB = PID_compute_law(&pid_BB, rif_BB_r, encoder_BB_pid.velocity);
-		out_BB = abs(round(control_BB*MAX_DUTY/U_MAX));
+		out_BB = abs(round(control_BB*MOTOR_MAX_DUTY/U_MAX));
 
 		motor_set(&motor_FA, out_FA, (control_FA > 0) ? CLOCKWISE : COUNTERCLOCKWISE);
 		motor_set(&motor_FB, out_FB, (control_FB > 0) ? CLOCKWISE : COUNTERCLOCKWISE);

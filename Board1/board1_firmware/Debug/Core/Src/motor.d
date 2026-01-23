@@ -1,5 +1,6 @@
-Core/Src/motor.o: ../Core/Src/motor.c ../Core/Inc/gpio.h \
- ../Core/Inc/main.h ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h \
+Core/Src/motor.o: ../Core/Src/motor.c ../Core/Inc/motor.h \
+ ../Core/Inc/tim.h ../Core/Inc/main.h \
+ ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h \
  ../Core/Inc/stm32g4xx_hal_conf.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_rcc.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_def.h \
@@ -33,9 +34,9 @@ Core/Src/motor.o: ../Core/Src/motor.c ../Core/Inc/gpio.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_tim_ex.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart_ex.h \
- ../Core/Inc/Board1_types.h ../Core/Inc/rtwtypes.h ../Core/Inc/motor.h \
- ../Core/Inc/tim.h
-../Core/Inc/gpio.h:
+ ../Core/Inc/Board1_types.h ../Core/Inc/rtwtypes.h
+../Core/Inc/motor.h:
+../Core/Inc/tim.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h:
 ../Core/Inc/stm32g4xx_hal_conf.h:
@@ -73,5 +74,3 @@ Core/Src/motor.o: ../Core/Src/motor.c ../Core/Inc/gpio.h \
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart_ex.h:
 ../Core/Inc/Board1_types.h:
 ../Core/Inc/rtwtypes.h:
-../Core/Inc/motor.h:
-../Core/Inc/tim.h:
