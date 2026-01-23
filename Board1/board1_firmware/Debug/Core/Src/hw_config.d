@@ -1,6 +1,6 @@
-Core/Src/motor_config.o: ../Core/Src/motor_config.c \
- ../Core/Inc/motor_config.h ../Core/Inc/motor.h ../Core/Inc/tim.h \
- ../Core/Inc/main.h ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h \
+Core/Src/hw_config.o: ../Core/Src/hw_config.c ../Core/Inc/hw_config.h \
+ ../Core/Inc/motor.h ../Core/Inc/tim.h ../Core/Inc/main.h \
+ ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h \
  ../Core/Inc/stm32g4xx_hal_conf.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_rcc.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_def.h \
@@ -34,9 +34,9 @@ Core/Src/motor_config.o: ../Core/Src/motor_config.c \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_tim_ex.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart_ex.h \
- ../Core/Inc/Board1_types.h ../Core/Inc/rtwtypes.h \
- ../Core/Inc/motor_calibration.h ../Core/Inc/tim.h
-../Core/Inc/motor_config.h:
+ ../Core/Inc/Board1_types.h ../Core/Inc/rtwtypes.h ../Core/Inc/encoder.h \
+ ../Core/Inc/hw_calibration.h ../Core/Inc/tim.h
+../Core/Inc/hw_config.h:
 ../Core/Inc/motor.h:
 ../Core/Inc/tim.h:
 ../Core/Inc/main.h:
@@ -76,5 +76,6 @@ Core/Src/motor_config.o: ../Core/Src/motor_config.c \
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart_ex.h:
 ../Core/Inc/Board1_types.h:
 ../Core/Inc/rtwtypes.h:
-../Core/Inc/motor_calibration.h:
+../Core/Inc/encoder.h:
+../Core/Inc/hw_calibration.h:
 ../Core/Inc/tim.h:

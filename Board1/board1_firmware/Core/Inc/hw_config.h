@@ -1,7 +1,10 @@
-#ifndef INC_MOTOR_CONFIG_H_
-#define INC_MOTOR_CONFIG_H_
+#ifndef INC_HW_CONFIG_H_
+#define INC_HW_CONFIG_H_
 
 #include "motor.h"
+#include "encoder.h"
+
+/* ===================== MOTORS ===================== */
 
 typedef enum {
     MOTOR_FA = 0,
@@ -19,4 +22,22 @@ typedef struct {
 
 extern const Motor_HW_Config_t MOTOR_HW_CONFIG[MOTOR_COUNT];
 
-#endif
+/* ===================== ENCODERS ===================== */
+
+typedef enum {
+    ENCODER_FA = 0,
+    ENCODER_FB,
+    ENCODER_BA,
+    ENCODER_BB,
+    ENCODER_COUNT
+} Encoder_Id_t;
+
+typedef struct {
+    TIM_HandleTypeDef* htim;
+    Encoder_Calibration_t calib;
+} Encoder_HW_Config_t;
+
+
+extern const Encoder_HW_Config_t ENCODER_HW_CONFIG[ENCODER_COUNT];
+
+#endif /* INC_HW_CONFIG_H_ */

@@ -1,2 +1,2 @@
-../Core/Src/encoder.c:4:6:encoder_init	32	static
-../Core/Src/encoder.c:26:6:encoder_readRPM	32	static
+../Core/Src/encoder.c:4:18:encoder_init	24	static
+../Core/Src/encoder.c:27:18:encoder_readRPM	32	static

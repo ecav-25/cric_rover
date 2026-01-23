@@ -1,29 +1,35 @@
 #include "encoder.h"
 #include "gpio.h"
 
-void encoder_init(EncoderHandle* enc, TIM_HandleTypeDef* htim, uint8_t pulse_per_revolution, float gear_motor_ratio, float reading_period){
-	enc->htim = htim;
-	enc->prev_count = __HAL_TIM_GET_COUNTER(enc->htim);
-	HAL_TIM_Encoder_Start(enc->htim, TIM_CHANNEL_ALL);
+Encoder_Status_t encoder_init(EncoderHandle* enc,
+                              TIM_HandleTypeDef* htim,
+                              const Encoder_Calibration_t* calib,
+                              float reading_period_ms)
+{
+    if ((enc == NULL) || (htim == NULL) || (calib == NULL)) {
+        return ENCODER_ERR;
+    }
 
-	if(gear_motor_ratio == 0){
-		enc->gear_motor_ratio = GEAR_RATIO;
-	}else{
-		enc->gear_motor_ratio = gear_motor_ratio;
-	}
+    enc->htim = htim;
+    enc->prev_count = __HAL_TIM_GET_COUNTER(htim);
+    enc->arr = __HAL_TIM_GET_AUTORELOAD(htim);
+    enc->reading_period = reading_period_ms / 1000.0f;
+    enc->calib = *calib;
+    enc->velocity = 0.0f;
 
-	if(pulse_per_revolution == 0){
-		enc->pulse_per_revolution = PULSES_PER_REVOLUTION;
-	}else{
-		enc->pulse_per_revolution = pulse_per_revolution;
-	}
-
-	enc->arr = __HAL_TIM_GET_AUTORELOAD(htim);
-	enc->reading_period = reading_period/1000;
-	enc->velocity = 0;
+    HAL_TIM_Encoder_Start(htim, TIM_CHANNEL_ALL);
+    return ENCODER_OK;
 }
 
-void encoder_readRPM(EncoderHandle* enc){
+
+
+
+Encoder_Status_t encoder_readRPM(EncoderHandle* enc){
+
+	if ((enc == NULL) || (enc->htim == NULL)) {
+		return ENCODER_ERR;
+	}
+
 	float diff;
 	uint32_t cnt = __HAL_TIM_GET_COUNTER(enc->htim);
 
@@ -40,24 +46,25 @@ void encoder_readRPM(EncoderHandle* enc){
 	  else
 		  diff = (enc->arr - cnt) + enc->prev_count;
 
-	  enc->velocity = (60.0 * diff) /
-	          (enc->pulse_per_revolution * enc->reading_period * enc->gear_motor_ratio);
+	  enc->velocity = (60.0f * diff) /
+	                  (enc->calib.pulses_per_rev * enc->reading_period * enc->calib.gear_ratio);
 	}
 
 	else {
-
 	  if (cnt > enc->prev_count)
 		  diff = cnt - enc->prev_count;
 	  else
 		  diff = (enc->arr - enc->prev_count) + cnt;
 
 	  enc->velocity = -(60.0 * diff) /
-			  (enc->pulse_per_revolution * enc->reading_period * enc->gear_motor_ratio);
+			  (enc->calib.pulses_per_rev * enc->reading_period * enc->calib.gear_ratio);
 	}
 
 	if ((enc->htim->Instance->SMCR & 0x3) == 0x3)
 		enc->velocity /= 2;
 
 	enc->prev_count = __HAL_TIM_GET_COUNTER(enc->htim);
+
+    return ENCODER_OK;
 }
 

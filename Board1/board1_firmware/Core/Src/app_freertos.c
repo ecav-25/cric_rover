@@ -35,8 +35,7 @@
 #include "led.h"
 #include "led_stripes.h"
 #include "deadline_watchdog.h"
-#include "motor_config.h"
-
+#include "hw_config.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -286,15 +285,47 @@ void MX_FREERTOS_Init(void) {
 	BATT_init(&hadc1);
 	TEMP_init(&hadc1);
 
-	encoder_init(&encoder_FA, &htim5, 0, 0, SUPERVISION_PERIOD);
-	encoder_init(&encoder_FB, &htim20, 0, 0, SUPERVISION_PERIOD);
-	encoder_init(&encoder_BA, &htim1, 0, 0, SUPERVISION_PERIOD);
-	encoder_init(&encoder_BB, &htim8, 0, 0, SUPERVISION_PERIOD);
+	encoder_init(&encoder_FA,
+	             ENCODER_HW_CONFIG[ENCODER_FA].htim,
+	             &ENCODER_HW_CONFIG[ENCODER_FA].calib,
+	             SUPERVISION_PERIOD);
 
-	encoder_init(&encoder_FA_pid, &htim5, 0, 0, PID_PERIOD);
-	encoder_init(&encoder_FB_pid, &htim20, 0, 0, PID_PERIOD);
-	encoder_init(&encoder_BA_pid, &htim1, 0, 0, PID_PERIOD);
-	encoder_init(&encoder_BB_pid, &htim8, 0, 0, PID_PERIOD);
+	encoder_init(&encoder_FB,
+	             ENCODER_HW_CONFIG[ENCODER_FB].htim,
+	             &ENCODER_HW_CONFIG[ENCODER_FB].calib,
+	             SUPERVISION_PERIOD);
+
+	encoder_init(&encoder_BA,
+	             ENCODER_HW_CONFIG[ENCODER_BA].htim,
+	             &ENCODER_HW_CONFIG[ENCODER_BA].calib,
+	             SUPERVISION_PERIOD);
+
+	encoder_init(&encoder_BB,
+	             ENCODER_HW_CONFIG[ENCODER_BB].htim,
+	             &ENCODER_HW_CONFIG[ENCODER_BB].calib,
+	             SUPERVISION_PERIOD);
+
+
+	encoder_init(&encoder_FA_pid,
+	             ENCODER_HW_CONFIG[ENCODER_FA].htim,
+	             &ENCODER_HW_CONFIG[ENCODER_FA].calib,
+	             PID_PERIOD);
+
+	encoder_init(&encoder_FB_pid,
+	             ENCODER_HW_CONFIG[ENCODER_FB].htim,
+	             &ENCODER_HW_CONFIG[ENCODER_FB].calib,
+	             PID_PERIOD);
+
+	encoder_init(&encoder_BA_pid,
+	             ENCODER_HW_CONFIG[ENCODER_BA].htim,
+	             &ENCODER_HW_CONFIG[ENCODER_BA].calib,
+	             PID_PERIOD);
+
+	encoder_init(&encoder_BB_pid,
+	             ENCODER_HW_CONFIG[ENCODER_BB].htim,
+	             &ENCODER_HW_CONFIG[ENCODER_BB].calib,
+	             PID_PERIOD);
+
 
 	motor_init(&motor_FA,
 	           MOTOR_HW_CONFIG[MOTOR_FA].htim,
