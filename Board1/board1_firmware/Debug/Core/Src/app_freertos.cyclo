@@ -1,0 +1,9 @@
+../Core/Src/app_freertos.c:89:21:ramp	3
+../Core/Src/app_freertos.c:295:6:MX_FREERTOS_Init	1
+../Core/Src/app_freertos.c:378:6:supervisionTask	1
+../Core/Src/app_freertos.c:397:6:readSensorsTask	1
+../Core/Src/app_freertos.c:448:6:pidTask	17
+../Core/Src/app_freertos.c:547:6:lightsTask	1
+../Core/Src/app_freertos.c:579:6:executeSupervision	13
+../Core/Src/app_freertos.c:623:6:deadlineProcedure	1
+../Core/Src/app_freertos.c:650:6:HAL_GPIO_EXTI_Callback	2

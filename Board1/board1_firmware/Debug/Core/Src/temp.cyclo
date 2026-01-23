@@ -1,0 +1,5 @@
+../Core/Src/temp.c:18:26:TEMP_cfgCh_	1
+../Core/Src/temp.c:38:17:TEMP_readConv_	3
+../Core/Src/temp.c:62:6:TEMP_init	1
+../Core/Src/temp.c:69:10:TEMP_readRaw	3
+../Core/Src/temp.c:86:7:TEMP_getCelsius	1

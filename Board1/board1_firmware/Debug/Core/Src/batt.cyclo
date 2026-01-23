@@ -1,0 +1,6 @@
+../Core/Src/batt.c:21:26:BATT_cfgCh_	1
+../Core/Src/batt.c:41:17:BATT_readConv_	3
+../Core/Src/batt.c:65:6:BATT_init	1
+../Core/Src/batt.c:71:10:BATT_readRaw	3
+../Core/Src/batt.c:88:7:BATT_getVolt	1
+../Core/Src/batt.c:108:7:BATT_getSoc	3

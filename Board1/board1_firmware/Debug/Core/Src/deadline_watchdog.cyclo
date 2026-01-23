@@ -1,0 +1,3 @@
+../Core/Src/deadline_watchdog.c:12:6:DWD_Init	1
+../Core/Src/deadline_watchdog.c:25:6:DWD_Notify	2
+../Core/Src/deadline_watchdog.c:37:6:DWD_CheckStatus	3

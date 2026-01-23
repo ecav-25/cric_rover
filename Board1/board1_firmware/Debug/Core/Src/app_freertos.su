@@ -1,0 +1,9 @@
+../Core/Src/app_freertos.c:89:21:ramp	24	static
+../Core/Src/app_freertos.c:295:6:MX_FREERTOS_Init	16	static
+../Core/Src/app_freertos.c:378:6:supervisionTask	16	static
+../Core/Src/app_freertos.c:397:6:readSensorsTask	32	static
+../Core/Src/app_freertos.c:448:6:pidTask	48	static
+../Core/Src/app_freertos.c:547:6:lightsTask	24	static
+../Core/Src/app_freertos.c:579:6:executeSupervision	16	static
+../Core/Src/app_freertos.c:623:6:deadlineProcedure	8	static,ignoring_inline_asm
+../Core/Src/app_freertos.c:650:6:HAL_GPIO_EXTI_Callback	16	static

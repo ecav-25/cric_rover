@@ -1,0 +1,2 @@
+../Core/Src/encoder.c:4:6:encoder_init	3
+../Core/Src/encoder.c:26:6:encoder_readRPM	6
