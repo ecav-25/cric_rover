@@ -1,5 +1,5 @@
-#ifndef INC_MOTOR_CONFIG_H_
-#define INC_MOTOR_CONFIG_H_
+#ifndef INC_HW_CONFIG_H_
+#define INC_HW_CONFIG_H_
 
 #include "motor.h"
 #include "tim.h"

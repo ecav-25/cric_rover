@@ -30,12 +30,14 @@
 #include "temp.h"
 #include "encoder.h"
 #include "pid.h"
+#include "pid_law.h"
 #include "motor.h"
 #include "stdlib.h"
 #include "led.h"
 #include "led_stripes.h"
 #include "deadline_watchdog.h"
 #include "hw_config.h"
+#include "ramp.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -59,29 +61,14 @@ typedef StaticEventGroup_t osStaticEventGroupDef_t;
 #define LIGHTS_PERIOD			(50)
 #define SUPERVISION_PERIOD	    (60)
 
-#define RAMP_SLOPE_DEFAULT_RPM_S   (600.0f)
-#define RAMP_SLOPE_SPORT_RPM_S     (1000.0f)
-#define RAMP_SLOPE_ECO_RPM_S       (300.0f)
-
 #define RAMP_STEP_DEFAULT (RAMP_SLOPE_DEFAULT_RPM_S * (PID_PERIOD / 1000.0f))
 #define RAMP_STEP_SPORT   (RAMP_SLOPE_SPORT_RPM_S   * (PID_PERIOD / 1000.0f))
 #define RAMP_STEP_ECO     (RAMP_SLOPE_ECO_RPM_S     * (PID_PERIOD / 1000.0f))
-
-#define NORMAL_BRK_COEFF		(0.5)
 
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-static inline float ramp(float current, float target, float step){
-    if (current < target - step)
-        return current + step;
-    else if (current > target + step)
-        return current - step;
-    else
-        return target;
-}
-
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -120,10 +107,10 @@ uint8_t out_BA = 0;
 uint8_t out_FB = 0;
 uint8_t out_FA = 0;
 
-PID_t pid_FA;
-PID_t pid_FB;
-PID_t pid_BA;
-PID_t pid_BB;
+PID_Law_t pid_FA;
+PID_Law_t pid_FB;
+PID_Law_t pid_BA;
+PID_Law_t pid_BB;
 
 real32_T a1 = 1;
 real32_T b0_FA = 0.011526, b0_FB = 0.012068, b0_BA = 0.01182, b0_BB = 0.011206;
@@ -265,6 +252,7 @@ const osEventFlagsAttr_t SessionEvent_attributes = {
 /* USER CODE BEGIN FunctionPrototypes */
 void executeSupervision();
 void deadlineProcedure();
+
 /* USER CODE END FunctionPrototypes */
 
 void supervisionTask(void *argument);
@@ -279,78 +267,108 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   * @param  None
   * @retval None
   */
+/* USER CODE BEGIN Init */
+static Encoder_Status_t init_encoders_supervision(void)
+{
+    if (encoder_init(&encoder_FA, ENCODER_HW_CONFIG[ENCODER_FA].htim, &ENCODER_HW_CONFIG[ENCODER_FA].calib, SUPERVISION_PERIOD) != ENCODER_OK){
+        return ENCODER_ERR;
+    }
+
+    if (encoder_init(&encoder_FB, ENCODER_HW_CONFIG[ENCODER_FB].htim, &ENCODER_HW_CONFIG[ENCODER_FB].calib, SUPERVISION_PERIOD) != ENCODER_OK){
+        return ENCODER_ERR;
+    }
+
+    if (encoder_init(&encoder_BA, ENCODER_HW_CONFIG[ENCODER_BA].htim, &ENCODER_HW_CONFIG[ENCODER_BA].calib, SUPERVISION_PERIOD) != ENCODER_OK){
+        return ENCODER_ERR;
+    }
+
+    if (encoder_init(&encoder_BB, ENCODER_HW_CONFIG[ENCODER_BB].htim, &ENCODER_HW_CONFIG[ENCODER_BB].calib, SUPERVISION_PERIOD) != ENCODER_OK){
+        return ENCODER_ERR;
+    }
+
+    return ENCODER_OK;
+}
+
+static Encoder_Status_t init_encoders_pid(void){
+    if (encoder_init(&encoder_FA_pid, ENCODER_HW_CONFIG[ENCODER_FA].htim, &ENCODER_HW_CONFIG[ENCODER_FA].calib, PID_PERIOD) != ENCODER_OK){
+        return ENCODER_ERR;
+    }
+
+    if (encoder_init(&encoder_FB_pid, ENCODER_HW_CONFIG[ENCODER_FB].htim, &ENCODER_HW_CONFIG[ENCODER_FB].calib, PID_PERIOD) != ENCODER_OK){
+        return ENCODER_ERR;
+    }
+
+    if (encoder_init(&encoder_BA_pid, ENCODER_HW_CONFIG[ENCODER_BA].htim, &ENCODER_HW_CONFIG[ENCODER_BA].calib, PID_PERIOD) != ENCODER_OK){
+        return ENCODER_ERR;
+    }
+
+    if (encoder_init(&encoder_BB_pid, ENCODER_HW_CONFIG[ENCODER_BB].htim, &ENCODER_HW_CONFIG[ENCODER_BB].calib, PID_PERIOD) != ENCODER_OK){
+        return ENCODER_ERR;
+    }
+
+    return ENCODER_OK;
+}
+
+static Motor_Status_t init_motors(void)
+{
+    if (motor_init(&motor_FA, MOTOR_HW_CONFIG[MOTOR_FA].htim, MOTOR_HW_CONFIG[MOTOR_FA].channel, &MOTOR_HW_CONFIG[MOTOR_FA].calib) != MOTOR_OK){
+        return MOTOR_ERR;
+    }
+
+    if (motor_init(&motor_FB, MOTOR_HW_CONFIG[MOTOR_FB].htim, MOTOR_HW_CONFIG[MOTOR_FB].channel, &MOTOR_HW_CONFIG[MOTOR_FB].calib) != MOTOR_OK){
+        return MOTOR_ERR;
+    }
+
+    if (motor_init(&motor_BA, MOTOR_HW_CONFIG[MOTOR_BA].htim, MOTOR_HW_CONFIG[MOTOR_BA].channel, &MOTOR_HW_CONFIG[MOTOR_BA].calib) != MOTOR_OK){
+        return MOTOR_ERR;
+    }
+
+    if (motor_init(&motor_BB, MOTOR_HW_CONFIG[MOTOR_BB].htim, MOTOR_HW_CONFIG[MOTOR_BB].channel, &MOTOR_HW_CONFIG[MOTOR_BB].calib) != MOTOR_OK){
+        return MOTOR_ERR;
+    }
+
+    return MOTOR_OK;
+}
+
+
 void MX_FREERTOS_Init(void) {
-  /* USER CODE BEGIN Init */
 	DWD_Init(&hard_rt_deadline_wd, &htim4, SYSTEM_ALIVE_MASK, deadlineProcedure);
 	BATT_init(&hadc1);
 	TEMP_init(&hadc1);
 
-	encoder_init(&encoder_FA,
-	             ENCODER_HW_CONFIG[ENCODER_FA].htim,
-	             &ENCODER_HW_CONFIG[ENCODER_FA].calib,
-	             SUPERVISION_PERIOD);
+	if (init_encoders_supervision() != ENCODER_OK){
+		Error_Handler();
+		return;
+	}
+	if (init_encoders_pid() != ENCODER_OK){
+		Error_Handler();
+		return;
+	}
+	if (init_motors() != MOTOR_OK){
+		Error_Handler();
+		return;
+	}
 
-	encoder_init(&encoder_FB,
-	             ENCODER_HW_CONFIG[ENCODER_FB].htim,
-	             &ENCODER_HW_CONFIG[ENCODER_FB].calib,
-	             SUPERVISION_PERIOD);
+	if (PID_Law_init(&pid_FA, a1, b0_FA, b1_FA) != PID_LAW_OK) {
+	    Error_Handler();
+		return;
+	}
 
-	encoder_init(&encoder_BA,
-	             ENCODER_HW_CONFIG[ENCODER_BA].htim,
-	             &ENCODER_HW_CONFIG[ENCODER_BA].calib,
-	             SUPERVISION_PERIOD);
+	if (PID_Law_init(&pid_FB, a1, b0_FB, b1_FB) != PID_LAW_OK) {
+	    Error_Handler();
+		return;
+	}
 
-	encoder_init(&encoder_BB,
-	             ENCODER_HW_CONFIG[ENCODER_BB].htim,
-	             &ENCODER_HW_CONFIG[ENCODER_BB].calib,
-	             SUPERVISION_PERIOD);
+	if (PID_Law_init(&pid_BA, a1, b0_BA, b1_BA) != PID_LAW_OK) {
+	    Error_Handler();
+	    return;
+	}
 
+	if (PID_Law_init(&pid_BB, a1, b0_BB, b1_BB) != PID_LAW_OK) {
+	    Error_Handler();
+	    return;
+	}
 
-	encoder_init(&encoder_FA_pid,
-	             ENCODER_HW_CONFIG[ENCODER_FA].htim,
-	             &ENCODER_HW_CONFIG[ENCODER_FA].calib,
-	             PID_PERIOD);
-
-	encoder_init(&encoder_FB_pid,
-	             ENCODER_HW_CONFIG[ENCODER_FB].htim,
-	             &ENCODER_HW_CONFIG[ENCODER_FB].calib,
-	             PID_PERIOD);
-
-	encoder_init(&encoder_BA_pid,
-	             ENCODER_HW_CONFIG[ENCODER_BA].htim,
-	             &ENCODER_HW_CONFIG[ENCODER_BA].calib,
-	             PID_PERIOD);
-
-	encoder_init(&encoder_BB_pid,
-	             ENCODER_HW_CONFIG[ENCODER_BB].htim,
-	             &ENCODER_HW_CONFIG[ENCODER_BB].calib,
-	             PID_PERIOD);
-
-
-	motor_init(&motor_FA,
-	           MOTOR_HW_CONFIG[MOTOR_FA].htim,
-	           MOTOR_HW_CONFIG[MOTOR_FA].channel,
-	           &MOTOR_HW_CONFIG[MOTOR_FA].calib);
-
-	motor_init(&motor_FB,
-	           MOTOR_HW_CONFIG[MOTOR_FB].htim,
-	           MOTOR_HW_CONFIG[MOTOR_FB].channel,
-	           &MOTOR_HW_CONFIG[MOTOR_FB].calib);
-
-	motor_init(&motor_BA,
-	           MOTOR_HW_CONFIG[MOTOR_BA].htim,
-	           MOTOR_HW_CONFIG[MOTOR_BA].channel,
-	           &MOTOR_HW_CONFIG[MOTOR_BA].calib);
-
-	motor_init(&motor_BB,
-	           MOTOR_HW_CONFIG[MOTOR_BB].htim,
-	           MOTOR_HW_CONFIG[MOTOR_BB].channel,
-	           &MOTOR_HW_CONFIG[MOTOR_BB].calib);
-
-	PID_init(&pid_FA, 0, 0, 0, 0, 0, a1, b0_FA, b1_FA);
-	PID_init(&pid_FB, 0, 0, 0, 0, 0, a1, b0_FB, b1_FB);
-	PID_init(&pid_BA, 0, 0, 0, 0, 0, a1, b0_BA, b1_BA);
-	PID_init(&pid_BB, 0, 0, 0, 0, 0, a1, b0_BB, b1_BB);
 
 	led_stripe_init(&cfg);
 	led_init(&ledA, ledA_ports, ledA_pins, OFF, led_init_state, 20);
@@ -439,10 +457,22 @@ void readSensorsTask(void *argument)
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
 
 		//debug_read_sensor++;
-		encoder_readRPM(&encoder_FA);
-		encoder_readRPM(&encoder_FB);
-		encoder_readRPM(&encoder_BA);
-		encoder_readRPM(&encoder_BB);
+		if (encoder_readRPM(&encoder_FA) != ENCODER_OK) {
+		    Error_Handler();
+		}
+
+		if (encoder_readRPM(&encoder_FB) != ENCODER_OK) {
+		    Error_Handler();
+		}
+
+		if (encoder_readRPM(&encoder_BA) != ENCODER_OK) {
+		    Error_Handler();
+		}
+
+		if (encoder_readRPM(&encoder_BB) != ENCODER_OK) {
+		    Error_Handler();
+		}
+
 
 		temperature = TEMP_getCelsius();
 
@@ -510,10 +540,22 @@ void pidTask(void *argument)
 
 	    taskEXIT_CRITICAL();
 
-	    encoder_readRPM(&encoder_FA_pid);
-	    encoder_readRPM(&encoder_FB_pid);
-	    encoder_readRPM(&encoder_BA_pid);
-	    encoder_readRPM(&encoder_BB_pid);
+	    if (encoder_readRPM(&encoder_FA_pid) != ENCODER_OK) {
+	        Error_Handler();
+	    }
+
+	    if (encoder_readRPM(&encoder_FB_pid) != ENCODER_OK) {
+	        Error_Handler();
+	    }
+
+	    if (encoder_readRPM(&encoder_BA_pid) != ENCODER_OK) {
+	        Error_Handler();
+	    }
+
+	    if (encoder_readRPM(&encoder_BB_pid) != ENCODER_OK) {
+	        Error_Handler();
+	    }
+
 
 	    switch (rover_mode)
 	    {
@@ -552,19 +594,46 @@ void pidTask(void *argument)
 	        rif_BB_r = ramp(rif_BB_r, rif_BB, ramp_step);
 	    }
 
-		control_FA = PID_compute_law(&pid_FA, rif_FA_r, encoder_FA_pid.velocity);
-		out_FA = abs(round(control_FA*MOTOR_MAX_DUTY/U_MAX));
-		control_FB = PID_compute_law(&pid_FB, rif_FB_r, encoder_FB_pid.velocity);
-		out_FB = abs(round(control_FB*MOTOR_MAX_DUTY/U_MAX));
-		control_BA = PID_compute_law(&pid_BA, rif_BA_r, encoder_BA_pid.velocity);
-		out_BA = abs(round(control_BA*MOTOR_MAX_DUTY/U_MAX));
-		control_BB = PID_compute_law(&pid_BB, rif_BB_r, encoder_BB_pid.velocity);
-		out_BB = abs(round(control_BB*MOTOR_MAX_DUTY/U_MAX));
+	    if (PID_Law_compute(&pid_FA, rif_FA_r, encoder_FA_pid.velocity, &control_FA) != PID_LAW_OK) {
+	        Error_Handler();
+	    }
+	    out_FA = abs(round(control_FA * MOTOR_MAX_DUTY / U_MAX));
 
-		motor_set(&motor_FA, out_FA, (control_FA > 0) ? CLOCKWISE : COUNTERCLOCKWISE);
-		motor_set(&motor_FB, out_FB, (control_FB > 0) ? CLOCKWISE : COUNTERCLOCKWISE);
-		motor_set(&motor_BA, out_BA, (control_BA > 0) ? CLOCKWISE : COUNTERCLOCKWISE);
-		motor_set(&motor_BB, out_BB, (control_BB > 0) ? CLOCKWISE : COUNTERCLOCKWISE);
+	    if (PID_Law_compute(&pid_FB, rif_FB_r, encoder_FB_pid.velocity, &control_FB) != PID_LAW_OK) {
+	        Error_Handler();
+	    }
+	    out_FB = abs(round(control_FB * MOTOR_MAX_DUTY / U_MAX));
+
+	    if (PID_Law_compute(&pid_BA, rif_BA_r, encoder_BA_pid.velocity, &control_BA) != PID_LAW_OK) {
+	        Error_Handler();
+	    }
+	    out_BA = abs(round(control_BA * MOTOR_MAX_DUTY / U_MAX));
+
+	    if (PID_Law_compute(&pid_BB, rif_BB_r, encoder_BB_pid.velocity, &control_BB) != PID_LAW_OK) {
+	        Error_Handler();
+	    }
+	    out_BB = abs(round(control_BB * MOTOR_MAX_DUTY / U_MAX));
+
+
+
+	    if (motor_set(&motor_FA, out_FA, (control_FA > 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
+	        Error_Handler();
+	    }
+
+	    if (motor_set(&motor_FB, out_FB, (control_FB > 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
+	        Error_Handler();
+	    }
+
+	    if (motor_set(&motor_BA, out_BA, (control_BA > 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
+	        Error_Handler();
+	    }
+
+	    if (motor_set(&motor_BB, out_BB, (control_BB > 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
+	        Error_Handler();
+	    }
+
+
+
 		DWD_Notify(&hard_rt_deadline_wd, DWD_FLAG_PID);
 	}
 
@@ -658,10 +727,22 @@ void deadlineProcedure(){
 	__disable_irq(); // Disabilitazione di ogni ulteriore Interrupt
 
 	// Ferma tutti i motori
-	motor_set(&motor_FA, 0, CLOCKWISE);
-	motor_set(&motor_FB, 0, CLOCKWISE);
-	motor_set(&motor_BA, 0, CLOCKWISE);
-	motor_set(&motor_BB, 0, CLOCKWISE);
+	if (motor_set(&motor_FA, 0, CLOCKWISE) != MOTOR_OK) {
+	    Error_Handler();
+	}
+
+	if (motor_set(&motor_FB, 0, CLOCKWISE) != MOTOR_OK) {
+	    Error_Handler();
+	}
+
+	if (motor_set(&motor_BA, 0, CLOCKWISE) != MOTOR_OK) {
+	    Error_Handler();
+	}
+
+	if (motor_set(&motor_BB, 0, CLOCKWISE) != MOTOR_OK) {
+	    Error_Handler();
+	}
+
 
 	// Ferma i PWM
 	HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);

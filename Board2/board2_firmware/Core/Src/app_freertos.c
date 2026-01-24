@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
+#include <hw_config.h>
 #include "FreeRTOS.h"
 #include "task.h"
 #include "main.h"
@@ -33,7 +34,7 @@
 #include "motor.h"
 #include "stdlib.h"
 #include "deadline_watchdog.h"
-#include "motor_config.h"
+#include "ramp.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -55,10 +56,7 @@ typedef StaticTask_t osStaticThreadDef_t;
 #define SONAR_SCAN_PERIOD 		(40)
 #define MAX_RPM 				(150)
 
-#define OPENLOOP_RAMP_SLOPE   	(600.0f)
 #define OPENLOOP_STEP       	(OPENLOOP_RAMP_SLOPE * (SUPERVISION_PERIOD / 1000.0))
-
-#define NORMAL_BRK_COEFF		(0.5)
 
 #define SONAR_NUMBER			(3)
 /* USER CODE END PD */
@@ -76,15 +74,6 @@ static volatile uint16_T g_sonar_distances[3];
 
 static hcsr04_t us_left, us_center, us_right;
 
-static inline real32_T ramp(real32_T current, real32_T target, real32_T step)
-{
-    if (current < target - step)
-        return current + step;
-    else if (current > target + step)
-        return current - step;
-    else
-        return target;
-}
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -240,25 +229,22 @@ void MX_FREERTOS_Init(void) {
 
 	mpu6050_init(&mpu_device, &hi2c1, 0, NULL);
 
-	motor_init(&motor_FA_openLoop,
-	           MOTOR_HW_CONFIG[MOTOR_FA].htim,
-	           MOTOR_HW_CONFIG[MOTOR_FA].channel,
-	           &MOTOR_HW_CONFIG[MOTOR_FA].calib);
+	if (motor_init(&motor_FA_openLoop, MOTOR_HW_CONFIG[MOTOR_FA].htim, MOTOR_HW_CONFIG[MOTOR_FA].channel, &MOTOR_HW_CONFIG[MOTOR_FA].calib) != MOTOR_OK){
+	    Error_Handler();
+	}
 
-	motor_init(&motor_FB_openLoop,
-	           MOTOR_HW_CONFIG[MOTOR_FB].htim,
-	           MOTOR_HW_CONFIG[MOTOR_FB].channel,
-	           &MOTOR_HW_CONFIG[MOTOR_FB].calib);
+	if (motor_init(&motor_FB_openLoop, MOTOR_HW_CONFIG[MOTOR_FB].htim, MOTOR_HW_CONFIG[MOTOR_FB].channel, &MOTOR_HW_CONFIG[MOTOR_FB].calib) != MOTOR_OK) {
+	    Error_Handler();
+	}
 
-	motor_init(&motor_BA_openLoop,
-	           MOTOR_HW_CONFIG[MOTOR_BA].htim,
-	           MOTOR_HW_CONFIG[MOTOR_BA].channel,
-	           &MOTOR_HW_CONFIG[MOTOR_BA].calib);
+	if (motor_init(&motor_BA_openLoop, MOTOR_HW_CONFIG[MOTOR_BA].htim, MOTOR_HW_CONFIG[MOTOR_BA].channel, &MOTOR_HW_CONFIG[MOTOR_BA].calib) != MOTOR_OK){
+	    Error_Handler();
+	}
 
-	motor_init(&motor_BB_openLoop,
-	           MOTOR_HW_CONFIG[MOTOR_BB].htim,
-	           MOTOR_HW_CONFIG[MOTOR_BB].channel,
-	           &MOTOR_HW_CONFIG[MOTOR_BB].calib);
+	if (motor_init(&motor_BB_openLoop, MOTOR_HW_CONFIG[MOTOR_BB].htim, MOTOR_HW_CONFIG[MOTOR_BB].channel, &MOTOR_HW_CONFIG[MOTOR_BB].calib) != MOTOR_OK){
+	    Error_Handler();
+	}
+
 
 	Board2_initialize();
   /* USER CODE END Init */
@@ -597,10 +583,25 @@ static void supervision_apply_actuation(void)
     if (duty_BB > MOTOR_MAX_DUTY) duty_BB = MOTOR_MAX_DUTY;
 
     /* ====== COMANDO MOTORI ====== */
-    motor_set(&motor_FA_openLoop, duty_FA, (rif_FA_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE);
-    motor_set(&motor_FB_openLoop, duty_FB, (rif_FB_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE);
-    motor_set(&motor_BA_openLoop, duty_BA, (rif_BA_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE);
-    motor_set(&motor_BB_openLoop, duty_BB, (rif_BB_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE);
+    if (motor_set(&motor_FA_openLoop, duty_FA,
+                  (rif_FA_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
+        Error_Handler();
+    }
+
+    if (motor_set(&motor_FB_openLoop, duty_FB,
+                  (rif_FB_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
+        Error_Handler();
+    }
+
+    if (motor_set(&motor_BA_openLoop, duty_BA,
+                  (rif_BA_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
+        Error_Handler();
+    }
+
+    if (motor_set(&motor_BB_openLoop, duty_BB,
+                  (rif_BB_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
+        Error_Handler();
+    }
 }
 
 void deadlineProcedure(){

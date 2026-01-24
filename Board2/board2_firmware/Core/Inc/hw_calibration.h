@@ -1,5 +1,5 @@
-#ifndef INC_MOTOR_CALIBRATION_H_
-#define INC_MOTOR_CALIBRATION_H_
+#ifndef INC_HW_CALIBRATION_H_
+#define INC_HW_CALIBRATION_H_
 
 /* -------------------- PWM stop -------------------- */
 #define PWM_STOP_FA            (3230u)

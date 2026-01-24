@@ -1,10 +1,7 @@
 #include "encoder.h"
 #include "gpio.h"
 
-Encoder_Status_t encoder_init(EncoderHandle* enc,
-                              TIM_HandleTypeDef* htim,
-                              const Encoder_Calibration_t* calib,
-                              float reading_period_ms)
+Encoder_Status_t encoder_init(EncoderHandle* enc, TIM_HandleTypeDef* htim, const Encoder_Calibration_t* calib, float reading_period_ms)
 {
     if ((enc == NULL) || (htim == NULL) || (calib == NULL)) {
         return ENCODER_ERR;
