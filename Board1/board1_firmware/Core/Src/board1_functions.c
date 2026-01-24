@@ -1,19 +1,44 @@
-#include <board_functions.h>
+/**
+ * @file board_functions.c
+ * @brief Implementazione del Hardware Abstraction Layer (HAL) per Board 1.
+ *
+ * Include l'implementazione delle funzioni di comunicazione UART via DMA,
+ * calcolo CRC-32, gestione GPIO e primitive di sistema (Time/OS).
+ * Si interfaccia con le librerie HAL di STM32 e FreeRTOS.
+ */
+
+#include "board_functions.h"
 #include "main.h"
 #include "string.h"
 #include "cmsis_os.h"
 
-extern UART_HandleTypeDef huart3;
-extern CRC_HandleTypeDef hcrc;
-extern osMutexId_t inputMutexHandle;
-extern osMutexId_t outputMutexHandle;
-extern osEventFlagsId_t StartEventHandle;
-extern TIM_HandleTypeDef htim2;
+/* ========================================================================== */
+/* 							   EXTERNAL HANDLES                               */
+/* ========================================================================== */
 
+extern UART_HandleTypeDef huart3; /**< Handle UART per la comunicazione Inter-Board */
+extern CRC_HandleTypeDef hcrc;    /**< Handle unità di calcolo CRC hardware */
+extern TIM_HandleTypeDef htim2;   /**< Handle Timer per il cronometraggio (us/ms) */
+
+/* ========================================================================== */
+/* 							   GLOBAL VARIABLES                               */
+/* ========================================================================== */
+
+/** @brief Flag di completamento trasmissione (gestito da ISR callback). */
 boolean_T tx_complete = 0;
+
+/** @brief Flag di completamento ricezione (gestito da ISR callback). */
 boolean_T rx_complete = 0;
 
-// Copia StateBusB1 campo per campo
+/* ========================================================================== */
+/* 					    STATIC HELPER FUNCTIONS (DATA COPY)                   */
+/* ========================================================================== */
+
+/**
+ * @brief Copia sicura campo per campo di StateBusB1.
+ * @details Necessaria per evitare problemi di allineamento/padding durante
+ * la serializzazione e garantire che il CRC sia calcolato solo sui dati utili.
+ */
 static void Copy_StateBusB1(StateBusB1* dest, const StateBusB1* src) {
     dest->battery_voltage = src->battery_voltage;
     dest->temperature = src->temperature;
@@ -23,15 +48,17 @@ static void Copy_StateBusB1(StateBusB1* dest, const StateBusB1* src) {
     dest->velocity_BB = src->velocity_BB;
 }
 
-// Copia StateBusB2 campo per campo
+/**
+ * @brief Copia sicura campo per campo di StateBusB2.
+ */
 static void Copy_StateBusB2(StateBusB2* dest, const StateBusB2* src) {
-	dest->acceleration_y = src->acceleration_y;
-	dest->acceleration_x = src->acceleration_x;
-	dest->gyroYaw = src->gyroYaw;
-	dest->sonar1 = src->sonar1;
-	dest->sonar2 = src->sonar2;
-	dest->sonar3 = src->sonar3;
-	dest->controller_y = src->controller_y;
+    dest->acceleration_y = src->acceleration_y;
+    dest->acceleration_x = src->acceleration_x;
+    dest->gyroYaw = src->gyroYaw;
+    dest->sonar1 = src->sonar1;
+    dest->sonar2 = src->sonar2;
+    dest->sonar3 = src->sonar3;
+    dest->controller_y = src->controller_y;
     dest->controller_x = src->controller_x;
     dest->button1 = src->button1;
     dest->button2 = src->button2;
@@ -42,7 +69,9 @@ static void Copy_StateBusB2(StateBusB2* dest, const StateBusB2* src) {
     dest->controller_battery = src->controller_battery;
 }
 
-// Copia GSBus campo per campo
+/**
+ * @brief Copia sicura per la struttura Global State.
+ */
 static void Copy_GSBus(GSBus* dest, const GSBus* src) {
     Copy_StateBusB1(&dest->stateB1, &src->stateB1);
     Copy_StateBusB2(&dest->stateB2, &src->stateB2);
@@ -52,7 +81,9 @@ static void Copy_GSBus(GSBus* dest, const GSBus* src) {
     dest->obs_detection = src->obs_detection;
 }
 
-// Copia DecBus campo per campo
+/**
+ * @brief Copia sicura per la struttura Decision.
+ */
 static void Copy_DecBus(DecBus* dest, const DecBus* src) {
     dest->rif_FA = src->rif_FA;
     dest->rif_FB = src->rif_FB;
@@ -67,48 +98,62 @@ static void Copy_DecBus(DecBus* dest, const DecBus* src) {
     dest->relay = src->relay;
 }
 
-boolean_T UART_Data_Sended(void)
+/* ========================================================================== */
+/* 							   UART FUNCTIONS                                 */
+/* ========================================================================== */
+
+boolean_T UART_Is_Tx_Complete(void)
 {
     if (tx_complete) {
-        tx_complete = 0;
+        tx_complete = 0; /* Reset flag dopo la lettura */
         return 1;
     }
     return 0;
 }
 
-boolean_T UART_Data_Received(void)
+boolean_T UART_Is_Rx_Complete(void)
 {
     if (rx_complete) {
-        rx_complete = 0;
+        rx_complete = 0; /* Reset flag dopo la lettura */
         return 1;
     }
     return 0;
 }
 
-void UART_DMA_Stop(void)
+void UART_Stop_DMA(void)
 {
     HAL_UART_DMAStop(&huart3);
 }
 
-void UART_Send_State(const void* s)
+void UART_Send_Local_State(const void* s)
 {
+    /* * NOTA: 'packet' deve essere static.
+     * Poiché usiamo il DMA (Transmit_DMA), la funzione ritorna immediatamente.
+     * Se la variabile fosse automatica (sullo stack), verrebbe distrutta
+     * prima che il DMA finisca di leggere i dati, causando corruzione.
+     */
     static PacketStateB1 packet;
 
+    /* 1. Pulizia memoria (Padding bytes a 0) */
     memset(&packet, 0, sizeof(packet));
+
+    /* 2. Copia dati sicura */
     Copy_StateBusB1(&packet.state, (const StateBusB1*)s);
 
+    /* 3. Calcolo CRC Hardware */
     __HAL_CRC_DR_RESET(&hcrc);
     packet.crc = HAL_CRC_Calculate(&hcrc,
                                   (uint32_t*)&packet.state,
                                   sizeof(packet.state));
 
+    /* 4. Avvio trasmissione DMA in Half-Duplex */
     HAL_HalfDuplex_EnableTransmitter(&huart3);
     HAL_UART_Transmit_DMA(&huart3, (uint8_t*)&packet, sizeof(packet));
 }
 
 void UART_Send_GlobalState(const void* gs)
 {
-    static PacketGstate packet;
+    static PacketGstate packet; /* Static per persistenza DMA */
 
     memset(&packet, 0, sizeof(packet));
     Copy_GSBus(&packet.global_state, (const GSBus*)gs);
@@ -124,7 +169,7 @@ void UART_Send_GlobalState(const void* gs)
 
 void UART_Send_Decision(const void* dec)
 {
-    static PacketDecision packet;
+    static PacketDecision packet; /* Static per persistenza DMA */
 
     memset(&packet, 0, sizeof(packet));
     Copy_DecBus(&packet.decision, (const DecBus*)dec);
@@ -140,7 +185,7 @@ void UART_Send_Decision(const void* dec)
 
 void UART_Send_Ping(void)
 {
-    static uint8_t ping = PING;
+    static uint8_t ping = PING; /* Static per persistenza DMA */
 
     HAL_HalfDuplex_EnableTransmitter(&huart3);
     HAL_UART_Transmit_DMA(&huart3, &ping, sizeof(ping));
@@ -148,6 +193,7 @@ void UART_Send_Ping(void)
 
 void UART_Wait_State(void* s)
 {
+    /* Configura la UART in ricezione e avvia il DMA circolare/normale */
     HAL_HalfDuplex_EnableReceiver(&huart3);
     HAL_UART_Receive_DMA(&huart3,
                          (uint8_t*)s,
@@ -178,10 +224,20 @@ void UART_Wait_Ping(void* ping)
                          sizeof(uint8_t));
 }
 
-boolean_T Correct_CRC_State(const void* s_packet)
+boolean_T UART_Check_Ping(uint8_t rec_ping)
+{
+    return (rec_ping == PING);
+}
+
+/* ========================================================================== */
+/* 							   CRC FUNCTIONS                                  */
+/* ========================================================================== */
+
+boolean_T CRC_Check_State(const void* s_packet)
 {
     const PacketStateB2* packet = (const PacketStateB2*)s_packet;
 
+    /* Crea una copia locale pulita per ricalcolare il CRC */
     StateBusB2 clean_state;
     memset(&clean_state, 0, sizeof(clean_state));
     Copy_StateBusB2(&clean_state, &packet->state);
@@ -192,10 +248,11 @@ boolean_T Correct_CRC_State(const void* s_packet)
                           (uint32_t*)&clean_state,
                           sizeof(clean_state));
 
+    /* Confronta CRC Calcolato vs CRC Ricevuto */
     return (crc_calc == packet->crc);
 }
 
-boolean_T Correct_CRC_GlobalState(const void* gs_packet)
+boolean_T CRC_Check_GlobalState(const void* gs_packet)
 {
     const PacketGstate* packet = (const PacketGstate*)gs_packet;
 
@@ -212,7 +269,7 @@ boolean_T Correct_CRC_GlobalState(const void* gs_packet)
     return (crc_calc == packet->crc);
 }
 
-boolean_T Correct_CRC_Decision(const void* dec_packet)
+boolean_T CRC_Check_Decision(const void* dec_packet)
 {
     const PacketDecision* packet = (const PacketDecision*)dec_packet;
 
@@ -229,66 +286,72 @@ boolean_T Correct_CRC_Decision(const void* dec_packet)
     return (crc_calc == packet->crc);
 }
 
-boolean_T Correct_Ping(uint8_t rec_ping)
-{
-    return (rec_ping == PING);
-}
+/* ========================================================================== */
+/* 							   GPIO & SIGNALS                                 */
+/* ========================================================================== */
 
-boolean_T is_Session_high(void)
+boolean_T IO_Read_Session(void)
 {
     return (HAL_GPIO_ReadPin(SESSION_GPIO_Port, SESSION_Pin)
             == GPIO_PIN_SET);
 }
 
-void set_STALK(void)
+void IO_Set_SlaveTalk(void)
 {
     HAL_GPIO_WritePin(STALK_GPIO_Port,
                       STALK_Pin,
                       GPIO_PIN_SET);
 }
 
-void reset_STALK(void)
+void IO_Reset_SlaveTalk(void)
 {
     HAL_GPIO_WritePin(STALK_GPIO_Port,
                       STALK_Pin,
                       GPIO_PIN_RESET);
 }
 
-boolean_T is_MTALK_high(void)
+boolean_T IO_Read_MasterTalk(void)
 {
     return (HAL_GPIO_ReadPin(MTALK_GPIO_Port, MTALK_Pin)
             == GPIO_PIN_SET);
 }
 
-uint32_t get_tick(void)
+/* ========================================================================== */
+/* 							   TIMING & OS                                    */
+/* ========================================================================== */
+
+uint32_t Time_Get_Tick(void)
 {
+    /* Restituisce il valore corrente del Timer dedicato (microsecondi) */
     return __HAL_TIM_GET_COUNTER(&htim2);
 }
 
-boolean_T check_elapsed_time_us(uint32_T start_time,
-                                uint32_T min_elapsed_time)
+boolean_T Time_Check_Elapsed_us(uint32_T start_time_us,
+                                uint32_T min_elapsed_us)
 {
     uint32_t current_us = __HAL_TIM_GET_COUNTER(&htim2);
-    return ((current_us - start_time) >= min_elapsed_time);
+    /* Nota: Gestisce implicitamente l'overflow se uint32_t e timer sono a 32bit */
+    return ((current_us - start_time_us) >= min_elapsed_us);
 }
 
-boolean_T check_elapsed_time(uint32_T start_time,
-                             uint32_T min_elapsed_time)
+boolean_T Time_Check_Elapsed_ms(uint32_T start_time,
+                                uint32_T min_elapsed_time_ms)
 {
+    /* Conversione: min_elapsed_time è in ms, timer è in us */
     uint32_t current_us = __HAL_TIM_GET_COUNTER(&htim2);
     uint32_t elapsed_us = current_us - start_time;
 
-    return (elapsed_us >= (min_elapsed_time * 1000U));
+    return (elapsed_us >= (min_elapsed_time_ms * 1000U));
 }
 
-void enter_critical_section(void)
+void OS_Enter_Critical(void)
 {
+    /* Wrapper per macro FreeRTOS: disabilita context switch/interrupts */
     taskENTER_CRITICAL();
 }
 
-void exit_critical_section(void)
+void OS_Exit_Critical(void)
 {
+    /* Wrapper per macro FreeRTOS: riabilita */
     taskEXIT_CRITICAL();
 }
-
-

@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board1'.
  *
- * Model version                  : 1.1786
+ * Model version                  : 1.2122
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Thu Jan 22 17:38:41 2026
+ * C/C++ source code generated on : Sat Jan 24 16:06:24 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -109,12 +109,12 @@ typedef struct {
   boolean_T special_retro;             /* '<Root>/Board1' */
   boolean_T limit_velocity;            /* '<Root>/Board1' */
   boolean_T obs_detection;             /* '<Root>/Board1' */
-  boolean_T prev_button2_retro;        /* '<Root>/Board1' */
   boolean_T prev_button1_retro;        /* '<Root>/Board1' */
-  boolean_T prev_button1_obs;          /* '<Root>/Board1' */
-  boolean_T prev_button2_obs;          /* '<Root>/Board1' */
-  boolean_T prev_r_stick_button;       /* '<Root>/Board1' */
   boolean_T prev_l_stick_button;       /* '<Root>/Board1' */
+  boolean_T prev_r_stick_button;       /* '<Root>/Board1' */
+  boolean_T prev_button2_retro;        /* '<Root>/Board1' */
+  boolean_T prev_button2_obs;          /* '<Root>/Board1' */
+  boolean_T prev_button1_obs;          /* '<Root>/Board1' */
 } DW_Board1_T;
 
 /* External inputs (root inport signals with default storage) */
@@ -184,6 +184,7 @@ extern RT_MODEL_Board1_T *const Board1_M;
 #define Boar_IN_Connection_restablished ((uint8_T)1U)
 #define Boar_IN_Control_from_controller ((uint8_T)1U)
 #define Boar_IN_Emergency_sonar_routine ((uint8_T)3U)
+#define Boar_IN_Local_state_transmitted ((uint8_T)5U)
 #define Board1_BUTTON_TIMEOUT          (700U)
 #define Board1_BYTE_RECEIVE_TIMEOUT    (1000U)
 #define Board1_BYTE_SEND_TIMEOUT       (500U)
@@ -193,19 +194,18 @@ extern RT_MODEL_Board1_T *const Board1_M;
 #define Board1_CRITICAL_VOLTAGE        (9.0F)
 #define Board1_DECISION_RECEIVE_TIMEOUT (3400U)
 #define Board1_DECISION_SEND_TIMEOUT   (2900U)
-#define Board1_HIGH_TEMPERATURE        (60.0F)
+#define Board1_High_TempERATURE        (60.0F)
 #define Board1_IMM_DISTANCE            ((uint16_T)70U)
 #define Board1_IN_Control_battery_stop ((uint8_T)1U)
 #define Board1_IN_Critical_voltage     ((uint8_T)1U)
 #define Board1_IN_Decision_received    ((uint8_T)1U)
-#define Board1_IN_Decision_sended      ((uint8_T)2U)
+#define Board1_IN_Decision_transmitted ((uint8_T)2U)
 #define Board1_IN_Degraded             ((uint8_T)1U)
 #define Board1_IN_Emergency_button     ((uint8_T)1U)
 #define Board1_IN_Emergency_sonar      ((uint8_T)1U)
 #define Board1_IN_First_button         ((uint8_T)1U)
-#define Board1_IN_Global_state_received ((uint8_T)3U)
-#define Board1_IN_Global_state_sended  ((uint8_T)4U)
-#define Board1_IN_High_temp            ((uint8_T)1U)
+#define Board1_IN_Global_state_received ((uint8_T)4U)
+#define Board1_IN_High_Temperature     ((uint8_T)1U)
 #define Board1_IN_Lights_AUTO          ((uint8_T)1U)
 #define Board1_IN_Lights_OFF           ((uint8_T)2U)
 #define Board1_IN_Lights_ON            ((uint8_T)3U)
@@ -225,26 +225,21 @@ extern RT_MODEL_Board1_T *const Board1_M;
 #define Board1_IN_Obstacle_left        ((uint8_T)2U)
 #define Board1_IN_Obstacle_right       ((uint8_T)2U)
 #define Board1_IN_Other_board_failure  ((uint8_T)1U)
-#define Board1_IN_Ping_sended          ((uint8_T)2U)
-#define Board1_IN_Receive_decision     ((uint8_T)5U)
-#define Board1_IN_Receive_global_state ((uint8_T)6U)
+#define Board1_IN_Ping_transmitted     ((uint8_T)2U)
+#define Board1_IN_Receive_decision     ((uint8_T)6U)
+#define Board1_IN_Receive_global_state ((uint8_T)7U)
 #define Board1_IN_Receive_ping         ((uint8_T)3U)
-#define Board1_IN_Receive_state        ((uint8_T)7U)
+#define Board1_IN_Receive_state        ((uint8_T)8U)
 #define Board1_IN_Received_Ping        ((uint8_T)4U)
-#define Board1_IN_Received_state       ((uint8_T)8U)
+#define Board1_IN_Received_state       ((uint8_T)9U)
 #define Board1_IN_Restablish           ((uint8_T)1U)
 #define Board1_IN_Restarting           ((uint8_T)2U)
-#define Board1_IN_Same_decision        ((uint8_T)9U)
+#define Board1_IN_Same_decision        ((uint8_T)10U)
 #define Board1_IN_Select_routine       ((uint8_T)8U)
-#define Board1_IN_Send_decision        ((uint8_T)10U)
-#define Board1_IN_Send_global_state    ((uint8_T)11U)
-#define Board1_IN_Send_ping            ((uint8_T)5U)
-#define Board1_IN_Send_state           ((uint8_T)12U)
 #define Board1_IN_Single_Board         ((uint8_T)3U)
 #define Board1_IN_Special_retro_change ((uint8_T)2U)
 #define Board1_IN_Special_retro_routine ((uint8_T)9U)
 #define Board1_IN_Special_retro_start  ((uint8_T)3U)
-#define Board1_IN_State_sended         ((uint8_T)13U)
 #define Board1_IN_Stop_back_rotation   ((uint8_T)1U)
 #define Board1_IN_Stop_left_rotation   ((uint8_T)2U)
 #define Board1_IN_Stop_left_rotation_l ((uint8_T)1U)
@@ -252,9 +247,13 @@ extern RT_MODEL_Board1_T *const Board1_M;
 #define Board1_IN_Stop_right_rotation_g ((uint8_T)1U)
 #define Board1_IN_Stop_slow            ((uint8_T)1U)
 #define Board1_IN_Stop_slow_routine    ((uint8_T)10U)
-#define Board1_IN_Stop_to_turn_left    ((uint8_T)2U)
-#define Board1_IN_Stop_to_turn_right   ((uint8_T)2U)
+#define Board1_IN_Stop_to_Turn_Left    ((uint8_T)2U)
+#define Board1_IN_Stop_to_Turn_Right   ((uint8_T)2U)
 #define Board1_IN_Supervision_task     ((uint8_T)1U)
+#define Board1_IN_Transmit_Decision    ((uint8_T)11U)
+#define Board1_IN_Transmit_Global_State ((uint8_T)12U)
+#define Board1_IN_Transmit_Local_State ((uint8_T)13U)
+#define Board1_IN_Transmit_ping        ((uint8_T)5U)
 #define Board1_IN_Turn_back            ((uint8_T)2U)
 #define Board1_IN_Turn_left            ((uint8_T)4U)
 #define Board1_IN_Turn_left_h          ((uint8_T)3U)
@@ -285,6 +284,7 @@ extern RT_MODEL_Board1_T *const Board1_M;
 #define Board1_WAIT_TIMEOUT            (500U)
 #define Board1_event_STEP              (1483)
 #define Board_GLOBAL_STATE_SEND_TIMEOUT (5000U)
+#define IN_Global_Local_state_transmitt ((uint8_T)3U)
 #define IN_Low_controller_battery_routi ((uint8_T)4U)
 #define IN_Moving_obstacle_from_left_ro ((uint8_T)5U)
 #define IN_Moving_obstacle_from_right_r ((uint8_T)6U)
