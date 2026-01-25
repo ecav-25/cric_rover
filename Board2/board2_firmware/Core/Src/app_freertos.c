@@ -435,9 +435,9 @@ void telemetryLoggerTask(void *argument)
 		else
 		    telemetry.temperature = (int8_t)(stateB1.temperature + (stateB1.temperature >= 0 ? 0.5 : -0.5));
 
-		if(Board2_DW.is_Normal_voltage_n == Board2_IN_Lights_AUTO)
+		if(Board2_DW.is_Normal_voltage_f == Board2_IN_Lights_AUTO)
 			telemetry.light_mode = LIGHT_AUTO;
-		else if(Board2_DW.is_Normal_voltage_n == Board2_IN_Lights_ON)
+		else if(Board2_DW.is_Normal_voltage_f == Board2_IN_Lights_ON)
 			telemetry.light_mode = LIGHT_ON;
 		else
 			telemetry.light_mode = LIGHT_OFF;
