@@ -19,6 +19,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include <hw_config.h>
+#include <utils.h>
 #include "FreeRTOS.h"
 #include "task.h"
 #include "main.h"
@@ -34,7 +35,6 @@
 #include "motor.h"
 #include "stdlib.h"
 #include "deadline_watchdog.h"
-#include "ramp.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -386,88 +386,88 @@ void supervisionTask(void *argument)
 /* USER CODE END Header_telemetryLoggerTask */
 void telemetryLoggerTask(void *argument)
 {
-  /* USER CODE BEGIN telemetryLoggerTask */
-	TickType_t xLastWakeTime = xTaskGetTickCount();
-	const TickType_t xFrequency = pdMS_TO_TICKS(TELEMETRY_LOGGER_PERIOD);
-	Telemetry_t telemetry;
-	StateBusB1 stateB1;
-	StateBusB2 stateB2;
-	DecBus output;
+    TickType_t xLastWakeTime = xTaskGetTickCount();
+    const TickType_t xFrequency = pdMS_TO_TICKS(TELEMETRY_LOGGER_PERIOD);
 
-  /* Infinite loop */
-  for(;;)
-  {
-	vTaskDelayUntil(&xLastWakeTime, xFrequency);
+    Telemetry_t telemetry;
+    StateBusB1 stateB1;
+    StateBusB2 stateB2;
+    DecBus output;
 
-	taskENTER_CRITICAL();
+    if (telemetry_init(&telemetry) != CONTROLLER_OK) {
+        Error_Handler();
+    }
 
-	output = Board2_Y.output;
-	stateB2 = Board2_DW.state;
-	if(Board2_DW.is_Supervision_task == Board2_IN_Normal){
-		stateB1 = Board2_DW.global_state.stateB1;
+    for (;;)
+    {
+        vTaskDelayUntil(&xLastWakeTime, xFrequency);
 
-		telemetry.backward_mode = (Board2_DW.special_retro) ? BW_SPECIAL : BW_NORMAL;
+        taskENTER_CRITICAL();
 
-		if (stateB1.battery_voltage <= 9.0)
-		    telemetry.battery_percent = 0;
-		else if (stateB1.battery_voltage >= 12.6)
-			telemetry.battery_percent = 100;
-		else
-			telemetry.battery_percent = (int8_t)(((stateB1.battery_voltage - 9.0) / 3.6) * 100.0 + 0.5);
+        output  = Board2_Y.output;
+        stateB2 = Board2_DW.state;
 
-		if (stateB1.temperature > 127)
-		    telemetry.temperature = 127;
-		else if (stateB1.temperature < -128)
-		    telemetry.temperature = -128;
-		else
-		    telemetry.temperature = (int8_t)(stateB1.temperature + (stateB1.temperature >= 0 ? 0.5 : -0.5));
+        /* ===================== NORMAL MODE ===================== */
+        if (Board2_DW.is_Supervision_task == Board2_IN_Normal){
+            stateB1 = Board2_DW.global_state.stateB1;
 
-		if(Board2_DW.is_Normal_voltage_n == Board2_IN_Lights_AUTO)
-			telemetry.light_mode = LIGHT_AUTO;
-		else if(Board2_DW.is_Normal_voltage_n == Board2_IN_Lights_ON)
-			telemetry.light_mode = LIGHT_ON;
-		else
-			telemetry.light_mode = LIGHT_OFF;
+            if (telemetry_set_backward_mode(&telemetry, Board2_DW.special_retro ? BW_SPECIAL : BW_NORMAL) != CONTROLLER_OK){
+                Error_Handler();
+            }
 
-		telemetry.rpm_fl = stateB1.velocity_FA;
-		telemetry.rpm_fr = stateB1.velocity_FB;
-		telemetry.rpm_rl = stateB1.velocity_BA;
-		telemetry.rpm_rr = stateB1.velocity_BB;
+            if (telemetry_set_battery(&telemetry, calculate_battery_percent(stateB1.battery_voltage)) != CONTROLLER_OK){
+                Error_Handler();
+            }
 
-		telemetry.operating_mode=OM_NORMAL;
-	}
-	else{
-		telemetry.backward_mode = BW_NORMAL;
+            if (telemetry_set_temperature(&telemetry, saturate_temperature(stateB1.temperature)) != CONTROLLER_OK){
+                Error_Handler();
+            }
 
-		telemetry.battery_percent = 0;
-		telemetry.temperature = 0;
+            if (telemetry_set_light_mode(&telemetry, get_light_mode(Board2_DW.is_Normal_voltage_n)) != CONTROLLER_OK){
+                Error_Handler();
+            }
 
-		telemetry.light_mode = LIGHT_OFF;
+            if (telemetry_set_rpm(&telemetry, stateB1.velocity_FA, stateB1.velocity_FB, stateB1.velocity_BA, stateB1.velocity_BB) != CONTROLLER_OK){
+                Error_Handler();
+            }
 
-		telemetry.rpm_fl = 0;
-		telemetry.rpm_fr = 0;
-		telemetry.rpm_rl = 0;
-		telemetry.rpm_rr = 0;
+            if (telemetry_set_operating_mode(&telemetry, OM_NORMAL) != CONTROLLER_OK){
+                Error_Handler();
+            }
+        }
+        /* ===================== NON-NORMAL MODES ===================== */
+        else{
+            if (telemetry_set_backward_mode(&telemetry, BW_NORMAL) != CONTROLLER_OK ||
+                telemetry_set_battery(&telemetry, 0) != CONTROLLER_OK ||
+                telemetry_set_temperature(&telemetry, 0) != CONTROLLER_OK ||
+                telemetry_set_light_mode(&telemetry, LIGHT_OFF) != CONTROLLER_OK ||
+                telemetry_set_rpm(&telemetry, 0, 0, 0, 0) != CONTROLLER_OK){
+                Error_Handler();
+            }
 
-		telemetry.operating_mode= (Board2_DW.is_Supervision_task == Board2_IN_Degraded)
-										? OM_DEGRADED : OM_SINGLE_BOARD;
-	}
+            if (telemetry_set_operating_mode(&telemetry, (Board2_DW.is_Supervision_task == Board2_IN_Degraded) ? OM_DEGRADED : OM_SINGLE_BOARD) != CONTROLLER_OK){
+                Error_Handler();
+            }
+        }
 
-	telemetry.sonar_l = stateB2.sonar1;
-	telemetry.sonar_c = stateB2.sonar2;
-	telemetry.sonar_r = stateB2.sonar3;
+        /* ===================== COMMON FIELDS ===================== */
 
-	telemetry.target_fl = output.rif_FA;
-	telemetry.target_fr = output.rif_FB;
-	telemetry.target_rl = output.rif_BA;
-	telemetry.target_rr = output.rif_BB;
+        if (telemetry_set_sonars(&telemetry, stateB2.sonar1, stateB2.sonar2, stateB2.sonar3) != CONTROLLER_OK){
+            Error_Handler();
+        }
 
-	taskEXIT_CRITICAL();
+        if (telemetry_set_targets(&telemetry, output.rif_FA, output.rif_FB, output.rif_BA, output.rif_BB) != CONTROLLER_OK){
+            Error_Handler();
+        }
 
-	telecontrol_send_telemetry(&controller, &telemetry);
-  }
-  /* USER CODE END telemetryLoggerTask */
+        taskEXIT_CRITICAL();
+
+        if (telecontrol_send_telemetry(&controller, &telemetry) != CONTROLLER_OK){
+            Error_Handler();
+        }
+    }
 }
+
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */

@@ -302,13 +302,13 @@ boolean_T IO_Read_SlaveTalk(void)
 void IO_Set_DriverControl(void)
 {
     /* Abilita driver motori */
-    HAL_GPIO_WritePin(SELECT_GPIO_Port, SELECT_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(SELECT_GPIO_Port, SELECT_Pin, GPIO_PIN_RESET);
 }
 
 void IO_Reset_DriverControl(void)
 {
     /* Disabilita driver */
-    HAL_GPIO_WritePin(SELECT_GPIO_Port, SELECT_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(SELECT_GPIO_Port, SELECT_Pin, GPIO_PIN_SET);
 }
 
 /* ========================================================================== */

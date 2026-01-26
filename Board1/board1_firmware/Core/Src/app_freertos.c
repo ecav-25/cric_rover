@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
+#include <utils.h>
 #include "FreeRTOS.h"
 #include "task.h"
 #include "main.h"
@@ -37,7 +38,6 @@
 #include "led_stripes.h"
 #include "deadline_watchdog.h"
 #include "hw_config.h"
-#include "ramp.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -141,6 +141,8 @@ extern ADC_HandleTypeDef hadc1;
 extern DMA_HandleTypeDef hdma_tim17_ch1;
 
 boolean_T deadline = 0;
+
+real32_T ramp_step;
 
 led_t ledA;
 led_t ledB;
@@ -369,7 +371,6 @@ void MX_FREERTOS_Init(void) {
 	    return;
 	}
 
-
 	led_stripe_init(&cfg);
 	led_init(&ledA, ledA_ports, ledA_pins, OFF, led_init_state, 20);
 	led_init(&ledB, ledB_ports, ledB_pins, OFF, led_init_state, 20);
@@ -523,7 +524,7 @@ void pidTask(void *argument)
 	static real32_T rif_BA_r = 0;
 	static real32_T rif_BB_r = 0;
 
-	real32_T ramp_step;
+
 
 	for (;;)
 	{
