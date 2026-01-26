@@ -1,130 +1,149 @@
 #include "batt.h"
 
-/* ========== STATIC MODULE VARIABLES ========== */
+/* ================== STATIC SUPPORT FUNCTIONS ================== */
 
-/* Local pointer to the ADC instance */
-static ADC_HandleTypeDef * l_adc = (ADC_HandleTypeDef *)0;
-
-/* Long sampling time suitable for high-impedance dividers */
-#define BATT_ADC_SMPL_TIME      (ADC_SAMPLETIME_247CYCLES_5)
-
-/* ADC polling timeout in milliseconds */
-#define BATT_ADC_TMO_MS         (10U)
-
-/* ========== STATIC SUPPORT FUNCTIONS ========== */
-
-/**
- * \brief Configures the ADC channel for battery measurement.
- * \param channel ADC channel to configure.
- * \return HAL_OK on success, HAL_ERROR otherwise.
- */
-static HAL_StatusTypeDef BATT_cfgCh_(uint32_t channel)
+static Batt_Status_t batt_cfg_channel_(batt_t *b)
 {
-    HAL_StatusTypeDef st;
-    ADC_ChannelConfTypeDef cfg;
+    if (b == NULL || b->hadc == NULL)
+        return BATT_ERR;
 
-    cfg.Channel      = channel;
-    cfg.Rank         = ADC_REGULAR_RANK_1;
-    cfg.SamplingTime = BATT_ADC_SMPL_TIME;
-    cfg.SingleDiff   = ADC_SINGLE_ENDED;
-    cfg.OffsetNumber = ADC_OFFSET_NONE;
-    cfg.Offset       = 0U;
-
-    st = HAL_ADC_ConfigChannel(l_adc, &cfg);
-    return st;
+    return (HAL_ADC_ConfigChannel(b->hadc, &b->channel_cfg) == HAL_OK) ? BATT_OK : BATT_ERR;
 }
 
-/**
- * \brief Performs a single ADC conversion.
- * \return Raw ADC value (0..4095) or 0 on failure.
- */
-static uint32_t BATT_readConv_(void)
+static Batt_Status_t batt_read_once_(batt_t *b, uint32_t *raw)
 {
-    uint32_t adcVal;
-    HAL_StatusTypeDef stStart;
-    HAL_StatusTypeDef stPoll;
+    if (b == NULL || raw == NULL)
+        return BATT_ERR;
 
-    adcVal = 0U;
+    if (HAL_ADC_Start(b->hadc) != HAL_OK)
+        return BATT_ERR;
 
-    stStart = HAL_ADC_Start(l_adc);
-    if (stStart == HAL_OK)
-    {
-        stPoll = HAL_ADC_PollForConversion(l_adc, BATT_ADC_TMO_MS);
-        if (stPoll == HAL_OK)
-        {
-            adcVal = HAL_ADC_GetValue(l_adc);
-        }
-        (void)HAL_ADC_Stop(l_adc);
+    if (HAL_ADC_PollForConversion(b->hadc, b->timeout_ms) != HAL_OK) {
+        HAL_ADC_Stop(b->hadc);
+        return BATT_ERR;
     }
 
-    return adcVal;
+    *raw = HAL_ADC_GetValue(b->hadc);
+    HAL_ADC_Stop(b->hadc);
+
+    return BATT_OK;
 }
 
-/* ========== PUBLIC API ========== */
-
-void BATT_init(ADC_HandleTypeDef * adc)
+static float batt_raw_to_voltage_(uint32_t raw)
 {
-    l_adc = adc;
-    HAL_ADCEx_Calibration_Start(l_adc, ADC_SINGLE_ENDED);
-}
-
-uint32_t BATT_readRaw(void)
-{
-    uint32_t raw;
-
-    raw = 0U;
-
-    if (l_adc != (ADC_HandleTypeDef *)0)
-    {
-        if (BATT_cfgCh_(BATT_ADC_CH) == HAL_OK)
-        {
-            raw = BATT_readConv_();
-        }
-    }
-
-    return raw;
-}
-
-float BATT_getVolt(void)
-{
-    uint32_t raw;
-    float vAdc;
+    float v_adc;
     float ratio;
-    float vBat;
 
-    raw = BATT_readRaw();
+    /* ADC -> volts */
+    v_adc = ((float)raw * BATT_ADC_VREF_MV) / (BATT_ADC_MAX_CNT * 1000.0f);
 
-    /* ADC conversion to volts */
-    vAdc = ((float)raw * BATT_ADC_VREF_MV) /
-           (BATT_ADC_MAX_CNT * 1000.0F);
-
-    /* Divider ratio */
+    /* divider ratio */
     ratio = (BATT_R1_OHM + BATT_R2_OHM) / BATT_R2_OHM;
 
-    vBat = vAdc * ratio;
-    return vBat;
+    return v_adc * ratio;
 }
 
-float BATT_getSoc(void)
+static Batt_Status_t batt_read_raw_internal_(batt_t *b,uint8_t samples, uint32_t *raw)
 {
-    float v;
-    float soc;
+    if (b == NULL || raw == NULL || samples == 0)
+        return BATT_ERR;
 
-    v = BATT_getVolt();
+    if (batt_cfg_channel_(b) != BATT_OK)
+        return BATT_ERR;
 
-    if (v <= BATT_LIPO_VMIN)
-    {
-        soc = 0.0F;
-    }
-    else if (v >= BATT_LIPO_VMAX)
-    {
-        soc = 100.0F;
-    }
-    else
-    {
-        soc = ((v - BATT_LIPO_VMIN) * 100.0F) /
-              (BATT_LIPO_VMAX - BATT_LIPO_VMIN);
+    uint32_t acc = 0;
+    uint32_t sample;
+
+    for (uint8_t i = 0; i < samples; i++) {
+        if (batt_read_once_(b, &sample) != BATT_OK)
+            return BATT_ERR;
+        acc += sample;
     }
 
-    return soc;
+    *raw = acc / samples;
+    b->raw_last = *raw;
+
+    return BATT_OK;
 }
+
+/* ================== PUBLIC API ================== */
+
+Batt_Status_t batt_init(batt_t *b, ADC_HandleTypeDef *hadc, const ADC_ChannelConfTypeDef *channel_cfg, uint32_t timeout_ms)
+{
+    if (b == NULL || hadc == NULL || channel_cfg == NULL)
+        return BATT_ERR;
+
+    b->hadc        = hadc;
+    b->channel_cfg = *channel_cfg;
+    b->timeout_ms  = timeout_ms;
+
+    b->raw_last  = 0U;
+    b->volt_last = 0.0f;
+
+    /* calibrazione ADC (una tantum) */
+    if (HAL_ADCEx_Calibration_Start(b->hadc, b->channel_cfg.SingleDiff) != HAL_OK)
+        return BATT_ERR;
+
+    return BATT_OK;
+}
+
+Batt_Status_t batt_read_raw_once(batt_t *b, uint32_t *raw)
+{
+    return batt_read_raw_internal_(b, 1, raw);
+}
+
+Batt_Status_t batt_read_raw_avg(batt_t *b, uint8_t samples, uint32_t *raw)
+{
+    return batt_read_raw_internal_(b, samples, raw);
+}
+
+Batt_Status_t batt_get_voltage_once(batt_t *b, float *volt)
+{
+    if (b == NULL || volt == NULL)
+        return BATT_ERR;
+
+    uint32_t raw;
+
+    if (batt_read_raw_once(b, &raw) != BATT_OK)
+        return BATT_ERR;
+
+    b->volt_last = batt_raw_to_voltage_(raw);
+
+    *volt = b->volt_last;
+    return BATT_OK;
+}
+
+Batt_Status_t batt_get_voltage_avg(batt_t *b, uint8_t samples, float *volt)
+{
+    if (b == NULL || volt == NULL)
+        return BATT_ERR;
+
+    uint32_t raw;
+
+    if (batt_read_raw_avg(b, samples, &raw) != BATT_OK)
+        return BATT_ERR;
+
+    b->volt_last = batt_raw_to_voltage_(raw);
+
+    *volt = b->volt_last;
+    return BATT_OK;
+}
+
+Batt_Status_t batt_get_last_raw(const batt_t *b, uint32_t *raw)
+{
+    if (b == NULL || raw == NULL)
+        return BATT_ERR;
+
+    *raw = b->raw_last;
+    return BATT_OK;
+}
+
+Batt_Status_t batt_get_last_voltage(const batt_t *b, float *volt)
+{
+    if (b == NULL || volt == NULL)
+        return BATT_ERR;
+
+    *volt = b->volt_last;
+    return BATT_OK;
+}
+

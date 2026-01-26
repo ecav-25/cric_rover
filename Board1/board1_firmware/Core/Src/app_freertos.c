@@ -87,6 +87,9 @@ EncoderHandle encoder_FB_pid;
 EncoderHandle encoder_BA_pid;
 EncoderHandle encoder_BB_pid;
 
+temp_t temp_sensor;
+batt_t battery_sensor;
+
 int16_T velocity_FA = 0;
 int16_T velocity_FB = 0;
 int16_T velocity_BA = 0;
@@ -333,8 +336,18 @@ static Motor_Status_t init_motors(void)
 
 void MX_FREERTOS_Init(void) {
 	DWD_Init(&hard_rt_deadline_wd, &htim4, SYSTEM_ALIVE_MASK, deadlineProcedure);
-	BATT_init(&hadc1);
-	TEMP_init(&hadc1);
+
+
+	if(batt_init(&battery_sensor, ADC_HW_CONFIG[ADC_BATTERY_VOLTAGE].hadc, &ADC_HW_CONFIG[ADC_BATTERY_VOLTAGE].channel_cfg, BATT_DEFAULT_TIMEOUT_MS) != BATT_OK){
+		Error_Handler();
+		return;
+	}
+
+
+	if(temp_init(&temp_sensor,ADC_HW_CONFIG[ADC_TEMP_SENSOR].hadc, &ADC_HW_CONFIG[ADC_TEMP_SENSOR].channel_cfg, TEMP_DEFAULT_TIMEOUT_MS) != TEMP_OK){
+		Error_Handler();
+		return;
+	}
 
 	if (init_encoders_supervision() != ENCODER_OK){
 		Error_Handler();
@@ -474,12 +487,17 @@ void readSensorsTask(void *argument)
 		}
 
 
-		temperature = TEMP_getCelsius();
+		if(temp_get_celsius_once(&temp_sensor, &temperature) != TEMP_OK){
+			Error_Handler();
+		}
 
-		battery_voltage = BATT_getVolt();
 
-		//debug_temperature = temperature;
-		//debug_battery_voltage = battery_voltage;
+		if(batt_get_voltage_once(&battery_sensor, &battery_voltage) != BATT_OK){
+			Error_Handler();
+		}
+
+		debug_temperature = temperature;
+		debug_battery_voltage = battery_voltage;
 
 		velocity_FA = (int16_T) roundf(encoder_FA.velocity);
 		velocity_FB = (int16_T) roundf(encoder_FB.velocity);

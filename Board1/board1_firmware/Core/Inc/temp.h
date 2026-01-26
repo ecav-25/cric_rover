@@ -1,50 +1,89 @@
-#ifndef TEMP_H
-#define TEMP_H
+#ifndef INC_TEMP_H_
+#define INC_TEMP_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <stdint.h>
 #include "stm32g4xx_hal.h"
+#include <stdint.h>
 
-/* ================== ADC/TEMPERATURE CONFIGURATION ================== */
+/* ================== RETURN CODES ================== */
 
-/* ADC reference voltage in millivolts */
-#define TEMP_ADC_VREF_MV        (3300.0F)
 
-/* ADC resolution (12-bit) */
-#define TEMP_ADC_MAX_CNT        (4095.0F)
 
-/* Internal temperature sensor ADC channel */
-#define TEMP_ADC_CH             (ADC_CHANNEL_TEMPSENSOR_ADC1)
+typedef enum {
+	TEMP_OK = 0,
+	TEMP_ERR = -1
+} Temp_Status_t;
 
-/* Sensor parameters from STM32 datasheet */
-#define TEMP_V25_MV             (760.0F)    /* mV at 25°C       */
-#define TEMP_SLOPE_MV           (2.5F)      /* mV/°C typical    */
+/* ================== SENSOR CONSTANTS ================== */
+/* Valori tipici da datasheet STM32 */
 
-/* ================== TEMPERATURE API ================== */
+#define TEMP_ADC_VREF_MV        (3300.0f)
+#define TEMP_ADC_MAX_CNT        (4095.0f)
+
+#define TEMP_V25_MV             (760.0f)
+#define TEMP_SLOPE_MV_PER_C     (2.5f)
+
+/* Sampling time consigliato per sensore interno */
+#define TEMP_DEFAULT_SMPL_TIME  (ADC_SAMPLETIME_247CYCLES_5)
+#define TEMP_DEFAULT_TIMEOUT_MS (10U)
+
+/* ================== OBJECT ================== */
+
+typedef struct
+{
+    ADC_HandleTypeDef *hadc;
+
+    ADC_ChannelConfTypeDef channel_cfg;
+
+    uint32_t timeout_ms;
+
+    /* ultimi valori acquisiti */
+    uint32_t raw_last;
+    float    temp_c_last;
+
+} temp_t;
+
+/* ================== API ================== */
 
 /**
- * \brief Initialises the temperature module.
- * \param adc Pointer to an initialised ADC handle.
+ * Inizializza l'oggetto sensore di temperatura.
  */
-void TEMP_init(ADC_HandleTypeDef * adc);
+Temp_Status_t temp_init(temp_t *t, ADC_HandleTypeDef *hadc, const ADC_ChannelConfTypeDef* channel_cfg, uint32_t timeout_ms);
+/**
+ * Lettura ADC grezza singola.
+ */
+Temp_Status_t temp_read_raw_once(temp_t *t, uint32_t *raw);
 
 /**
- * \brief Reads a raw ADC value from the internal temperature channel.
- * \return Raw ADC result (0..4095) or 0 on failure.
+ * Lettura ADC grezza mediata su N campioni.
  */
-uint32_t TEMP_readRaw(void);
+Temp_Status_t temp_read_raw_avg(temp_t *t, uint8_t samples, uint32_t *raw);
 
 /**
- * \brief Computes temperature in degrees Celsius.
- * \return Temperature (°C).
+ * Lettura temperatura (°C) singola.
  */
-float TEMP_getCelsius(void);
+Temp_Status_t temp_get_celsius_once(temp_t *t, float *temp_c);
+
+/**
+ * Lettura temperatura (°C) mediata su N campioni.
+ */
+Temp_Status_t temp_get_celsius_avg(temp_t *t, uint8_t samples, float *temp_c);
+
+/**
+ * Ultimo valore ADC acquisito.
+ */
+Temp_Status_t temp_get_last_raw(const temp_t *t, uint32_t *raw);
+
+/**
+ * Ultima temperatura calcolata.
+ */
+Temp_Status_t temp_get_last_celsius(const temp_t *t, float *temp_c);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* TEMP_H */
+#endif /* INC_TEMP_H_ */

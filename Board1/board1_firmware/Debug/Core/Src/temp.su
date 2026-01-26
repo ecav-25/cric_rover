@@ -1,5 +1,11 @@
-../Core/Src/temp.c:18:26:TEMP_cfgCh_	56	static
-../Core/Src/temp.c:38:17:TEMP_readConv_	16	static
-../Core/Src/temp.c:62:6:TEMP_init	16	static
-../Core/Src/temp.c:69:10:TEMP_readRaw	16	static
-../Core/Src/temp.c:86:7:TEMP_getCelsius	24	static
+../Core/Src/temp.c:5:22:temp_cfg_channel_	16	static
+../Core/Src/temp.c:14:22:temp_read_once_	16	static
+../Core/Src/temp.c:32:14:temp_raw_to_celsius_	24	static
+../Core/Src/temp.c:39:22:temp_read_raw_internal_	40	static
+../Core/Src/temp.c:63:15:temp_init	32	static
+../Core/Src/temp.c:81:15:temp_read_raw_once	16	static
+../Core/Src/temp.c:86:15:temp_read_raw_avg	24	static
+../Core/Src/temp.c:91:15:temp_get_celsius_once	24	static
+../Core/Src/temp.c:106:15:temp_get_celsius_avg	32	static
+../Core/Src/temp.c:121:15:temp_get_last_raw	16	static
+../Core/Src/temp.c:129:15:temp_get_last_celsius	16	static
