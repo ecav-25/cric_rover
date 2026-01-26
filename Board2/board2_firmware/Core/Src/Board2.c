@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board2'.
  *
- * Model version                  : 1.2172
+ * Model version                  : 1.2174
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Mon Jan 26 12:28:40 2026
+ * C/C++ source code generated on : Mon Jan 26 16:31:55 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -36,7 +36,7 @@ static RT_MODEL_Board2_T Board2_M_;
 RT_MODEL_Board2_T *const Board2_M = &Board2_M_;
 
 /* Forward declaration for local functions */
-static void Board2_Enable_MUX(void);
+static void Board2_Disable_MUX(void);
 static void Board2_Update_Local_State(void);
 static void Board2_Open_Session(void);
 static void Board2_Raise_MTalk(void);
@@ -57,7 +57,7 @@ static boolean_T Board2_Is_Tx_Finished(void);
 static void Board2_Compute_Degraded_Actions(void);
 static void Bo_exit_internal_Normal_voltage(void);
 static void Board2_exit_internal_Normal(void);
-static void Board2_Disable_MUX(void);
+static void Board2_Enable_MUX(void);
 static void Board2_Send_Decision(void);
 static void Board2_Wait_Decision(void);
 static void Board2_Send_Global_State(void);
@@ -133,9 +133,9 @@ static void Board2_Supervisor(void);
 static void Board2_Init_Data_Structures(void);
 
 /* Function for Chart: '<Root>/Board2' */
-static void Board2_Enable_MUX(void)
+static void Board2_Disable_MUX(void)
 {
-  IO_Set_DriverControl();
+  IO_Disable_MUX();
 }
 
 /* Function for Chart: '<Root>/Board2' */
@@ -488,9 +488,9 @@ static void Board2_exit_internal_Normal(void)
 }
 
 /* Function for Chart: '<Root>/Board2' */
-static void Board2_Disable_MUX(void)
+static void Board2_Enable_MUX(void)
 {
-  IO_Reset_DriverControl();
+  IO_Enable_MUX();
 }
 
 /* Function for Chart: '<Root>/Board2' */
@@ -550,7 +550,7 @@ static void Board2_Local_state_transmitted(void)
       } else {
         Board2_Compute_Degraded_Actions();
         Board2_exit_internal_Normal();
-        Board2_Disable_MUX();
+        Board2_Enable_MUX();
         Board2_Close_Session();
         Board2_Lower_MTalk();
         Board2_Abort_Communication();
@@ -677,7 +677,7 @@ static void Board2_Receive_decision(void)
         Board2_Write_Output();
       } else {
         Board2_exit_internal_Normal();
-        Board2_Disable_MUX();
+        Board2_Enable_MUX();
         Board2_Close_Session();
         Board2_Lower_MTalk();
         Board2_Abort_Communication();
@@ -697,7 +697,7 @@ static void Board2_Receive_decision(void)
     if (b) {
       Board2_Compute_Degraded_Actions();
       Board2_exit_internal_Normal();
-      Board2_Disable_MUX();
+      Board2_Enable_MUX();
       Board2_Close_Session();
       Board2_Lower_MTalk();
       Board2_Abort_Communication();
@@ -2030,7 +2030,7 @@ static void Board2_Receive_global_state(void)
         Board2_DW.time_comm = Board2_Get_Timestamp();
       } else {
         Board2_exit_internal_Normal();
-        Board2_Disable_MUX();
+        Board2_Enable_MUX();
         Board2_Close_Session();
         Board2_Lower_MTalk();
         Board2_Abort_Communication();
@@ -2050,7 +2050,7 @@ static void Board2_Receive_global_state(void)
     if (b) {
       Board2_Compute_Degraded_Actions();
       Board2_exit_internal_Normal();
-      Board2_Disable_MUX();
+      Board2_Enable_MUX();
       Board2_Close_Session();
       Board2_Lower_MTalk();
       Board2_Abort_Communication();
@@ -2465,7 +2465,7 @@ static void Board2_Receive_state(void)
     if (b) {
       Board2_Compute_Degraded_Actions();
       Board2_exit_internal_Normal();
-      Board2_Disable_MUX();
+      Board2_Enable_MUX();
       Board2_Close_Session();
       Board2_Lower_MTalk();
       Board2_Abort_Communication();
@@ -2498,7 +2498,7 @@ static void Board2_Supervisor(void)
         } else {
           Board2_Compute_Degraded_Actions();
           Board2_exit_internal_Normal();
-          Board2_Disable_MUX();
+          Board2_Enable_MUX();
           Board2_Close_Session();
           Board2_Lower_MTalk();
           Board2_Abort_Communication();
@@ -2527,7 +2527,7 @@ static void Board2_Supervisor(void)
         } else {
           Board2_Compute_Degraded_Actions();
           Board2_exit_internal_Normal();
-          Board2_Disable_MUX();
+          Board2_Enable_MUX();
           Board2_Close_Session();
           Board2_Lower_MTalk();
           Board2_Abort_Communication();
@@ -2549,7 +2549,7 @@ static void Board2_Supervisor(void)
       if (b) {
         Board2_Compute_Degraded_Actions();
         Board2_exit_internal_Normal();
-        Board2_Disable_MUX();
+        Board2_Enable_MUX();
         Board2_Close_Session();
         Board2_Lower_MTalk();
         Board2_Abort_Communication();
@@ -2594,7 +2594,7 @@ static void Board2_Supervisor(void)
       if (b) {
         Board2_Compute_Degraded_Actions();
         Board2_exit_internal_Normal();
-        Board2_Disable_MUX();
+        Board2_Enable_MUX();
         Board2_Close_Session();
         Board2_Lower_MTalk();
         Board2_Abort_Communication();
@@ -2615,7 +2615,7 @@ static void Board2_Supervisor(void)
       if (b) {
         Board2_Compute_Degraded_Actions();
         Board2_exit_internal_Normal();
-        Board2_Disable_MUX();
+        Board2_Enable_MUX();
         Board2_Close_Session();
         Board2_Lower_MTalk();
         Board2_Abort_Communication();
@@ -2636,7 +2636,7 @@ static void Board2_Supervisor(void)
       if (b) {
         Board2_Compute_Degraded_Actions();
         Board2_exit_internal_Normal();
-        Board2_Disable_MUX();
+        Board2_Enable_MUX();
         Board2_Close_Session();
         Board2_Lower_MTalk();
         Board2_Abort_Communication();
@@ -2656,7 +2656,7 @@ static void Board2_Supervisor(void)
       if (b) {
         Board2_Compute_Degraded_Actions();
         Board2_exit_internal_Normal();
-        Board2_Disable_MUX();
+        Board2_Enable_MUX();
         Board2_Close_Session();
         Board2_Lower_MTalk();
         Board2_Abort_Communication();
@@ -2678,7 +2678,7 @@ static void Board2_Supervisor(void)
       if (b) {
         Board2_Compute_Degraded_Actions();
         Board2_exit_internal_Normal();
-        Board2_Disable_MUX();
+        Board2_Enable_MUX();
         Board2_Close_Session();
         Board2_Lower_MTalk();
         Board2_Abort_Communication();
@@ -2831,7 +2831,7 @@ void Board2_step(void)
     Board2_Lower_MTalk();
     Board2_DW.is_c1_Board2 = Board2_IN_Supervision_task;
     Board2_DW.is_Supervision_task = Board2_IN_Normal;
-    Board2_Enable_MUX();
+    Board2_Disable_MUX();
     Board2_enter_internal_Normal();
   } else if (Board2_DW.is_c1_Board2 == Board2_IN_Supervision_task) {
     switch (Board2_DW.is_Supervision_task) {
@@ -2843,7 +2843,7 @@ void Board2_step(void)
           Board2_DW.is_Restablish = Board2_IN_NO_ACTIVE_CHILD;
           Board2_DW.is_Degraded = Board2_IN_NO_ACTIVE_CHILD;
           Board2_DW.is_Supervision_task = Board2_IN_Normal;
-          Board2_Enable_MUX();
+          Board2_Disable_MUX();
           Board2_enter_internal_Normal();
           break;
 
