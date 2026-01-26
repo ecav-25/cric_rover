@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board1'.
  *
- * Model version                  : 1.2172
+ * Model version                  : 1.2189
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Mon Jan 26 12:24:24 2026
+ * C/C++ source code generated on : Mon Jan 26 18:58:32 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -266,12 +266,13 @@ extern RT_MODEL_Board1_T *const Board1_M;
 #define Board1_MAX_RETRANSMIT          ((uint8_T)1U)
 #define Board1_MAX_RPM                 (150.0F)
 #define Board1_MIN_DISTANCE            ((uint16_T)150U)
-#define Board1_OBS_TIMEOUT             (1000U)
+#define Board1_OBS_TIMEOUT             (5000U)
 #define Board1_PERIOD                  (0.06F)
 #define Board1_PROTECTION_DISTANCE     ((uint16_T)20U)
 #define Board1_PURE_TURN_EPS           (0.01F)
 #define Board1_STATE_RECEIVE_TIMEOUT   (3800U)
 #define Board1_STATE_SEND_TIMEOUT      (2200U)
+#define Board1_STOP_THRESHOLD          ((uint16_T)1U)
 #define Board1_TEMP_TIMEOUT            (15000U)
 #define Board1_TURN_ANGLE              (45.0F)
 #define Board1_TURN_BACK_ANGLE         (180.0F)
