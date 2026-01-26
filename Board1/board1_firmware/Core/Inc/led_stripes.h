@@ -18,8 +18,6 @@ typedef enum {
   LED_INVALID_PARAM
 } led_status_t;
 
-typedef REAR_LED_TYPE led_anim_t;
-
 typedef struct {
 
   TIM_HandleTypeDef *htim;
@@ -41,8 +39,8 @@ typedef struct {
 
 
 led_status_t led_stripe_init(led_config_t *cfg);
-led_status_t rear_led_step(uint8_t animation);
-led_status_t rear_sign_step(uint8_t animation);
+led_status_t rear_led_step(REAR_LED_TYPE animation);
+led_status_t rear_sign_step(REAR_SIGN_TYPE animation);
 led_status_t led_set_RGB(uint8_t index, uint8_t r, uint8_t g, uint8_t b);
 led_status_t led_set_all_RGB(uint8_t r, uint8_t g, uint8_t b);
 led_status_t led_render();

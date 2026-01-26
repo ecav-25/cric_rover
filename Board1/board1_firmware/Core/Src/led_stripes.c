@@ -51,6 +51,8 @@ static led_status_t rear_led_anim_arrow_right();
 static led_status_t rear_led_anim_backward();
 static led_status_t rear_sign_off();
 static led_status_t rear_sign_white();
+static led_status_t rear_sign_orange();
+static led_status_t rear_sign_green();
 static led_status_t rear_sign_red();
 
 
@@ -80,7 +82,7 @@ led_status_t led_stripe_init(led_config_t *cfg){
   return LED_STRIPE_OK;
 }
 
-led_status_t rear_led_step(uint8_t animation){
+led_status_t rear_led_step(REAR_LED_TYPE animation){
 
 	led_status_t res = LED_STRIPE_ERR;
 
@@ -133,7 +135,7 @@ led_status_t rear_led_step(uint8_t animation){
 
 
 
-led_status_t rear_sign_step(uint8_t animation){
+led_status_t rear_sign_step(REAR_SIGN_TYPE animation){
 
 	led_status_t res = LED_STRIPE_ERR;
 
@@ -144,17 +146,27 @@ led_status_t rear_sign_step(uint8_t animation){
 	}
 
 	switch(animation){
-		case OFF:
+		case SIGN_OFF:
 			if(rear_sign_off() == LED_STRIPE_OK){
 				res = LED_STRIPE_OK;
 			}
 			break;
-		case WHITE:
+		case SIGN_WHITE:
 			if(rear_sign_white() == LED_STRIPE_OK){
 				res = LED_STRIPE_OK;
 			}
 			break;
-		case RED:
+		case SIGN_GREEN:
+			if(rear_sign_green() == LED_STRIPE_OK){
+				res = LED_STRIPE_OK;
+			}
+			break;
+		case SIGN_ORANGE:
+			if(rear_sign_orange() == LED_STRIPE_OK){
+				res = LED_STRIPE_OK;
+			}
+			break;
+		case SIGN_RED:
 			if(rear_sign_red() == LED_STRIPE_OK){
 				res = LED_STRIPE_OK;
 			}
@@ -359,6 +371,32 @@ static led_status_t rear_sign_red(void)
     if (rear_sign.step != 0) return LED_STRIPE_OK;
 
     if (led_set_RGB_range(rear_sign.start, rear_sign.end, 255, 0, 0) != LED_STRIPE_OK)
+        return LED_STRIPE_ERR;
+
+    g_led_bus.dirty = 1;
+    rear_sign.step = 1;
+    return LED_STRIPE_OK;
+}
+
+
+static led_status_t rear_sign_green(void)
+{
+    if (rear_sign.step != 0) return LED_STRIPE_OK;
+
+    if (led_set_RGB_range(rear_sign.start, rear_sign.end, 0, 255, 0) != LED_STRIPE_OK)
+        return LED_STRIPE_ERR;
+
+    g_led_bus.dirty = 1;
+    rear_sign.step = 1;
+    return LED_STRIPE_OK;
+}
+
+
+static led_status_t rear_sign_orange(void)
+{
+    if (rear_sign.step != 0) return LED_STRIPE_OK;
+
+    if (led_set_RGB_range(rear_sign.start, rear_sign.end, 255, 40, 0) != LED_STRIPE_OK)
         return LED_STRIPE_ERR;
 
     g_led_bus.dirty = 1;

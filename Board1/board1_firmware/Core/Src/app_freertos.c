@@ -566,7 +566,7 @@ void lightsTask(void *argument)
 		led_step(&ledA, led_FA);
 		led_step(&ledB, led_FB);
 		rear_led_step(rear_led);
-		rear_sign_step(rear_sign); //aggiustare il +1
+		rear_sign_step(rear_sign);
 		led_render();
 
 		DWD_Notify(&hard_rt_deadline_wd, DWD_FLAG_LIGHT);
