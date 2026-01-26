@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board2'.
  *
- * Model version                  : 1.2122
+ * Model version                  : 1.2189
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Sat Jan 24 16:10:06 2026
+ * C/C++ source code generated on : Mon Jan 26 19:03:08 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -36,7 +36,7 @@ static RT_MODEL_Board2_T Board2_M_;
 RT_MODEL_Board2_T *const Board2_M = &Board2_M_;
 
 /* Forward declaration for local functions */
-static void Board2_Enable_MUX(void);
+static void Board2_Disable_MUX(void);
 static void Board2_Update_Local_State(void);
 static void Board2_Open_Session(void);
 static void Board2_Raise_MTalk(void);
@@ -57,7 +57,7 @@ static boolean_T Board2_Is_Tx_Finished(void);
 static void Board2_Compute_Degraded_Actions(void);
 static void Bo_exit_internal_Normal_voltage(void);
 static void Board2_exit_internal_Normal(void);
-static void Board2_Disable_MUX(void);
+static void Board2_Enable_MUX(void);
 static void Board2_Send_Decision(void);
 static void Board2_Wait_Decision(void);
 static void Board2_Send_Global_State(void);
@@ -77,10 +77,9 @@ static void Board2_Turn_Right(void);
 static void Board2_Update_Angle(real32_T yaw);
 static void Board2_Stop_Motors(void);
 static void Board2_Emergency_sonar_routine(void);
-static boolean_T Board2_Stop_B_Pressed(void);
 static boolean_T Board2_Near_Obstacle(void);
-static void Moving_obstacle_from_left_routi(void);
-static void Moving_obstacle_from_right_rout(void);
+static boolean_T Board2_Stop_B_Pressed(void);
+static void Board2_Process_Evasive_Commands(void);
 static boolean_T Board2_Is_Rover_Moving_Forward(void);
 static boolean_T Board2_Emergency_S_Routine(void);
 static boolean_T Board2_Mov_Obs_R_Routine(void);
@@ -94,10 +93,11 @@ static void Board2_Turn_Back(void);
 static void Board2_Select_routine(void);
 static boolean_T Board2_Mov_Obs_Right(void);
 static boolean_T Board2_Mov_Obs_Left(void);
-static void Board2_Routine_manager(void);
+static void Board2_Stop_slow_routine(void);
+static void Board2_Normal_voltage(void);
+static boolean_T Board2_Mode_B_Pressed(void);
 static boolean_T Board2_Lights_B_Pressed(void);
 static void Board2_Update_Rover_Lights(boolean_T white_led_when_stopped);
-static boolean_T Board2_Mode_B_Pressed(void);
 static void Board2_Actions(void);
 static boolean_T Board2_isequal_l(MOVING_OBSTACLE_TYPE varargin_1,
   MOVING_OBSTACLE_TYPE varargin_2);
@@ -133,9 +133,9 @@ static void Board2_Supervisor(void);
 static void Board2_Init_Data_Structures(void);
 
 /* Function for Chart: '<Root>/Board2' */
-static void Board2_Enable_MUX(void)
+static void Board2_Disable_MUX(void)
 {
-  IO_Set_DriverControl();
+  IO_Disable_MUX();
 }
 
 /* Function for Chart: '<Root>/Board2' */
@@ -214,7 +214,7 @@ static void Board2_Rover_Lights_OFF(void)
   Board2_DW.decision.led_A = OFF;
   Board2_DW.decision.led_B = OFF;
   Board2_DW.decision.rear_led = IDLE;
-  Board2_DW.decision.rear_sign = OFF;
+  Board2_DW.decision.rear_sign = SIGN_OFF;
 }
 
 /* Function for Chart: '<Root>/Board2' */
@@ -253,14 +253,14 @@ static void Board2_enter_internal_Normal(void)
   Board2_DW.is_active_Routine_manager = 1U;
   Board2_DW.is_Routine_manager = Board2_IN_Normal_voltage;
   Board2_DW.is_Normal_voltage = Board2_IN_Select_routine;
-  Board2_DW.is_active_Lights_manager = 1U;
-  Board2_DW.is_Lights_manager = Board2_IN_Normal_voltage;
-  Board2_DW.is_Normal_voltage_n = Board2_IN_Lights_OFF;
-  Board2_Rover_Lights_OFF();
   Board2_DW.is_active_Mode_manager = 1U;
   Board2_DW.is_Mode_manager = Board2_IN_Normal_voltage;
-  Board2_DW.is_Normal_voltage_b = Board2_IN_Mode_DEFAULT;
+  Board2_DW.is_Normal_voltage_f = Board2_IN_Mode_DEFAULT;
   Board2_DW.decision.mode = DEFAULT;
+  Board2_DW.is_active_Lights_manager = 1U;
+  Board2_DW.is_Lights_manager = Board2_IN_Normal_voltage;
+  Board2_DW.is_Normal_voltage_d = Board2_IN_Lights_OFF;
+  Board2_Rover_Lights_OFF();
   Board2_DW.is_active_Relay_manager = 1U;
   Board2_DW.is_Relay_manager = Board2_IN_Normal_voltage;
   Board2_DW.decision.relay = true;
@@ -356,7 +356,7 @@ static void Board2_Compute_Degraded_Actions(void)
     Board2_Y.output.led_A = OFF;
     Board2_Y.output.led_B = OFF;
     Board2_Y.output.rear_led = IDLE;
-    Board2_Y.output.rear_sign = OFF;
+    Board2_Y.output.rear_sign = SIGN_OFF;
     Board2_Y.output.relay = true;
     OS_Exit_Critical();
   } else if (Board2_U.B4) {
@@ -369,7 +369,7 @@ static void Board2_Compute_Degraded_Actions(void)
     Board2_Y.output.led_A = OFF;
     Board2_Y.output.led_B = OFF;
     Board2_Y.output.rear_led = IDLE;
-    Board2_Y.output.rear_sign = OFF;
+    Board2_Y.output.rear_sign = SIGN_OFF;
     Board2_Y.output.relay = true;
     OS_Exit_Critical();
   } else if (Board2_U.B3 || (Board2_U.controller_battery <=
@@ -383,7 +383,7 @@ static void Board2_Compute_Degraded_Actions(void)
     Board2_Y.output.led_A = OFF;
     Board2_Y.output.led_B = OFF;
     Board2_Y.output.rear_led = IDLE;
-    Board2_Y.output.rear_sign = OFF;
+    Board2_Y.output.rear_sign = SIGN_OFF;
     Board2_Y.output.relay = true;
     OS_Exit_Critical();
   } else {
@@ -426,7 +426,7 @@ static void Board2_Compute_Degraded_Actions(void)
     Board2_Y.output.led_A = OFF;
     Board2_Y.output.led_B = OFF;
     Board2_Y.output.rear_led = IDLE;
-    Board2_Y.output.rear_sign = OFF;
+    Board2_Y.output.rear_sign = SIGN_OFF;
     Board2_Y.output.relay = true;
     OS_Exit_Critical();
   }
@@ -454,12 +454,12 @@ static void Board2_exit_internal_Normal(void)
 {
   Board2_DW.is_Relay_manager = Board2_IN_NO_ACTIVE_CHILD;
   Board2_DW.is_active_Relay_manager = 0U;
-  Board2_DW.is_Normal_voltage_b = Board2_IN_NO_ACTIVE_CHILD;
-  Board2_DW.is_Mode_manager = Board2_IN_NO_ACTIVE_CHILD;
-  Board2_DW.is_active_Mode_manager = 0U;
-  Board2_DW.is_Normal_voltage_n = Board2_IN_NO_ACTIVE_CHILD;
+  Board2_DW.is_Normal_voltage_d = Board2_IN_NO_ACTIVE_CHILD;
   Board2_DW.is_Lights_manager = Board2_IN_NO_ACTIVE_CHILD;
   Board2_DW.is_active_Lights_manager = 0U;
+  Board2_DW.is_Normal_voltage_f = Board2_IN_NO_ACTIVE_CHILD;
+  Board2_DW.is_Mode_manager = Board2_IN_NO_ACTIVE_CHILD;
+  Board2_DW.is_active_Mode_manager = 0U;
   Bo_exit_internal_Normal_voltage();
   Board2_DW.is_Routine_manager = Board2_IN_NO_ACTIVE_CHILD;
   Board2_DW.is_active_Routine_manager = 0U;
@@ -488,9 +488,9 @@ static void Board2_exit_internal_Normal(void)
 }
 
 /* Function for Chart: '<Root>/Board2' */
-static void Board2_Disable_MUX(void)
+static void Board2_Enable_MUX(void)
 {
-  IO_Reset_DriverControl();
+  IO_Enable_MUX();
 }
 
 /* Function for Chart: '<Root>/Board2' */
@@ -550,7 +550,7 @@ static void Board2_Local_state_transmitted(void)
       } else {
         Board2_Compute_Degraded_Actions();
         Board2_exit_internal_Normal();
-        Board2_Disable_MUX();
+        Board2_Enable_MUX();
         Board2_Close_Session();
         Board2_Lower_MTalk();
         Board2_Abort_Communication();
@@ -677,7 +677,7 @@ static void Board2_Receive_decision(void)
         Board2_Write_Output();
       } else {
         Board2_exit_internal_Normal();
-        Board2_Disable_MUX();
+        Board2_Enable_MUX();
         Board2_Close_Session();
         Board2_Lower_MTalk();
         Board2_Abort_Communication();
@@ -697,7 +697,7 @@ static void Board2_Receive_decision(void)
     if (b) {
       Board2_Compute_Degraded_Actions();
       Board2_exit_internal_Normal();
-      Board2_Disable_MUX();
+      Board2_Enable_MUX();
       Board2_Close_Session();
       Board2_Lower_MTalk();
       Board2_Abort_Communication();
@@ -723,23 +723,68 @@ static boolean_T Board2_Critical_Voltage(void)
 /* Function for Chart: '<Root>/Board2' */
 static boolean_T Board2_Is_Rover_Stationary(void)
 {
-  int32_T k;
-  boolean_T x[4];
+  int32_T b_k;
+  int16_T b_y;
+  boolean_T b_x[4];
   boolean_T exitg1;
   boolean_T y;
-  x[0] = (Board2_DW.global_state.stateB1.velocity_FA == 0);
-  x[1] = (Board2_DW.global_state.stateB1.velocity_FB == 0);
-  x[2] = (Board2_DW.global_state.stateB1.velocity_BA == 0);
-  x[3] = (Board2_DW.global_state.stateB1.velocity_BB == 0);
+  if (Board2_DW.global_state.stateB1.velocity_FA < 0) {
+    b_k = -Board2_DW.global_state.stateB1.velocity_FA;
+    if (-Board2_DW.global_state.stateB1.velocity_FA > 32767) {
+      b_k = 32767;
+    }
+
+    b_y = (int16_T)b_k;
+  } else {
+    b_y = Board2_DW.global_state.stateB1.velocity_FA;
+  }
+
+  b_x[0] = (b_y <= Board2_STOP_THRESHOLD);
+  if (Board2_DW.global_state.stateB1.velocity_FB < 0) {
+    b_k = -Board2_DW.global_state.stateB1.velocity_FB;
+    if (-Board2_DW.global_state.stateB1.velocity_FB > 32767) {
+      b_k = 32767;
+    }
+
+    b_y = (int16_T)b_k;
+  } else {
+    b_y = Board2_DW.global_state.stateB1.velocity_FB;
+  }
+
+  b_x[1] = (b_y <= Board2_STOP_THRESHOLD);
+  if (Board2_DW.global_state.stateB1.velocity_BA < 0) {
+    b_k = -Board2_DW.global_state.stateB1.velocity_BA;
+    if (-Board2_DW.global_state.stateB1.velocity_BA > 32767) {
+      b_k = 32767;
+    }
+
+    b_y = (int16_T)b_k;
+  } else {
+    b_y = Board2_DW.global_state.stateB1.velocity_BA;
+  }
+
+  b_x[2] = (b_y <= Board2_STOP_THRESHOLD);
+  if (Board2_DW.global_state.stateB1.velocity_BB < 0) {
+    b_k = -Board2_DW.global_state.stateB1.velocity_BB;
+    if (-Board2_DW.global_state.stateB1.velocity_BB > 32767) {
+      b_k = 32767;
+    }
+
+    b_y = (int16_T)b_k;
+  } else {
+    b_y = Board2_DW.global_state.stateB1.velocity_BB;
+  }
+
+  b_x[3] = (b_y <= Board2_STOP_THRESHOLD);
   y = true;
-  k = 0;
+  b_k = 0;
   exitg1 = false;
-  while ((!exitg1) && (k < 4)) {
-    if (!x[k]) {
+  while ((!exitg1) && (b_k < 4)) {
+    if (!b_x[b_k]) {
       y = false;
       exitg1 = true;
     } else {
-      k++;
+      b_k++;
     }
   }
 
@@ -810,12 +855,13 @@ static void Board2_Emergency_sonar_routine(void)
       }
 
       if (b) {
-        if (Board2_DW.global_state.stateB2.sonar3 > Board2_IMM_DISTANCE) {
+        if (Board2_DW.global_state.stateB2.sonar3 > Board2_DW.distance_threshold)
+        {
           Board2_DW.is_Emergency_sonar_routine = Board2_IN_Turn_right;
           Board2_Turn_Right();
           Board2_DW.decision.brk_mode = NONE;
-        } else if (Board2_DW.global_state.stateB2.sonar1 > Board2_IMM_DISTANCE)
-        {
+        } else if (Board2_DW.global_state.stateB2.sonar1 >
+                   Board2_DW.distance_threshold) {
           Board2_DW.is_Emergency_sonar_routine = Board2_IN_Turn_left;
           Board2_Turn_Left();
           Board2_DW.decision.brk_mode = NONE;
@@ -874,6 +920,21 @@ static void Board2_Emergency_sonar_routine(void)
 }
 
 /* Function for Chart: '<Root>/Board2' */
+static boolean_T Board2_Near_Obstacle(void)
+{
+  if (Board2_DW.global_state.obs_detection) {
+    Board2_DW.distance_threshold = Board2_IMM_DISTANCE;
+  } else {
+    Board2_DW.distance_threshold = Board2_PROTECTION_DISTANCE;
+  }
+
+  return (Board2_DW.sfEvent == Board2_event_STEP) &&
+    ((Board2_DW.global_state.stateB2.sonar1 <= Board2_DW.distance_threshold) ||
+     (Board2_DW.global_state.stateB2.sonar2 <= Board2_DW.distance_threshold) ||
+     (Board2_DW.global_state.stateB2.sonar3 <= Board2_DW.distance_threshold));
+}
+
+/* Function for Chart: '<Root>/Board2' */
 static boolean_T Board2_Stop_B_Pressed(void)
 {
   return (Board2_DW.sfEvent == Board2_event_STEP) &&
@@ -883,161 +944,65 @@ static boolean_T Board2_Stop_B_Pressed(void)
 }
 
 /* Function for Chart: '<Root>/Board2' */
-static boolean_T Board2_Near_Obstacle(void)
+static void Board2_Process_Evasive_Commands(void)
 {
-  return (Board2_DW.sfEvent == Board2_event_STEP) &&
-    ((Board2_DW.global_state.stateB2.sonar1 <= Board2_IMM_DISTANCE) ||
-     (Board2_DW.global_state.stateB2.sonar2 <= Board2_IMM_DISTANCE) ||
-     (Board2_DW.global_state.stateB2.sonar3 <= Board2_IMM_DISTANCE)) &&
-    Board2_DW.global_state.obs_detection;
-}
-
-/* Function for Chart: '<Root>/Board2' */
-static void Moving_obstacle_from_left_routi(void)
-{
-  boolean_T b;
-  b = Board2_Emergency_B_Pressed();
-  if (b) {
-    Board2_DW.is_Moving_obstacle_from_left_ro = Board2_IN_NO_ACTIVE_CHILD;
-    Board2_DW.is_Normal_voltage = Boa_IN_Emergency_button_routine;
-    Board2_DW.is_Emergency_button_routine = Board2_IN_Emergency_button;
-    Board2_Stop_Motors();
-    Board2_DW.decision.brk_mode = EMERGENCY;
+  int32_T MAX_SPEED;
+  int32_T steering;
+  real32_T forward;
+  real32_T throttle;
+  real32_T turn;
+  if (Board2_DW.global_state.limit_vel) {
+    MAX_SPEED = (int32_T)Board2_LIMITED_RPM;
   } else {
-    b = Board2_Stop_B_Pressed();
-    if (b) {
-      Board2_DW.is_Moving_obstacle_from_left_ro = Board2_IN_NO_ACTIVE_CHILD;
-      Board2_DW.is_Normal_voltage = Board2_IN_Stop_slow_routine;
-      Board2_DW.is_Stop_slow_routine = Board2_IN_Stop_slow;
-      Board2_Stop_Motors();
-      Board2_DW.decision.brk_mode = NORMAL;
-    } else {
-      switch (Board2_DW.is_Moving_obstacle_from_left_ro) {
-       case Board2_IN_Stop_left_rotation_h:
-        Board2_DW.is_Moving_obstacle_from_left_ro = Board2_IN_NO_ACTIVE_CHILD;
-        Board2_DW.is_Normal_voltage = Board2_IN_Select_routine;
-        break;
+    MAX_SPEED = (int32_T)Board2_MAX_RPM;
+  }
 
-       case Board2_IN_Stop_to_Turn_Left:
-        if (Board2_DW.sfEvent == Board2_event_STEP) {
-          b = Board2_Is_Rover_Stationary();
-        } else {
-          b = false;
-        }
+  throttle = ((real32_T)Board2_DW.global_state.stateB2.controller_y -
+              Board2_CENTER) / Board2_CENTER;
+  switch (Board2_DW.global_state.mov_obs) {
+   case MOVING_FROM_RIGHT:
+    steering = 1;
+    break;
 
-        if (b) {
-          Board2_DW.is_Moving_obstacle_from_left_ro = Board2_IN_Turn_left_k;
-          Board2_Turn_Left();
-          Board2_DW.decision.brk_mode = NONE;
-        } else {
-          b = Board2_Near_Obstacle();
-          if (b) {
-            Board2_DW.is_Moving_obstacle_from_left_ro =
-              Board2_IN_NO_ACTIVE_CHILD;
-            Board2_DW.is_Normal_voltage = Boar_IN_Emergency_sonar_routine;
-            Board2_DW.angle = 0.0F;
-            Board2_DW.prevYaw = 0.0F;
-            Board2_DW.is_Emergency_sonar_routine = Board2_IN_Emergency_sonar;
-            Board2_Stop_Motors();
-            Board2_DW.decision.brk_mode = EMERGENCY;
-          }
-        }
-        break;
+   case MOVING_FROM_LEFT:
+    steering = -1;
+    break;
 
-       case Board2_IN_Turn_left_k:
-        if (Board2_DW.sfEvent == Board2_event_STEP) {
-          Board2_Update_Angle(Board2_DW.global_state.stateB2.gyroYaw);
-          if (fabsf(Board2_DW.angle) >= Board2_TURN_ANGLE) {
-            Board2_DW.angle = 0.0F;
-            Board2_DW.prevYaw = 0.0F;
-            Board2_DW.is_Moving_obstacle_from_left_ro =
-              Board2_IN_Stop_left_rotation_h;
-            Board2_Stop_Motors();
-            Board2_DW.decision.brk_mode = NONE;
-          } else {
-            Board2_DW.is_Moving_obstacle_from_left_ro = Board2_IN_Turn_left_k;
-            Board2_Turn_Left();
-            Board2_DW.decision.brk_mode = NONE;
-          }
-        }
-        break;
+   default:
+    steering = 1;
+    break;
+  }
+
+  forward = throttle * (real32_T)MAX_SPEED;
+  turn = (real32_T)(steering * MAX_SPEED);
+  if (fabsf(throttle) < Board2_PURE_TURN_EPS) {
+    forward = 0.0F;
+  } else {
+    throttle = fabsf(forward) * Board2_TURN_RATIO;
+    if (fabsf(turn) > throttle) {
+      if (turn < 0.0F) {
+        steering = -1;
+      } else {
+        steering = (turn > 0.0F);
       }
+
+      turn = (real32_T)steering * throttle;
     }
   }
-}
 
-/* Function for Chart: '<Root>/Board2' */
-static void Moving_obstacle_from_right_rout(void)
-{
-  boolean_T b;
-  b = Board2_Emergency_B_Pressed();
-  if (b) {
-    Board2_DW.is_Moving_obstacle_from_right_r = Board2_IN_NO_ACTIVE_CHILD;
-    Board2_DW.is_Normal_voltage = Boa_IN_Emergency_button_routine;
-    Board2_DW.is_Emergency_button_routine = Board2_IN_Emergency_button;
-    Board2_Stop_Motors();
-    Board2_DW.decision.brk_mode = EMERGENCY;
-  } else {
-    b = Board2_Stop_B_Pressed();
-    if (b) {
-      Board2_DW.is_Moving_obstacle_from_right_r = Board2_IN_NO_ACTIVE_CHILD;
-      Board2_DW.is_Normal_voltage = Board2_IN_Stop_slow_routine;
-      Board2_DW.is_Stop_slow_routine = Board2_IN_Stop_slow;
-      Board2_Stop_Motors();
-      Board2_DW.decision.brk_mode = NORMAL;
-    } else {
-      switch (Board2_DW.is_Moving_obstacle_from_right_r) {
-       case Board2_IN_Stop_right_rotation_n:
-        Board2_DW.is_Moving_obstacle_from_right_r = Board2_IN_NO_ACTIVE_CHILD;
-        Board2_DW.is_Normal_voltage = Board2_IN_Select_routine;
-        break;
-
-       case Board2_IN_Stop_to_Turn_Right:
-        if (Board2_DW.sfEvent == Board2_event_STEP) {
-          b = Board2_Is_Rover_Stationary();
-        } else {
-          b = false;
-        }
-
-        if (b) {
-          Board2_DW.is_Moving_obstacle_from_right_r = Board2_IN_Turn_right_j;
-          Board2_Turn_Right();
-          Board2_DW.decision.brk_mode = NONE;
-        } else {
-          b = Board2_Near_Obstacle();
-          if (b) {
-            Board2_DW.is_Moving_obstacle_from_right_r =
-              Board2_IN_NO_ACTIVE_CHILD;
-            Board2_DW.is_Normal_voltage = Boar_IN_Emergency_sonar_routine;
-            Board2_DW.angle = 0.0F;
-            Board2_DW.prevYaw = 0.0F;
-            Board2_DW.is_Emergency_sonar_routine = Board2_IN_Emergency_sonar;
-            Board2_Stop_Motors();
-            Board2_DW.decision.brk_mode = EMERGENCY;
-          }
-        }
-        break;
-
-       case Board2_IN_Turn_right_j:
-        if (Board2_DW.sfEvent == Board2_event_STEP) {
-          Board2_Update_Angle(Board2_DW.global_state.stateB2.gyroYaw);
-          if (fabsf(Board2_DW.angle) >= Board2_TURN_ANGLE) {
-            Board2_DW.angle = 0.0F;
-            Board2_DW.prevYaw = 0.0F;
-            Board2_DW.is_Moving_obstacle_from_right_r =
-              Board2_IN_Stop_right_rotation_n;
-            Board2_Stop_Motors();
-            Board2_DW.decision.brk_mode = NONE;
-          } else {
-            Board2_DW.is_Moving_obstacle_from_right_r = Board2_IN_Turn_right_j;
-            Board2_Turn_Right();
-            Board2_DW.decision.brk_mode = NONE;
-          }
-        }
-        break;
-      }
-    }
+  throttle = forward + turn;
+  forward -= turn;
+  turn = fmaxf(fabsf(throttle), fabsf(forward));
+  if (turn > MAX_SPEED) {
+    turn = (real32_T)MAX_SPEED / turn;
+    throttle *= turn;
+    forward *= turn;
   }
+
+  Board2_DW.decision.rif_FA = throttle;
+  Board2_DW.decision.rif_BA = throttle;
+  Board2_DW.decision.rif_FB = forward;
+  Board2_DW.decision.rif_BB = forward;
 }
 
 /* Function for Chart: '<Root>/Board2' */
@@ -1070,10 +1035,17 @@ static boolean_T Board2_Is_Rover_Moving_Forward(void)
 static boolean_T Board2_Emergency_S_Routine(void)
 {
   boolean_T y;
+  if (Board2_DW.global_state.obs_detection) {
+    Board2_DW.distance_threshold = Board2_IMM_DISTANCE;
+  } else {
+    Board2_DW.distance_threshold = Board2_PROTECTION_DISTANCE;
+  }
+
   if ((Board2_DW.sfEvent == Board2_event_STEP) &&
-      ((Board2_DW.global_state.stateB2.sonar1 <= Board2_IMM_DISTANCE) ||
-       (Board2_DW.global_state.stateB2.sonar2 <= Board2_IMM_DISTANCE) ||
-       (Board2_DW.global_state.stateB2.sonar3 <= Board2_IMM_DISTANCE))) {
+      ((Board2_DW.global_state.stateB2.sonar1 <= Board2_DW.distance_threshold) ||
+       (Board2_DW.global_state.stateB2.sonar2 <= Board2_DW.distance_threshold) ||
+       (Board2_DW.global_state.stateB2.sonar3 <= Board2_DW.distance_threshold)))
+  {
     y = Board2_Is_Rover_Moving_Forward();
   } else {
     y = false;
@@ -1256,19 +1228,18 @@ static void Board2_Select_routine(void)
         Board2_DW.is_Normal_voltage = IN_Moving_obstacle_from_right_r;
         Board2_DW.angle = 0.0F;
         Board2_DW.prevYaw = 0.0F;
-        Board2_DW.is_Moving_obstacle_from_right_r = Board2_IN_Stop_to_Turn_Right;
-        Board2_Stop_Motors();
-        Board2_DW.decision.brk_mode = NORMAL;
+        Board2_DW.is_Moving_obstacle_from_right_r = Board2_IN_Turn_right_j;
+        Board2_Process_Evasive_Commands();
+        Board2_DW.decision.brk_mode = NONE;
       } else {
         b = Board2_Mov_Obs_L_Routine();
         if (b) {
           Board2_DW.is_Normal_voltage = IN_Moving_obstacle_from_left_ro;
           Board2_DW.angle = 0.0F;
           Board2_DW.prevYaw = 0.0F;
-          Board2_DW.is_Moving_obstacle_from_left_ro =
-            Board2_IN_Stop_to_Turn_Left;
-          Board2_Stop_Motors();
-          Board2_DW.decision.brk_mode = NORMAL;
+          Board2_DW.is_Moving_obstacle_from_left_ro = Board2_IN_Turn_left_k;
+          Board2_Process_Evasive_Commands();
+          Board2_DW.decision.brk_mode = NONE;
         } else {
           b = Board2_Stop_Slow_Routine();
           if (b) {
@@ -1320,204 +1291,292 @@ static void Board2_Select_routine(void)
 static boolean_T Board2_Mov_Obs_Right(void)
 {
   return (Board2_DW.sfEvent == Board2_event_STEP) &&
-    (Board2_DW.global_state.mov_obs == MOVING_FROM_RIGHT);
+    (Board2_DW.global_state.mov_obs == MOVING_FROM_RIGHT) &&
+    Board2_DW.global_state.obs_detection;
 }
 
 /* Function for Chart: '<Root>/Board2' */
 static boolean_T Board2_Mov_Obs_Left(void)
 {
   return (Board2_DW.sfEvent == Board2_event_STEP) &&
-    (Board2_DW.global_state.mov_obs == MOVING_FROM_LEFT);
+    (Board2_DW.global_state.mov_obs == MOVING_FROM_LEFT) &&
+    Board2_DW.global_state.obs_detection;
 }
 
 /* Function for Chart: '<Root>/Board2' */
-static void Board2_Routine_manager(void)
+static void Board2_Stop_slow_routine(void)
 {
   boolean_T b;
-  switch (Board2_DW.is_Routine_manager) {
-   case Board2_IN_Critical_voltage:
-    if (Board2_DW.sfEvent == Board2_event_STEP) {
-      b = !Board2_Critical_Voltage();
-    } else {
-      b = false;
-    }
-
+  b = Board2_Emergency_B_Pressed();
+  if (b) {
+    Board2_DW.is_Stop_slow_routine = Board2_IN_NO_ACTIVE_CHILD;
+    Board2_DW.is_Normal_voltage = Boa_IN_Emergency_button_routine;
+    Board2_DW.is_Emergency_button_routine = Board2_IN_Emergency_button;
+    Board2_Stop_Motors();
+    Board2_DW.decision.brk_mode = EMERGENCY;
+  } else {
+    b = Board2_Near_Obstacle();
     if (b) {
-      Board2_DW.is_Routine_manager = Board2_IN_Normal_voltage;
-      Board2_DW.is_Normal_voltage = Board2_IN_Select_routine;
-    }
-    break;
-
-   case Board2_IN_Normal_voltage:
-    if (Board2_DW.sfEvent == Board2_event_STEP) {
-      b = Board2_Critical_Voltage();
-    } else {
-      b = false;
-    }
-
-    if (b) {
-      Bo_exit_internal_Normal_voltage();
-      Board2_DW.is_Routine_manager = Board2_IN_Critical_voltage;
+      Board2_DW.is_Stop_slow_routine = Board2_IN_NO_ACTIVE_CHILD;
+      Board2_DW.is_Normal_voltage = Boar_IN_Emergency_sonar_routine;
+      Board2_DW.angle = 0.0F;
+      Board2_DW.prevYaw = 0.0F;
+      Board2_DW.is_Emergency_sonar_routine = Board2_IN_Emergency_sonar;
       Board2_Stop_Motors();
       Board2_DW.decision.brk_mode = EMERGENCY;
     } else {
-      switch (Board2_DW.is_Normal_voltage) {
-       case B_IN_Control_controller_routine:
-        if (Board2_DW.is_Control_controller_routine ==
-            Boar_IN_Control_from_controller) {
-          Board2_DW.is_Control_controller_routine = Board2_IN_NO_ACTIVE_CHILD;
-          Board2_DW.is_Normal_voltage = Board2_IN_Select_routine;
-        }
-        break;
-
-       case Boa_IN_Emergency_button_routine:
-        if (Board2_DW.is_Emergency_button_routine == Board2_IN_Emergency_button)
-        {
+      b = Board2_Mov_Obs_Right();
+      if (b) {
+        Board2_DW.is_Stop_slow_routine = Board2_IN_NO_ACTIVE_CHILD;
+        Board2_DW.is_Normal_voltage = IN_Moving_obstacle_from_right_r;
+        Board2_DW.angle = 0.0F;
+        Board2_DW.prevYaw = 0.0F;
+        Board2_DW.is_Moving_obstacle_from_right_r = Board2_IN_Turn_right_j;
+        Board2_Process_Evasive_Commands();
+        Board2_DW.decision.brk_mode = NONE;
+      } else {
+        b = Board2_Mov_Obs_Left();
+        if (b) {
+          Board2_DW.is_Stop_slow_routine = Board2_IN_NO_ACTIVE_CHILD;
+          Board2_DW.is_Normal_voltage = IN_Moving_obstacle_from_left_ro;
+          Board2_DW.angle = 0.0F;
+          Board2_DW.prevYaw = 0.0F;
+          Board2_DW.is_Moving_obstacle_from_left_ro = Board2_IN_Turn_left_k;
+          Board2_Process_Evasive_Commands();
+          Board2_DW.decision.brk_mode = NONE;
+        } else if (Board2_DW.is_Stop_slow_routine == Board2_IN_Stop_slow) {
           b = Board2_Is_Rover_Stationary();
           if (b) {
-            Board2_DW.is_Emergency_button_routine = Board2_IN_NO_ACTIVE_CHILD;
+            Board2_DW.is_Stop_slow_routine = Board2_IN_NO_ACTIVE_CHILD;
             Board2_DW.is_Normal_voltage = Board2_IN_Select_routine;
           }
         }
-        break;
+      }
+    }
+  }
+}
 
-       case Boar_IN_Emergency_sonar_routine:
-        Board2_Emergency_sonar_routine();
-        break;
+/* Function for Chart: '<Root>/Board2' */
+static void Board2_Normal_voltage(void)
+{
+  boolean_T b;
+  if (Board2_DW.sfEvent == Board2_event_STEP) {
+    b = Board2_Critical_Voltage();
+  } else {
+    b = false;
+  }
 
-       case IN_Low_controller_battery_routi:
-        if (Board2_DW.is_Low_controller_battery_routi ==
-            Board2_IN_Control_battery_stop) {
-          Board2_DW.is_Low_controller_battery_routi = Board2_IN_NO_ACTIVE_CHILD;
-          Board2_DW.is_Normal_voltage = Board2_IN_Select_routine;
-        }
-        break;
+  if (b) {
+    Bo_exit_internal_Normal_voltage();
+    Board2_DW.is_Routine_manager = Board2_IN_Critical_voltage;
+    Board2_Stop_Motors();
+    Board2_DW.decision.brk_mode = EMERGENCY;
+  } else {
+    switch (Board2_DW.is_Normal_voltage) {
+     case B_IN_Control_controller_routine:
+      if (Board2_DW.is_Control_controller_routine ==
+          Boar_IN_Control_from_controller) {
+        Board2_DW.is_Control_controller_routine = Board2_IN_NO_ACTIVE_CHILD;
+        Board2_DW.is_Normal_voltage = Board2_IN_Select_routine;
+      }
+      break;
 
-       case IN_Moving_obstacle_from_left_ro:
-        Moving_obstacle_from_left_routi();
-        break;
-
-       case IN_Moving_obstacle_from_right_r:
-        Moving_obstacle_from_right_rout();
-        break;
-
-       case Board2_IN_Not_moving_routine:
-        if (Board2_DW.is_Not_moving_routine == Board2_IN_Not_moving) {
-          Board2_DW.is_Not_moving_routine = Board2_IN_NO_ACTIVE_CHILD;
-          Board2_DW.is_Normal_voltage = Board2_IN_Select_routine;
-        }
-        break;
-
-       case Board2_IN_Select_routine:
-        Board2_Select_routine();
-        break;
-
-       case Board2_IN_Special_retro_routine:
-        b = Board2_Emergency_B_Pressed();
+     case Boa_IN_Emergency_button_routine:
+      if (Board2_DW.is_Emergency_button_routine == Board2_IN_Emergency_button) {
+        b = Board2_Is_Rover_Stationary();
         if (b) {
-          Board2_DW.is_Special_retro_routine = Board2_IN_NO_ACTIVE_CHILD;
-          Board2_DW.is_Normal_voltage = Boa_IN_Emergency_button_routine;
-          Board2_DW.is_Emergency_button_routine = Board2_IN_Emergency_button;
+          Board2_DW.is_Emergency_button_routine = Board2_IN_NO_ACTIVE_CHILD;
+          Board2_DW.is_Normal_voltage = Board2_IN_Select_routine;
+        }
+      }
+      break;
+
+     case Boar_IN_Emergency_sonar_routine:
+      Board2_Emergency_sonar_routine();
+      break;
+
+     case IN_Low_controller_battery_routi:
+      if (Board2_DW.is_Low_controller_battery_routi ==
+          Board2_IN_Control_battery_stop) {
+        Board2_DW.is_Low_controller_battery_routi = Board2_IN_NO_ACTIVE_CHILD;
+        Board2_DW.is_Normal_voltage = Board2_IN_Select_routine;
+      }
+      break;
+
+     case IN_Moving_obstacle_from_left_ro:
+      b = Board2_Emergency_B_Pressed();
+      if (b) {
+        Board2_DW.is_Moving_obstacle_from_left_ro = Board2_IN_NO_ACTIVE_CHILD;
+        Board2_DW.is_Normal_voltage = Boa_IN_Emergency_button_routine;
+        Board2_DW.is_Emergency_button_routine = Board2_IN_Emergency_button;
+        Board2_Stop_Motors();
+        Board2_DW.decision.brk_mode = EMERGENCY;
+      } else {
+        b = Board2_Near_Obstacle();
+        if (b) {
+          Board2_DW.is_Moving_obstacle_from_left_ro = Board2_IN_NO_ACTIVE_CHILD;
+          Board2_DW.is_Normal_voltage = Boar_IN_Emergency_sonar_routine;
+          Board2_DW.angle = 0.0F;
+          Board2_DW.prevYaw = 0.0F;
+          Board2_DW.is_Emergency_sonar_routine = Board2_IN_Emergency_sonar;
           Board2_Stop_Motors();
           Board2_DW.decision.brk_mode = EMERGENCY;
         } else {
           b = Board2_Stop_B_Pressed();
           if (b) {
-            Board2_DW.is_Special_retro_routine = Board2_IN_NO_ACTIVE_CHILD;
+            Board2_DW.is_Moving_obstacle_from_left_ro =
+              Board2_IN_NO_ACTIVE_CHILD;
             Board2_DW.is_Normal_voltage = Board2_IN_Stop_slow_routine;
             Board2_DW.is_Stop_slow_routine = Board2_IN_Stop_slow;
             Board2_Stop_Motors();
             Board2_DW.decision.brk_mode = NORMAL;
-          } else {
-            switch (Board2_DW.is_Special_retro_routine) {
-             case Board2_IN_Stop_back_rotation:
-              if ((Board2_DW.global_state.stateB2.controller_y >=
-                   Board2_CONTROLLER_ZERO) ||
-                  (Board2_DW.global_state.stateB2.controller_x !=
-                   Board2_CONTROLLER_ZERO)) {
-                Board2_DW.is_Special_retro_routine = Board2_IN_NO_ACTIVE_CHILD;
-                Board2_DW.is_Normal_voltage = Board2_IN_Select_routine;
-              }
-              break;
-
-             case Board2_IN_Turn_back:
-              if (Board2_DW.sfEvent == Board2_event_STEP) {
-                Board2_Update_Angle(Board2_DW.global_state.stateB2.gyroYaw);
-                if (fabsf(Board2_DW.angle) >= Board2_TURN_BACK_ANGLE) {
-                  Board2_DW.angle = 0.0F;
-                  Board2_DW.prevYaw = 0.0F;
-                  Board2_DW.is_Special_retro_routine =
-                    Board2_IN_Stop_back_rotation;
-                  Board2_Stop_Motors();
-                  Board2_DW.decision.brk_mode = NONE;
-                } else {
-                  Board2_DW.is_Special_retro_routine = Board2_IN_Turn_back;
-                  Board2_Turn_Back();
-                  Board2_DW.decision.brk_mode = NONE;
-                }
-              }
-              break;
+          } else if ((Board2_DW.is_Moving_obstacle_from_left_ro ==
+                      Board2_IN_Turn_left_k) && (Board2_DW.sfEvent ==
+                      Board2_event_STEP)) {
+            Board2_Update_Angle(Board2_DW.global_state.stateB2.gyroYaw);
+            if (fabsf(Board2_DW.angle) >= Board2_TURN_ANGLE) {
+              Board2_DW.angle = 0.0F;
+              Board2_DW.prevYaw = 0.0F;
+              Board2_DW.is_Moving_obstacle_from_left_ro =
+                Board2_IN_NO_ACTIVE_CHILD;
+              Board2_DW.is_Normal_voltage = Board2_IN_Select_routine;
+            } else {
+              Board2_Process_Evasive_Commands();
+              Board2_DW.decision.brk_mode = NONE;
             }
           }
         }
-        break;
+      }
+      break;
 
-       case Board2_IN_Stop_slow_routine:
-        b = Board2_Emergency_B_Pressed();
+     case IN_Moving_obstacle_from_right_r:
+      b = Board2_Emergency_B_Pressed();
+      if (b) {
+        Board2_DW.is_Moving_obstacle_from_right_r = Board2_IN_NO_ACTIVE_CHILD;
+        Board2_DW.is_Normal_voltage = Boa_IN_Emergency_button_routine;
+        Board2_DW.is_Emergency_button_routine = Board2_IN_Emergency_button;
+        Board2_Stop_Motors();
+        Board2_DW.decision.brk_mode = EMERGENCY;
+      } else {
+        b = Board2_Near_Obstacle();
         if (b) {
-          Board2_DW.is_Stop_slow_routine = Board2_IN_NO_ACTIVE_CHILD;
-          Board2_DW.is_Normal_voltage = Boa_IN_Emergency_button_routine;
-          Board2_DW.is_Emergency_button_routine = Board2_IN_Emergency_button;
+          Board2_DW.is_Moving_obstacle_from_right_r = Board2_IN_NO_ACTIVE_CHILD;
+          Board2_DW.is_Normal_voltage = Boar_IN_Emergency_sonar_routine;
+          Board2_DW.angle = 0.0F;
+          Board2_DW.prevYaw = 0.0F;
+          Board2_DW.is_Emergency_sonar_routine = Board2_IN_Emergency_sonar;
           Board2_Stop_Motors();
           Board2_DW.decision.brk_mode = EMERGENCY;
         } else {
-          b = Board2_Near_Obstacle();
+          b = Board2_Stop_B_Pressed();
           if (b) {
-            Board2_DW.is_Stop_slow_routine = Board2_IN_NO_ACTIVE_CHILD;
-            Board2_DW.is_Normal_voltage = Boar_IN_Emergency_sonar_routine;
-            Board2_DW.angle = 0.0F;
-            Board2_DW.prevYaw = 0.0F;
-            Board2_DW.is_Emergency_sonar_routine = Board2_IN_Emergency_sonar;
+            Board2_DW.is_Moving_obstacle_from_right_r =
+              Board2_IN_NO_ACTIVE_CHILD;
+            Board2_DW.is_Normal_voltage = Board2_IN_Stop_slow_routine;
+            Board2_DW.is_Stop_slow_routine = Board2_IN_Stop_slow;
             Board2_Stop_Motors();
-            Board2_DW.decision.brk_mode = EMERGENCY;
-          } else {
-            b = Board2_Mov_Obs_Right();
-            if (b) {
-              Board2_DW.is_Stop_slow_routine = Board2_IN_NO_ACTIVE_CHILD;
-              Board2_DW.is_Normal_voltage = IN_Moving_obstacle_from_right_r;
+            Board2_DW.decision.brk_mode = NORMAL;
+          } else if ((Board2_DW.is_Moving_obstacle_from_right_r ==
+                      Board2_IN_Turn_right_j) && (Board2_DW.sfEvent ==
+                      Board2_event_STEP)) {
+            Board2_Update_Angle(Board2_DW.global_state.stateB2.gyroYaw);
+            if (fabsf(Board2_DW.angle) >= Board2_TURN_ANGLE) {
               Board2_DW.angle = 0.0F;
               Board2_DW.prevYaw = 0.0F;
               Board2_DW.is_Moving_obstacle_from_right_r =
-                Board2_IN_Stop_to_Turn_Right;
-              Board2_Stop_Motors();
-              Board2_DW.decision.brk_mode = NORMAL;
+                Board2_IN_NO_ACTIVE_CHILD;
+              Board2_DW.is_Normal_voltage = Board2_IN_Select_routine;
             } else {
-              b = Board2_Mov_Obs_Left();
-              if (b) {
-                Board2_DW.is_Stop_slow_routine = Board2_IN_NO_ACTIVE_CHILD;
-                Board2_DW.is_Normal_voltage = IN_Moving_obstacle_from_left_ro;
-                Board2_DW.angle = 0.0F;
-                Board2_DW.prevYaw = 0.0F;
-                Board2_DW.is_Moving_obstacle_from_left_ro =
-                  Board2_IN_Stop_to_Turn_Left;
-                Board2_Stop_Motors();
-                Board2_DW.decision.brk_mode = NORMAL;
-              } else if (Board2_DW.is_Stop_slow_routine == Board2_IN_Stop_slow)
-              {
-                b = Board2_Is_Rover_Stationary();
-                if (b) {
-                  Board2_DW.is_Stop_slow_routine = Board2_IN_NO_ACTIVE_CHILD;
-                  Board2_DW.is_Normal_voltage = Board2_IN_Select_routine;
-                }
-              }
+              Board2_Process_Evasive_Commands();
+              Board2_DW.decision.brk_mode = NONE;
             }
           }
         }
-        break;
       }
+      break;
+
+     case Board2_IN_Not_moving_routine:
+      if (Board2_DW.is_Not_moving_routine == Board2_IN_Not_moving) {
+        Board2_DW.is_Not_moving_routine = Board2_IN_NO_ACTIVE_CHILD;
+        Board2_DW.is_Normal_voltage = Board2_IN_Select_routine;
+      }
+      break;
+
+     case Board2_IN_Select_routine:
+      Board2_Select_routine();
+      break;
+
+     case Board2_IN_Special_retro_routine:
+      b = Board2_Emergency_B_Pressed();
+      if (b) {
+        Board2_DW.is_Special_retro_routine = Board2_IN_NO_ACTIVE_CHILD;
+        Board2_DW.is_Normal_voltage = Boa_IN_Emergency_button_routine;
+        Board2_DW.is_Emergency_button_routine = Board2_IN_Emergency_button;
+        Board2_Stop_Motors();
+        Board2_DW.decision.brk_mode = EMERGENCY;
+      } else {
+        b = Board2_Stop_B_Pressed();
+        if (b) {
+          Board2_DW.is_Special_retro_routine = Board2_IN_NO_ACTIVE_CHILD;
+          Board2_DW.is_Normal_voltage = Board2_IN_Stop_slow_routine;
+          Board2_DW.is_Stop_slow_routine = Board2_IN_Stop_slow;
+          Board2_Stop_Motors();
+          Board2_DW.decision.brk_mode = NORMAL;
+        } else {
+          switch (Board2_DW.is_Special_retro_routine) {
+           case Board2_IN_Stop_back_rotation:
+            if ((Board2_DW.global_state.stateB2.controller_y >=
+                 Board2_CONTROLLER_ZERO) ||
+                (Board2_DW.global_state.stateB2.controller_x !=
+                 Board2_CONTROLLER_ZERO)) {
+              Board2_DW.is_Special_retro_routine = Board2_IN_NO_ACTIVE_CHILD;
+              Board2_DW.is_Normal_voltage = Board2_IN_Select_routine;
+            }
+            break;
+
+           case Board2_IN_Turn_back:
+            if (Board2_DW.sfEvent == Board2_event_STEP) {
+              Board2_Update_Angle(Board2_DW.global_state.stateB2.gyroYaw);
+              if (fabsf(Board2_DW.angle) >= Board2_TURN_BACK_ANGLE) {
+                Board2_DW.angle = 0.0F;
+                Board2_DW.prevYaw = 0.0F;
+                Board2_DW.is_Special_retro_routine =
+                  Board2_IN_Stop_back_rotation;
+                Board2_Stop_Motors();
+                Board2_DW.decision.brk_mode = NONE;
+              } else {
+                Board2_DW.is_Special_retro_routine = Board2_IN_Turn_back;
+                Board2_Turn_Back();
+                Board2_DW.decision.brk_mode = NONE;
+              }
+            }
+            break;
+          }
+        }
+      }
+      break;
+
+     case Board2_IN_Stop_slow_routine:
+      Board2_Stop_slow_routine();
+      break;
     }
-    break;
   }
+}
+
+/* Function for Chart: '<Root>/Board2' */
+static boolean_T Board2_Mode_B_Pressed(void)
+{
+  boolean_T y;
+  if (Board2_DW.sfEvent != Board2_event_STEP) {
+    y = false;
+  } else {
+    y = (Board2_DW.global_state.stateB2.l_stick_button &&
+         (!Board2_DW.prev_l_stick_button));
+    Board2_DW.prev_l_stick_button =
+      Board2_DW.global_state.stateB2.l_stick_button;
+  }
+
+  return y;
 }
 
 /* Function for Chart: '<Root>/Board2' */
@@ -1544,21 +1603,18 @@ static void Board2_Update_Rover_Lights(boolean_T white_led_when_stopped)
     Board2_DW.decision.led_A = WHITE;
     Board2_DW.decision.led_B = WHITE;
     Board2_DW.decision.rear_led = BRAKING_LIGHT;
-    Board2_DW.decision.rear_sign = WHITE;
   } else if (((Board2_DW.decision.rif_FA + Board2_DW.decision.rif_BA) / 2.0F <
               0.0F) && ((Board2_DW.decision.rif_FB + Board2_DW.decision.rif_BB) /
                         2.0F > 0.0F)) {
     Board2_DW.decision.led_A = BLINKING_RED;
     Board2_DW.decision.led_B = WHITE;
     Board2_DW.decision.rear_led = ARROW_LEFT;
-    Board2_DW.decision.rear_sign = WHITE;
   } else if (((Board2_DW.decision.rif_FA + Board2_DW.decision.rif_BA) / 2.0F >
               0.0F) && ((Board2_DW.decision.rif_FB + Board2_DW.decision.rif_BB) /
                         2.0F < 0.0F)) {
     Board2_DW.decision.led_A = WHITE;
     Board2_DW.decision.led_B = BLINKING_RED;
     Board2_DW.decision.rear_led = ARROW_RIGHT;
-    Board2_DW.decision.rear_sign = WHITE;
   } else {
     real32_T left_ref;
     real32_T right_ref;
@@ -1570,7 +1626,6 @@ static void Board2_Update_Rover_Lights(boolean_T white_led_when_stopped)
       Board2_DW.decision.led_A = BLINKING_RED;
       Board2_DW.decision.led_B = WHITE;
       Board2_DW.decision.rear_led = ARROW_LEFT;
-      Board2_DW.decision.rear_sign = WHITE;
     } else if (e_y && ((Board2_DW.decision.rif_FA + Board2_DW.decision.rif_BA) /
                        2.0F - (Board2_DW.decision.rif_FB +
                  Board2_DW.decision.rif_BB) / 2.0F > Board2_DW.TURN_THRESHOLD))
@@ -1578,7 +1633,6 @@ static void Board2_Update_Rover_Lights(boolean_T white_led_when_stopped)
       Board2_DW.decision.led_A = WHITE;
       Board2_DW.decision.led_B = BLINKING_RED;
       Board2_DW.decision.rear_led = ARROW_RIGHT;
-      Board2_DW.decision.rear_sign = WHITE;
     } else {
       int32_T k;
       boolean_T exitg1;
@@ -1602,7 +1656,6 @@ static void Board2_Update_Rover_Lights(boolean_T white_led_when_stopped)
         Board2_DW.decision.led_A = WHITE;
         Board2_DW.decision.led_B = WHITE;
         Board2_DW.decision.rear_led = BACKWARD_LIGHTS;
-        Board2_DW.decision.rear_sign = WHITE;
       } else {
         x[0] = (Board2_DW.decision.rif_FA > 0.0F);
         x[1] = (Board2_DW.decision.rif_FB > 0.0F);
@@ -1626,7 +1679,6 @@ static void Board2_Update_Rover_Lights(boolean_T white_led_when_stopped)
           Board2_DW.decision.led_A = WHITE;
           Board2_DW.decision.led_B = WHITE;
           Board2_DW.decision.rear_led = BACKLIGHTS;
-          Board2_DW.decision.rear_sign = WHITE;
         } else {
           if (white_led_when_stopped) {
             Board2_DW.decision.led_A = WHITE;
@@ -1637,27 +1689,24 @@ static void Board2_Update_Rover_Lights(boolean_T white_led_when_stopped)
           }
 
           Board2_DW.decision.rear_led = BACKLIGHTS;
-          Board2_DW.decision.rear_sign = WHITE;
         }
       }
     }
   }
-}
 
-/* Function for Chart: '<Root>/Board2' */
-static boolean_T Board2_Mode_B_Pressed(void)
-{
-  boolean_T y;
-  if (Board2_DW.sfEvent != Board2_event_STEP) {
-    y = false;
-  } else {
-    y = (Board2_DW.global_state.stateB2.l_stick_button &&
-         (!Board2_DW.prev_l_stick_button));
-    Board2_DW.prev_l_stick_button =
-      Board2_DW.global_state.stateB2.l_stick_button;
+  switch (Board2_DW.decision.mode) {
+   case DEFAULT:
+    Board2_DW.decision.rear_sign = SIGN_WHITE;
+    break;
+
+   case SPORT:
+    Board2_DW.decision.rear_sign = SIGN_ORANGE;
+    break;
+
+   default:
+    Board2_DW.decision.rear_sign = SIGN_GREEN;
+    break;
   }
-
-  return y;
 }
 
 /* Function for Chart: '<Root>/Board2' */
@@ -1665,11 +1714,7 @@ static void Board2_Actions(void)
 {
   boolean_T b;
   if (Board2_DW.is_active_Routine_manager != 0) {
-    Board2_Routine_manager();
-  }
-
-  if (Board2_DW.is_active_Lights_manager != 0) {
-    switch (Board2_DW.is_Lights_manager) {
+    switch (Board2_DW.is_Routine_manager) {
      case Board2_IN_Critical_voltage:
       if (Board2_DW.sfEvent == Board2_event_STEP) {
         b = !Board2_Critical_Voltage();
@@ -1678,56 +1723,13 @@ static void Board2_Actions(void)
       }
 
       if (b) {
-        Board2_DW.is_Lights_manager = Board2_IN_Normal_voltage;
-        Board2_DW.is_Normal_voltage_n = Board2_IN_Lights_OFF;
-        Board2_Rover_Lights_OFF();
+        Board2_DW.is_Routine_manager = Board2_IN_Normal_voltage;
+        Board2_DW.is_Normal_voltage = Board2_IN_Select_routine;
       }
       break;
 
      case Board2_IN_Normal_voltage:
-      if (Board2_DW.sfEvent == Board2_event_STEP) {
-        b = Board2_Critical_Voltage();
-      } else {
-        b = false;
-      }
-
-      if (b) {
-        Board2_DW.is_Normal_voltage_n = Board2_IN_NO_ACTIVE_CHILD;
-        Board2_DW.is_Lights_manager = Board2_IN_Critical_voltage;
-        Board2_Rover_Lights_OFF();
-      } else {
-        switch (Board2_DW.is_Normal_voltage_n) {
-         case Board2_IN_Lights_AUTO:
-          b = Board2_Lights_B_Pressed();
-          if (b) {
-            Board2_DW.is_Normal_voltage_n = Board2_IN_Lights_OFF;
-            Board2_Rover_Lights_OFF();
-          } else if (Board2_DW.sfEvent == Board2_event_STEP) {
-            Board2_DW.is_Normal_voltage_n = Board2_IN_Lights_AUTO;
-            Board2_Update_Rover_Lights(false);
-          }
-          break;
-
-         case Board2_IN_Lights_OFF:
-          b = Board2_Lights_B_Pressed();
-          if (b) {
-            Board2_DW.is_Normal_voltage_n = Board2_IN_Lights_ON;
-            Board2_Update_Rover_Lights(true);
-          }
-          break;
-
-         case Board2_IN_Lights_ON:
-          b = Board2_Lights_B_Pressed();
-          if (b) {
-            Board2_DW.is_Normal_voltage_n = Board2_IN_Lights_AUTO;
-            Board2_Update_Rover_Lights(false);
-          } else if (Board2_DW.sfEvent == Board2_event_STEP) {
-            Board2_DW.is_Normal_voltage_n = Board2_IN_Lights_ON;
-            Board2_Update_Rover_Lights(true);
-          }
-          break;
-        }
-      }
+      Board2_Normal_voltage();
       break;
     }
   }
@@ -1743,7 +1745,7 @@ static void Board2_Actions(void)
 
       if (b) {
         Board2_DW.is_Mode_manager = Board2_IN_Normal_voltage;
-        Board2_DW.is_Normal_voltage_b = Board2_IN_Mode_DEFAULT;
+        Board2_DW.is_Normal_voltage_f = Board2_IN_Mode_DEFAULT;
         Board2_DW.decision.mode = DEFAULT;
       }
       break;
@@ -1756,15 +1758,15 @@ static void Board2_Actions(void)
       }
 
       if (b) {
-        Board2_DW.is_Normal_voltage_b = Board2_IN_NO_ACTIVE_CHILD;
+        Board2_DW.is_Normal_voltage_f = Board2_IN_NO_ACTIVE_CHILD;
         Board2_DW.is_Mode_manager = Board2_IN_Critical_voltage;
         Board2_DW.decision.mode = ECO;
       } else {
-        switch (Board2_DW.is_Normal_voltage_b) {
+        switch (Board2_DW.is_Normal_voltage_f) {
          case Board2_IN_Mode_DEFAULT:
           b = Board2_Mode_B_Pressed();
           if (b) {
-            Board2_DW.is_Normal_voltage_b = Board2_IN_Mode_SPORT;
+            Board2_DW.is_Normal_voltage_f = Board2_IN_Mode_SPORT;
             Board2_DW.decision.mode = SPORT;
           }
           break;
@@ -1772,7 +1774,7 @@ static void Board2_Actions(void)
          case Board2_IN_Mode_ECO:
           b = Board2_Mode_B_Pressed();
           if (b) {
-            Board2_DW.is_Normal_voltage_b = Board2_IN_Mode_DEFAULT;
+            Board2_DW.is_Normal_voltage_f = Board2_IN_Mode_DEFAULT;
             Board2_DW.decision.mode = DEFAULT;
           }
           break;
@@ -1780,8 +1782,72 @@ static void Board2_Actions(void)
          case Board2_IN_Mode_SPORT:
           b = Board2_Mode_B_Pressed();
           if (b) {
-            Board2_DW.is_Normal_voltage_b = Board2_IN_Mode_ECO;
+            Board2_DW.is_Normal_voltage_f = Board2_IN_Mode_ECO;
             Board2_DW.decision.mode = ECO;
+          }
+          break;
+        }
+      }
+      break;
+    }
+  }
+
+  if (Board2_DW.is_active_Lights_manager != 0) {
+    switch (Board2_DW.is_Lights_manager) {
+     case Board2_IN_Critical_voltage:
+      if (Board2_DW.sfEvent == Board2_event_STEP) {
+        b = !Board2_Critical_Voltage();
+      } else {
+        b = false;
+      }
+
+      if (b) {
+        Board2_DW.is_Lights_manager = Board2_IN_Normal_voltage;
+        Board2_DW.is_Normal_voltage_d = Board2_IN_Lights_OFF;
+        Board2_Rover_Lights_OFF();
+      }
+      break;
+
+     case Board2_IN_Normal_voltage:
+      if (Board2_DW.sfEvent == Board2_event_STEP) {
+        b = Board2_Critical_Voltage();
+      } else {
+        b = false;
+      }
+
+      if (b) {
+        Board2_DW.is_Normal_voltage_d = Board2_IN_NO_ACTIVE_CHILD;
+        Board2_DW.is_Lights_manager = Board2_IN_Critical_voltage;
+        Board2_Rover_Lights_OFF();
+      } else {
+        switch (Board2_DW.is_Normal_voltage_d) {
+         case Board2_IN_Lights_AUTO:
+          b = Board2_Lights_B_Pressed();
+          if (b) {
+            Board2_DW.is_Normal_voltage_d = Board2_IN_Lights_OFF;
+            Board2_Rover_Lights_OFF();
+          } else if (Board2_DW.sfEvent == Board2_event_STEP) {
+            Board2_DW.is_Normal_voltage_d = Board2_IN_Lights_AUTO;
+            Board2_Update_Rover_Lights(false);
+          }
+          break;
+
+         case Board2_IN_Lights_OFF:
+          b = Board2_Lights_B_Pressed();
+          if (b) {
+            Board2_DW.is_Normal_voltage_d = Board2_IN_Lights_ON;
+            Board2_Update_Rover_Lights(true);
+          }
+          break;
+
+         case Board2_IN_Lights_ON:
+          b = Board2_Lights_B_Pressed();
+          if (b) {
+            Board2_DW.is_Normal_voltage_d = Board2_IN_Lights_AUTO;
+            Board2_Update_Rover_Lights(false);
+          } else if (Board2_DW.sfEvent == Board2_event_STEP) {
+            Board2_DW.is_Normal_voltage_d = Board2_IN_Lights_ON;
+            Board2_Update_Rover_Lights(true);
           }
           break;
         }
@@ -2009,7 +2075,7 @@ static void Board2_Receive_global_state(void)
         Board2_DW.time_comm = Board2_Get_Timestamp();
       } else {
         Board2_exit_internal_Normal();
-        Board2_Disable_MUX();
+        Board2_Enable_MUX();
         Board2_Close_Session();
         Board2_Lower_MTalk();
         Board2_Abort_Communication();
@@ -2029,7 +2095,7 @@ static void Board2_Receive_global_state(void)
     if (b) {
       Board2_Compute_Degraded_Actions();
       Board2_exit_internal_Normal();
-      Board2_Disable_MUX();
+      Board2_Enable_MUX();
       Board2_Close_Session();
       Board2_Lower_MTalk();
       Board2_Abort_Communication();
@@ -2444,7 +2510,7 @@ static void Board2_Receive_state(void)
     if (b) {
       Board2_Compute_Degraded_Actions();
       Board2_exit_internal_Normal();
-      Board2_Disable_MUX();
+      Board2_Enable_MUX();
       Board2_Close_Session();
       Board2_Lower_MTalk();
       Board2_Abort_Communication();
@@ -2477,7 +2543,7 @@ static void Board2_Supervisor(void)
         } else {
           Board2_Compute_Degraded_Actions();
           Board2_exit_internal_Normal();
-          Board2_Disable_MUX();
+          Board2_Enable_MUX();
           Board2_Close_Session();
           Board2_Lower_MTalk();
           Board2_Abort_Communication();
@@ -2506,7 +2572,7 @@ static void Board2_Supervisor(void)
         } else {
           Board2_Compute_Degraded_Actions();
           Board2_exit_internal_Normal();
-          Board2_Disable_MUX();
+          Board2_Enable_MUX();
           Board2_Close_Session();
           Board2_Lower_MTalk();
           Board2_Abort_Communication();
@@ -2528,7 +2594,7 @@ static void Board2_Supervisor(void)
       if (b) {
         Board2_Compute_Degraded_Actions();
         Board2_exit_internal_Normal();
-        Board2_Disable_MUX();
+        Board2_Enable_MUX();
         Board2_Close_Session();
         Board2_Lower_MTalk();
         Board2_Abort_Communication();
@@ -2573,7 +2639,7 @@ static void Board2_Supervisor(void)
       if (b) {
         Board2_Compute_Degraded_Actions();
         Board2_exit_internal_Normal();
-        Board2_Disable_MUX();
+        Board2_Enable_MUX();
         Board2_Close_Session();
         Board2_Lower_MTalk();
         Board2_Abort_Communication();
@@ -2594,7 +2660,7 @@ static void Board2_Supervisor(void)
       if (b) {
         Board2_Compute_Degraded_Actions();
         Board2_exit_internal_Normal();
-        Board2_Disable_MUX();
+        Board2_Enable_MUX();
         Board2_Close_Session();
         Board2_Lower_MTalk();
         Board2_Abort_Communication();
@@ -2615,7 +2681,7 @@ static void Board2_Supervisor(void)
       if (b) {
         Board2_Compute_Degraded_Actions();
         Board2_exit_internal_Normal();
-        Board2_Disable_MUX();
+        Board2_Enable_MUX();
         Board2_Close_Session();
         Board2_Lower_MTalk();
         Board2_Abort_Communication();
@@ -2635,7 +2701,7 @@ static void Board2_Supervisor(void)
       if (b) {
         Board2_Compute_Degraded_Actions();
         Board2_exit_internal_Normal();
-        Board2_Disable_MUX();
+        Board2_Enable_MUX();
         Board2_Close_Session();
         Board2_Lower_MTalk();
         Board2_Abort_Communication();
@@ -2657,7 +2723,7 @@ static void Board2_Supervisor(void)
       if (b) {
         Board2_Compute_Degraded_Actions();
         Board2_exit_internal_Normal();
-        Board2_Disable_MUX();
+        Board2_Enable_MUX();
         Board2_Close_Session();
         Board2_Lower_MTalk();
         Board2_Abort_Communication();
@@ -2727,7 +2793,7 @@ static void Board2_Init_Data_Structures(void)
     OFF,                               /* led_A */
     OFF,                               /* led_B */
     IDLE,                              /* rear_led */
-    OFF,                               /* rear_sign */
+    SIGN_OFF,                          /* rear_sign */
     DEFAULT,                           /* mode */
     false                              /* relay */
   };
@@ -2782,7 +2848,7 @@ static void Board2_Init_Data_Structures(void)
       OFF,                             /* led_A */
       OFF,                             /* led_B */
       IDLE,                            /* rear_led */
-      OFF,                             /* rear_sign */
+      SIGN_OFF,                        /* rear_sign */
       DEFAULT,                         /* mode */
       false                            /* relay */
     },                                 /* decision */
@@ -2810,7 +2876,7 @@ void Board2_step(void)
     Board2_Lower_MTalk();
     Board2_DW.is_c1_Board2 = Board2_IN_Supervision_task;
     Board2_DW.is_Supervision_task = Board2_IN_Normal;
-    Board2_Enable_MUX();
+    Board2_Disable_MUX();
     Board2_enter_internal_Normal();
   } else if (Board2_DW.is_c1_Board2 == Board2_IN_Supervision_task) {
     switch (Board2_DW.is_Supervision_task) {
@@ -2822,7 +2888,7 @@ void Board2_step(void)
           Board2_DW.is_Restablish = Board2_IN_NO_ACTIVE_CHILD;
           Board2_DW.is_Degraded = Board2_IN_NO_ACTIVE_CHILD;
           Board2_DW.is_Supervision_task = Board2_IN_Normal;
-          Board2_Enable_MUX();
+          Board2_Disable_MUX();
           Board2_enter_internal_Normal();
           break;
 

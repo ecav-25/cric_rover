@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board1'.
  *
- * Model version                  : 1.2122
+ * Model version                  : 1.2189
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Sat Jan 24 16:06:24 2026
+ * C/C++ source code generated on : Mon Jan 26 18:58:32 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -56,6 +56,7 @@ typedef struct {
   uint32_T time_temp;                  /* '<Root>/Board1' */
   uint32_T time_comm;                  /* '<Root>/Board1' */
   MOVING_OBSTACLE_TYPE moving_obstacle;/* '<Root>/Board1' */
+  uint16_T distance_threshold;         /* '<Root>/Board1' */
   uint8_T retransmitted;               /* '<Root>/Board1' */
   uint8_T receivedPing;                /* '<Root>/Board1' */
   uint8_T is_active_c3_Board1;         /* '<Root>/Board1' */
@@ -97,12 +98,12 @@ typedef struct {
   uint8_T is_Not_moving_routine;       /* '<Root>/Board1' */
   uint8_T is_Special_retro_routine;    /* '<Root>/Board1' */
   uint8_T is_Stop_slow_routine;        /* '<Root>/Board1' */
-  uint8_T is_active_Lights_manager;    /* '<Root>/Board1' */
-  uint8_T is_Lights_manager;           /* '<Root>/Board1' */
-  uint8_T is_Normal_voltage_g;         /* '<Root>/Board1' */
   uint8_T is_active_Mode_manager;      /* '<Root>/Board1' */
   uint8_T is_Mode_manager;             /* '<Root>/Board1' */
-  uint8_T is_Normal_voltage_n;         /* '<Root>/Board1' */
+  uint8_T is_Normal_voltage_g;         /* '<Root>/Board1' */
+  uint8_T is_active_Lights_manager;    /* '<Root>/Board1' */
+  uint8_T is_Lights_manager;           /* '<Root>/Board1' */
+  uint8_T is_Normal_voltage_f;         /* '<Root>/Board1' */
   uint8_T is_active_Relay_manager;     /* '<Root>/Board1' */
   uint8_T is_Relay_manager;            /* '<Root>/Board1' */
   uint8_T is_Single_Board;             /* '<Root>/Board1' */
@@ -242,13 +243,9 @@ extern RT_MODEL_Board1_T *const Board1_M;
 #define Board1_IN_Special_retro_start  ((uint8_T)3U)
 #define Board1_IN_Stop_back_rotation   ((uint8_T)1U)
 #define Board1_IN_Stop_left_rotation   ((uint8_T)2U)
-#define Board1_IN_Stop_left_rotation_l ((uint8_T)1U)
 #define Board1_IN_Stop_right_rotation  ((uint8_T)3U)
-#define Board1_IN_Stop_right_rotation_g ((uint8_T)1U)
 #define Board1_IN_Stop_slow            ((uint8_T)1U)
 #define Board1_IN_Stop_slow_routine    ((uint8_T)10U)
-#define Board1_IN_Stop_to_Turn_Left    ((uint8_T)2U)
-#define Board1_IN_Stop_to_Turn_Right   ((uint8_T)2U)
 #define Board1_IN_Supervision_task     ((uint8_T)1U)
 #define Board1_IN_Transmit_Decision    ((uint8_T)11U)
 #define Board1_IN_Transmit_Global_State ((uint8_T)12U)
@@ -256,9 +253,9 @@ extern RT_MODEL_Board1_T *const Board1_M;
 #define Board1_IN_Transmit_ping        ((uint8_T)5U)
 #define Board1_IN_Turn_back            ((uint8_T)2U)
 #define Board1_IN_Turn_left            ((uint8_T)4U)
-#define Board1_IN_Turn_left_h          ((uint8_T)3U)
+#define Board1_IN_Turn_left_h          ((uint8_T)1U)
 #define Board1_IN_Turn_right           ((uint8_T)5U)
-#define Board1_IN_Turn_right_m         ((uint8_T)3U)
+#define Board1_IN_Turn_right_m         ((uint8_T)1U)
 #define Board1_IN_Waiting              ((uint8_T)3U)
 #define Board1_IN_Waiting_to_restablish ((uint8_T)6U)
 #define Board1_IN_Waiting_to_start     ((uint8_T)14U)
@@ -269,11 +266,13 @@ extern RT_MODEL_Board1_T *const Board1_M;
 #define Board1_MAX_RETRANSMIT          ((uint8_T)1U)
 #define Board1_MAX_RPM                 (150.0F)
 #define Board1_MIN_DISTANCE            ((uint16_T)150U)
-#define Board1_OBS_TIMEOUT             (1000U)
+#define Board1_OBS_TIMEOUT             (5000U)
 #define Board1_PERIOD                  (0.06F)
+#define Board1_PROTECTION_DISTANCE     ((uint16_T)20U)
 #define Board1_PURE_TURN_EPS           (0.01F)
 #define Board1_STATE_RECEIVE_TIMEOUT   (3800U)
 #define Board1_STATE_SEND_TIMEOUT      (2200U)
+#define Board1_STOP_THRESHOLD          ((uint16_T)1U)
 #define Board1_TEMP_TIMEOUT            (15000U)
 #define Board1_TURN_ANGLE              (45.0F)
 #define Board1_TURN_BACK_ANGLE         (180.0F)

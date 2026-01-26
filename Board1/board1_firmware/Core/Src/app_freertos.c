@@ -688,7 +688,7 @@ void lightsTask(void *argument)
 		led_step(&ledA, led_FA);
 		led_step(&ledB, led_FB);
 		rear_led_step(rear_led);
-		rear_sign_step(rear_sign); //aggiustare il +1
+		rear_sign_step(rear_sign);
 		led_render();
 
 		DWD_Notify(&hard_rt_deadline_wd, DWD_FLAG_LIGHT);
@@ -699,8 +699,6 @@ void lightsTask(void *argument)
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
 void executeSupervision(){
-	HAL_TIM_Base_Start_IT(&htim4);
-
 	debug_time = HAL_GetTick();
 
 	do{
@@ -727,16 +725,9 @@ void executeSupervision(){
 
 	debug_diff = HAL_GetTick() - debug_time;
 
-	HAL_TIM_Base_Stop_IT(&htim4);
-	__HAL_TIM_SET_COUNTER(&htim4, 0);
-
 	if (retransmit_seen_in_cycle){
 		count_retransmit++;
 		retransmit_seen_in_cycle = false;
-	}
-
-	if(deadline){
-		deadlineProcedure();
 	}
 
 	debug_output = Board1_Y.output;

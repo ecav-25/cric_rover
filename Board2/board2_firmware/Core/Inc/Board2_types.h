@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board2'.
  *
- * Model version                  : 1.2122
+ * Model version                  : 1.2189
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Sat Jan 24 16:10:06 2026
+ * C/C++ source code generated on : Mon Jan 26 19:03:08 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -57,6 +57,19 @@ typedef enum {
 
 #endif
 
+#ifndef DEFINED_TYPEDEF_FOR_REAR_SIGN_TYPE_
+#define DEFINED_TYPEDEF_FOR_REAR_SIGN_TYPE_
+
+typedef enum {
+  SIGN_OFF = 0,                        /* Default value */
+  SIGN_WHITE,
+  SIGN_GREEN,
+  SIGN_ORANGE,
+  SIGN_RED
+} REAR_SIGN_TYPE;
+
+#endif
+
 #ifndef DEFINED_TYPEDEF_FOR_ROVER_MODE_
 #define DEFINED_TYPEDEF_FOR_ROVER_MODE_
 
@@ -80,7 +93,7 @@ typedef struct {
   LED_TYPE led_A;
   LED_TYPE led_B;
   REAR_LED_TYPE rear_led;
-  LED_TYPE rear_sign;
+  REAR_SIGN_TYPE rear_sign;
   ROVER_MODE mode;
   boolean_T relay;
 } DecBus;

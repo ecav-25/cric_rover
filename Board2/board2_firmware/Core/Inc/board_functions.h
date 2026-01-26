@@ -171,16 +171,16 @@ void IO_Reset_MasterTalk(void);
 boolean_T IO_Read_SlaveTalk(void);
 
 /**
- * @brief Abilita il segnale di controllo driver (Enable).
- * @details Attiva fisicamente il segnale del mux per il controllo dei motori.
- */
-void IO_Set_DriverControl(void);
-
-/**
  * @brief Disabilita il segnale di controllo driver (Disable).
  * @details Disattiva fisicamente il segnale del mux.
  */
-void IO_Reset_DriverControl(void);
+void IO_Disable_MUX(void);
+
+/**
+ * @brief Abilita il segnale di controllo driver (Enable).
+ * @details Attiva fisicamente il segnale del mux per il controllo dei motori.
+ */
+void IO_Enable_MUX(void);
 
 /* ========================================================================== */
 /* 							   TIMING & OS                                    */

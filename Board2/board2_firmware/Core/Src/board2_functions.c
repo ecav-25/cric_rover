@@ -299,15 +299,23 @@ boolean_T IO_Read_SlaveTalk(void)
     return (HAL_GPIO_ReadPin(STALK_GPIO_Port, STALK_Pin) == GPIO_PIN_SET);
 }
 
-void IO_Set_DriverControl(void)
+void IO_Disable_MUX(void)
 {
+<<<<<<< HEAD
     /* Abilita driver motori */
+=======
+    /* Motori controllati dallo slave */
+>>>>>>> branch 'master' of https://github.com/ecav-25/cric_rover.git
     HAL_GPIO_WritePin(SELECT_GPIO_Port, SELECT_Pin, GPIO_PIN_RESET);
 }
 
-void IO_Reset_DriverControl(void)
+void IO_Enable_MUX(void)
 {
+<<<<<<< HEAD
     /* Disabilita driver */
+=======
+    /* Motori controllati dal master */
+>>>>>>> branch 'master' of https://github.com/ecav-25/cric_rover.git
     HAL_GPIO_WritePin(SELECT_GPIO_Port, SELECT_Pin, GPIO_PIN_SET);
 }
 
