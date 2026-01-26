@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board2'.
  *
- * Model version                  : 1.2148
+ * Model version                  : 1.2172
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Sun Jan 25 15:49:43 2026
+ * C/C++ source code generated on : Mon Jan 26 12:28:40 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -95,9 +95,9 @@ static boolean_T Board2_Mov_Obs_Right(void);
 static boolean_T Board2_Mov_Obs_Left(void);
 static void Board2_Stop_slow_routine(void);
 static void Board2_Normal_voltage(void);
+static boolean_T Board2_Mode_B_Pressed(void);
 static boolean_T Board2_Lights_B_Pressed(void);
 static void Board2_Update_Rover_Lights(boolean_T white_led_when_stopped);
-static boolean_T Board2_Mode_B_Pressed(void);
 static void Board2_Actions(void);
 static boolean_T Board2_isequal_l(MOVING_OBSTACLE_TYPE varargin_1,
   MOVING_OBSTACLE_TYPE varargin_2);
@@ -214,7 +214,7 @@ static void Board2_Rover_Lights_OFF(void)
   Board2_DW.decision.led_A = OFF;
   Board2_DW.decision.led_B = OFF;
   Board2_DW.decision.rear_led = IDLE;
-  Board2_DW.decision.rear_sign = OFF;
+  Board2_DW.decision.rear_sign = SIGN_OFF;
 }
 
 /* Function for Chart: '<Root>/Board2' */
@@ -253,14 +253,14 @@ static void Board2_enter_internal_Normal(void)
   Board2_DW.is_active_Routine_manager = 1U;
   Board2_DW.is_Routine_manager = Board2_IN_Normal_voltage;
   Board2_DW.is_Normal_voltage = Board2_IN_Select_routine;
-  Board2_DW.is_active_Lights_manager = 1U;
-  Board2_DW.is_Lights_manager = Board2_IN_Normal_voltage;
-  Board2_DW.is_Normal_voltage_f = Board2_IN_Lights_OFF;
-  Board2_Rover_Lights_OFF();
   Board2_DW.is_active_Mode_manager = 1U;
   Board2_DW.is_Mode_manager = Board2_IN_Normal_voltage;
-  Board2_DW.is_Normal_voltage_d = Board2_IN_Mode_DEFAULT;
+  Board2_DW.is_Normal_voltage_f = Board2_IN_Mode_DEFAULT;
   Board2_DW.decision.mode = DEFAULT;
+  Board2_DW.is_active_Lights_manager = 1U;
+  Board2_DW.is_Lights_manager = Board2_IN_Normal_voltage;
+  Board2_DW.is_Normal_voltage_d = Board2_IN_Lights_OFF;
+  Board2_Rover_Lights_OFF();
   Board2_DW.is_active_Relay_manager = 1U;
   Board2_DW.is_Relay_manager = Board2_IN_Normal_voltage;
   Board2_DW.decision.relay = true;
@@ -356,7 +356,7 @@ static void Board2_Compute_Degraded_Actions(void)
     Board2_Y.output.led_A = OFF;
     Board2_Y.output.led_B = OFF;
     Board2_Y.output.rear_led = IDLE;
-    Board2_Y.output.rear_sign = OFF;
+    Board2_Y.output.rear_sign = SIGN_OFF;
     Board2_Y.output.relay = true;
     OS_Exit_Critical();
   } else if (Board2_U.B4) {
@@ -369,7 +369,7 @@ static void Board2_Compute_Degraded_Actions(void)
     Board2_Y.output.led_A = OFF;
     Board2_Y.output.led_B = OFF;
     Board2_Y.output.rear_led = IDLE;
-    Board2_Y.output.rear_sign = OFF;
+    Board2_Y.output.rear_sign = SIGN_OFF;
     Board2_Y.output.relay = true;
     OS_Exit_Critical();
   } else if (Board2_U.B3 || (Board2_U.controller_battery <=
@@ -383,7 +383,7 @@ static void Board2_Compute_Degraded_Actions(void)
     Board2_Y.output.led_A = OFF;
     Board2_Y.output.led_B = OFF;
     Board2_Y.output.rear_led = IDLE;
-    Board2_Y.output.rear_sign = OFF;
+    Board2_Y.output.rear_sign = SIGN_OFF;
     Board2_Y.output.relay = true;
     OS_Exit_Critical();
   } else {
@@ -426,7 +426,7 @@ static void Board2_Compute_Degraded_Actions(void)
     Board2_Y.output.led_A = OFF;
     Board2_Y.output.led_B = OFF;
     Board2_Y.output.rear_led = IDLE;
-    Board2_Y.output.rear_sign = OFF;
+    Board2_Y.output.rear_sign = SIGN_OFF;
     Board2_Y.output.relay = true;
     OS_Exit_Critical();
   }
@@ -455,11 +455,11 @@ static void Board2_exit_internal_Normal(void)
   Board2_DW.is_Relay_manager = Board2_IN_NO_ACTIVE_CHILD;
   Board2_DW.is_active_Relay_manager = 0U;
   Board2_DW.is_Normal_voltage_d = Board2_IN_NO_ACTIVE_CHILD;
-  Board2_DW.is_Mode_manager = Board2_IN_NO_ACTIVE_CHILD;
-  Board2_DW.is_active_Mode_manager = 0U;
-  Board2_DW.is_Normal_voltage_f = Board2_IN_NO_ACTIVE_CHILD;
   Board2_DW.is_Lights_manager = Board2_IN_NO_ACTIVE_CHILD;
   Board2_DW.is_active_Lights_manager = 0U;
+  Board2_DW.is_Normal_voltage_f = Board2_IN_NO_ACTIVE_CHILD;
+  Board2_DW.is_Mode_manager = Board2_IN_NO_ACTIVE_CHILD;
+  Board2_DW.is_active_Mode_manager = 0U;
   Bo_exit_internal_Normal_voltage();
   Board2_DW.is_Routine_manager = Board2_IN_NO_ACTIVE_CHILD;
   Board2_DW.is_active_Routine_manager = 0U;
@@ -916,11 +916,11 @@ static void Board2_Process_Evasive_Commands(void)
               Board2_CENTER) / Board2_CENTER;
   forward = throttle * (real32_T)MAX_SPEED;
   switch (Board2_DW.global_state.mov_obs) {
-   case MOVING_FROM_LEFT:
+   case MOVING_FROM_RIGHT:
     steering_eff = 1;
     break;
 
-   case MOVING_FROM_RIGHT:
+   case MOVING_FROM_LEFT:
     steering_eff = -1;
     break;
 
@@ -1519,6 +1519,22 @@ static void Board2_Normal_voltage(void)
 }
 
 /* Function for Chart: '<Root>/Board2' */
+static boolean_T Board2_Mode_B_Pressed(void)
+{
+  boolean_T y;
+  if (Board2_DW.sfEvent != Board2_event_STEP) {
+    y = false;
+  } else {
+    y = (Board2_DW.global_state.stateB2.l_stick_button &&
+         (!Board2_DW.prev_l_stick_button));
+    Board2_DW.prev_l_stick_button =
+      Board2_DW.global_state.stateB2.l_stick_button;
+  }
+
+  return y;
+}
+
+/* Function for Chart: '<Root>/Board2' */
 static boolean_T Board2_Lights_B_Pressed(void)
 {
   boolean_T y;
@@ -1542,21 +1558,18 @@ static void Board2_Update_Rover_Lights(boolean_T white_led_when_stopped)
     Board2_DW.decision.led_A = WHITE;
     Board2_DW.decision.led_B = WHITE;
     Board2_DW.decision.rear_led = BRAKING_LIGHT;
-    Board2_DW.decision.rear_sign = WHITE;
   } else if (((Board2_DW.decision.rif_FA + Board2_DW.decision.rif_BA) / 2.0F <
               0.0F) && ((Board2_DW.decision.rif_FB + Board2_DW.decision.rif_BB) /
                         2.0F > 0.0F)) {
     Board2_DW.decision.led_A = BLINKING_RED;
     Board2_DW.decision.led_B = WHITE;
     Board2_DW.decision.rear_led = ARROW_LEFT;
-    Board2_DW.decision.rear_sign = WHITE;
   } else if (((Board2_DW.decision.rif_FA + Board2_DW.decision.rif_BA) / 2.0F >
               0.0F) && ((Board2_DW.decision.rif_FB + Board2_DW.decision.rif_BB) /
                         2.0F < 0.0F)) {
     Board2_DW.decision.led_A = WHITE;
     Board2_DW.decision.led_B = BLINKING_RED;
     Board2_DW.decision.rear_led = ARROW_RIGHT;
-    Board2_DW.decision.rear_sign = WHITE;
   } else {
     real32_T left_ref;
     real32_T right_ref;
@@ -1568,7 +1581,6 @@ static void Board2_Update_Rover_Lights(boolean_T white_led_when_stopped)
       Board2_DW.decision.led_A = BLINKING_RED;
       Board2_DW.decision.led_B = WHITE;
       Board2_DW.decision.rear_led = ARROW_LEFT;
-      Board2_DW.decision.rear_sign = WHITE;
     } else if (e_y && ((Board2_DW.decision.rif_FA + Board2_DW.decision.rif_BA) /
                        2.0F - (Board2_DW.decision.rif_FB +
                  Board2_DW.decision.rif_BB) / 2.0F > Board2_DW.TURN_THRESHOLD))
@@ -1576,7 +1588,6 @@ static void Board2_Update_Rover_Lights(boolean_T white_led_when_stopped)
       Board2_DW.decision.led_A = WHITE;
       Board2_DW.decision.led_B = BLINKING_RED;
       Board2_DW.decision.rear_led = ARROW_RIGHT;
-      Board2_DW.decision.rear_sign = WHITE;
     } else {
       int32_T k;
       boolean_T exitg1;
@@ -1600,7 +1611,6 @@ static void Board2_Update_Rover_Lights(boolean_T white_led_when_stopped)
         Board2_DW.decision.led_A = WHITE;
         Board2_DW.decision.led_B = WHITE;
         Board2_DW.decision.rear_led = BACKWARD_LIGHTS;
-        Board2_DW.decision.rear_sign = WHITE;
       } else {
         x[0] = (Board2_DW.decision.rif_FA > 0.0F);
         x[1] = (Board2_DW.decision.rif_FB > 0.0F);
@@ -1624,7 +1634,6 @@ static void Board2_Update_Rover_Lights(boolean_T white_led_when_stopped)
           Board2_DW.decision.led_A = WHITE;
           Board2_DW.decision.led_B = WHITE;
           Board2_DW.decision.rear_led = BACKLIGHTS;
-          Board2_DW.decision.rear_sign = WHITE;
         } else {
           if (white_led_when_stopped) {
             Board2_DW.decision.led_A = WHITE;
@@ -1635,27 +1644,24 @@ static void Board2_Update_Rover_Lights(boolean_T white_led_when_stopped)
           }
 
           Board2_DW.decision.rear_led = BACKLIGHTS;
-          Board2_DW.decision.rear_sign = WHITE;
         }
       }
     }
   }
-}
 
-/* Function for Chart: '<Root>/Board2' */
-static boolean_T Board2_Mode_B_Pressed(void)
-{
-  boolean_T y;
-  if (Board2_DW.sfEvent != Board2_event_STEP) {
-    y = false;
-  } else {
-    y = (Board2_DW.global_state.stateB2.l_stick_button &&
-         (!Board2_DW.prev_l_stick_button));
-    Board2_DW.prev_l_stick_button =
-      Board2_DW.global_state.stateB2.l_stick_button;
+  switch (Board2_DW.decision.mode) {
+   case DEFAULT:
+    Board2_DW.decision.rear_sign = SIGN_WHITE;
+    break;
+
+   case SPORT:
+    Board2_DW.decision.rear_sign = SIGN_ORANGE;
+    break;
+
+   default:
+    Board2_DW.decision.rear_sign = SIGN_GREEN;
+    break;
   }
-
-  return y;
 }
 
 /* Function for Chart: '<Root>/Board2' */
@@ -1683,70 +1689,6 @@ static void Board2_Actions(void)
     }
   }
 
-  if (Board2_DW.is_active_Lights_manager != 0) {
-    switch (Board2_DW.is_Lights_manager) {
-     case Board2_IN_Critical_voltage:
-      if (Board2_DW.sfEvent == Board2_event_STEP) {
-        b = !Board2_Critical_Voltage();
-      } else {
-        b = false;
-      }
-
-      if (b) {
-        Board2_DW.is_Lights_manager = Board2_IN_Normal_voltage;
-        Board2_DW.is_Normal_voltage_f = Board2_IN_Lights_OFF;
-        Board2_Rover_Lights_OFF();
-      }
-      break;
-
-     case Board2_IN_Normal_voltage:
-      if (Board2_DW.sfEvent == Board2_event_STEP) {
-        b = Board2_Critical_Voltage();
-      } else {
-        b = false;
-      }
-
-      if (b) {
-        Board2_DW.is_Normal_voltage_f = Board2_IN_NO_ACTIVE_CHILD;
-        Board2_DW.is_Lights_manager = Board2_IN_Critical_voltage;
-        Board2_Rover_Lights_OFF();
-      } else {
-        switch (Board2_DW.is_Normal_voltage_f) {
-         case Board2_IN_Lights_AUTO:
-          b = Board2_Lights_B_Pressed();
-          if (b) {
-            Board2_DW.is_Normal_voltage_f = Board2_IN_Lights_OFF;
-            Board2_Rover_Lights_OFF();
-          } else if (Board2_DW.sfEvent == Board2_event_STEP) {
-            Board2_DW.is_Normal_voltage_f = Board2_IN_Lights_AUTO;
-            Board2_Update_Rover_Lights(false);
-          }
-          break;
-
-         case Board2_IN_Lights_OFF:
-          b = Board2_Lights_B_Pressed();
-          if (b) {
-            Board2_DW.is_Normal_voltage_f = Board2_IN_Lights_ON;
-            Board2_Update_Rover_Lights(true);
-          }
-          break;
-
-         case Board2_IN_Lights_ON:
-          b = Board2_Lights_B_Pressed();
-          if (b) {
-            Board2_DW.is_Normal_voltage_f = Board2_IN_Lights_AUTO;
-            Board2_Update_Rover_Lights(false);
-          } else if (Board2_DW.sfEvent == Board2_event_STEP) {
-            Board2_DW.is_Normal_voltage_f = Board2_IN_Lights_ON;
-            Board2_Update_Rover_Lights(true);
-          }
-          break;
-        }
-      }
-      break;
-    }
-  }
-
   if (Board2_DW.is_active_Mode_manager != 0) {
     switch (Board2_DW.is_Mode_manager) {
      case Board2_IN_Critical_voltage:
@@ -1758,7 +1700,7 @@ static void Board2_Actions(void)
 
       if (b) {
         Board2_DW.is_Mode_manager = Board2_IN_Normal_voltage;
-        Board2_DW.is_Normal_voltage_d = Board2_IN_Mode_DEFAULT;
+        Board2_DW.is_Normal_voltage_f = Board2_IN_Mode_DEFAULT;
         Board2_DW.decision.mode = DEFAULT;
       }
       break;
@@ -1771,15 +1713,15 @@ static void Board2_Actions(void)
       }
 
       if (b) {
-        Board2_DW.is_Normal_voltage_d = Board2_IN_NO_ACTIVE_CHILD;
+        Board2_DW.is_Normal_voltage_f = Board2_IN_NO_ACTIVE_CHILD;
         Board2_DW.is_Mode_manager = Board2_IN_Critical_voltage;
         Board2_DW.decision.mode = ECO;
       } else {
-        switch (Board2_DW.is_Normal_voltage_d) {
+        switch (Board2_DW.is_Normal_voltage_f) {
          case Board2_IN_Mode_DEFAULT:
           b = Board2_Mode_B_Pressed();
           if (b) {
-            Board2_DW.is_Normal_voltage_d = Board2_IN_Mode_SPORT;
+            Board2_DW.is_Normal_voltage_f = Board2_IN_Mode_SPORT;
             Board2_DW.decision.mode = SPORT;
           }
           break;
@@ -1787,7 +1729,7 @@ static void Board2_Actions(void)
          case Board2_IN_Mode_ECO:
           b = Board2_Mode_B_Pressed();
           if (b) {
-            Board2_DW.is_Normal_voltage_d = Board2_IN_Mode_DEFAULT;
+            Board2_DW.is_Normal_voltage_f = Board2_IN_Mode_DEFAULT;
             Board2_DW.decision.mode = DEFAULT;
           }
           break;
@@ -1795,8 +1737,72 @@ static void Board2_Actions(void)
          case Board2_IN_Mode_SPORT:
           b = Board2_Mode_B_Pressed();
           if (b) {
-            Board2_DW.is_Normal_voltage_d = Board2_IN_Mode_ECO;
+            Board2_DW.is_Normal_voltage_f = Board2_IN_Mode_ECO;
             Board2_DW.decision.mode = ECO;
+          }
+          break;
+        }
+      }
+      break;
+    }
+  }
+
+  if (Board2_DW.is_active_Lights_manager != 0) {
+    switch (Board2_DW.is_Lights_manager) {
+     case Board2_IN_Critical_voltage:
+      if (Board2_DW.sfEvent == Board2_event_STEP) {
+        b = !Board2_Critical_Voltage();
+      } else {
+        b = false;
+      }
+
+      if (b) {
+        Board2_DW.is_Lights_manager = Board2_IN_Normal_voltage;
+        Board2_DW.is_Normal_voltage_d = Board2_IN_Lights_OFF;
+        Board2_Rover_Lights_OFF();
+      }
+      break;
+
+     case Board2_IN_Normal_voltage:
+      if (Board2_DW.sfEvent == Board2_event_STEP) {
+        b = Board2_Critical_Voltage();
+      } else {
+        b = false;
+      }
+
+      if (b) {
+        Board2_DW.is_Normal_voltage_d = Board2_IN_NO_ACTIVE_CHILD;
+        Board2_DW.is_Lights_manager = Board2_IN_Critical_voltage;
+        Board2_Rover_Lights_OFF();
+      } else {
+        switch (Board2_DW.is_Normal_voltage_d) {
+         case Board2_IN_Lights_AUTO:
+          b = Board2_Lights_B_Pressed();
+          if (b) {
+            Board2_DW.is_Normal_voltage_d = Board2_IN_Lights_OFF;
+            Board2_Rover_Lights_OFF();
+          } else if (Board2_DW.sfEvent == Board2_event_STEP) {
+            Board2_DW.is_Normal_voltage_d = Board2_IN_Lights_AUTO;
+            Board2_Update_Rover_Lights(false);
+          }
+          break;
+
+         case Board2_IN_Lights_OFF:
+          b = Board2_Lights_B_Pressed();
+          if (b) {
+            Board2_DW.is_Normal_voltage_d = Board2_IN_Lights_ON;
+            Board2_Update_Rover_Lights(true);
+          }
+          break;
+
+         case Board2_IN_Lights_ON:
+          b = Board2_Lights_B_Pressed();
+          if (b) {
+            Board2_DW.is_Normal_voltage_d = Board2_IN_Lights_AUTO;
+            Board2_Update_Rover_Lights(false);
+          } else if (Board2_DW.sfEvent == Board2_event_STEP) {
+            Board2_DW.is_Normal_voltage_d = Board2_IN_Lights_ON;
+            Board2_Update_Rover_Lights(true);
           }
           break;
         }
@@ -2742,7 +2748,7 @@ static void Board2_Init_Data_Structures(void)
     OFF,                               /* led_A */
     OFF,                               /* led_B */
     IDLE,                              /* rear_led */
-    OFF,                               /* rear_sign */
+    SIGN_OFF,                          /* rear_sign */
     DEFAULT,                           /* mode */
     false                              /* relay */
   };
@@ -2797,7 +2803,7 @@ static void Board2_Init_Data_Structures(void)
       OFF,                             /* led_A */
       OFF,                             /* led_B */
       IDLE,                            /* rear_led */
-      OFF,                             /* rear_sign */
+      SIGN_OFF,                        /* rear_sign */
       DEFAULT,                         /* mode */
       false                            /* relay */
     },                                 /* decision */
