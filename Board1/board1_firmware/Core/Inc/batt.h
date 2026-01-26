@@ -1,60 +1,96 @@
-#ifndef BATT_H
-#define BATT_H
+#ifndef INC_BATT_H_
+#define INC_BATT_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <stdint.h>
 #include "stm32g4xx_hal.h"
+#include <stdint.h>
 
-/* ================== ADC/BATTERY CONFIGURATION ================== */
+/* ================== RETURN CODES ================== */
+
+typedef enum {
+    BATT_OK  = 0,
+    BATT_ERR = -1
+} Batt_Status_t;
+
+/* ================== ADC / BATTERY CONSTANTS ================== */
 
 /* ADC reference voltage in millivolts */
-#define BATT_ADC_VREF_MV        (3300.0F)
+#define BATT_ADC_VREF_MV        (3300.0f)
 
-/* ADC resolution (12-bit: 0..4095) */
-#define BATT_ADC_MAX_CNT        (4095.0F)
-
-/* ADC channel connected to the battery divider */
-#define BATT_ADC_CH             (ADC_CHANNEL_9) //questo deve essere configurabile
+/* ADC resolution (12-bit) */
+#define BATT_ADC_MAX_CNT        (4095.0f)
 
 /* Divider resistors (Ohm) */
-#define BATT_R1_OHM             (100000.0F)    /* 100 kOhm */
-#define BATT_R2_OHM             (27000.0F)     /* 27 kOhm  */
+#define BATT_R1_OHM             (100000.0f)   /* high side */
+#define BATT_R2_OHM             (27000.0f)    /* low side  */
 
-/* LiPo 3S State-of-Charge limits (Volt) */
-#define BATT_LIPO_VMIN          (10.0F)
-#define BATT_LIPO_VMAX          (12.6F)
+/* LiPo 3S limits (Volt) */
+#define BATT_LIPO_VMIN          (10.0f)
+#define BATT_LIPO_VMAX          (12.6f)
 
-/* ================== BATTERY API ================== */
+/* Timeout di default per operazioni ADC */
+#define BATT_DEFAULT_TIMEOUT_MS (10U)
+
+/* ================== OBJECT ================== */
+
+typedef struct
+{
+    ADC_HandleTypeDef *hadc;
+
+    ADC_ChannelConfTypeDef channel_cfg;
+
+    uint32_t timeout_ms;
+
+    /* ultimi valori acquisiti */
+    uint32_t raw_last;
+    float    volt_last;
+
+} batt_t;
+
+/* ================== API ================== */
 
 /**
- * \brief Initialises the battery measurement module.
- * \param adc Pointer to an initialised ADC handle (e.g., &hadc1).
+ * Inizializza l'oggetto batteria.
  */
-void BATT_init(ADC_HandleTypeDef * adc);
+Batt_Status_t batt_init(batt_t *b, ADC_HandleTypeDef *hadc, const ADC_ChannelConfTypeDef *channel_cfg, uint32_t timeout_ms);
 
 /**
- * \brief Reads a raw ADC value from the battery channel.
- * \return Raw ADC value (0..4095), or 0 on error.
+ * Lettura ADC grezza singola.
  */
-uint32_t BATT_readRaw(void);
+Batt_Status_t batt_read_raw_once(batt_t *b, uint32_t *raw);
 
 /**
- * \brief Computes the actual battery voltage.
- * \return Battery voltage in volts.
+ * Lettura ADC grezza mediata su N campioni.
  */
-float BATT_getVolt(void);
+Batt_Status_t batt_read_raw_avg(batt_t *b, uint8_t samples, uint32_t *raw);
 
 /**
- * \brief Estimates the LiPo 3S State-of-Charge percentage.
- * \return SOC percentage (0..100), saturated at limits.
+ * Lettura tensione batteria (Volt) singola.
  */
-float BATT_getSoc(void);
+Batt_Status_t batt_get_voltage_once(batt_t *b, float *volt);
+
+/**
+ * Lettura tensione batteria (Volt) mediata su N campioni.
+ */
+Batt_Status_t batt_get_voltage_avg(batt_t *b, uint8_t samples, float *volt);
+
+
+/**
+ * Ultimo valore ADC acquisito.
+ */
+Batt_Status_t batt_get_last_raw(const batt_t *b, uint32_t *raw);
+
+/**
+ * Ultima tensione calcolata.
+ */
+Batt_Status_t batt_get_last_voltage(const batt_t *b, float *volt);
+
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* BATT_H */
+#endif /* INC_BATT_H_ */

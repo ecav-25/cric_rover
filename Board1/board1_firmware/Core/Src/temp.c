@@ -1,101 +1,135 @@
 #include "temp.h"
 
-/* ========== STATIC MODULE VARIABLES ========== */
+/* ================== STATIC SUPPORT FUNCTIONS ================== */
 
-static ADC_HandleTypeDef * l_adc = (ADC_HandleTypeDef *)0;
-
-/* Recommended sampling time for internal temperature sensor */
-#define TEMP_ADC_SMPL_TIME      (ADC_SAMPLETIME_247CYCLES_5)
-#define TEMP_ADC_TMO_MS         (10U)
-
-/* ========== STATIC SUPPORT FUNCTIONS ========== */
-
-/**
- * \brief Configures the ADC channel for internal temperature.
- * \param channel Temperature sensor ADC channel.
- * \return HAL_OK on success, HAL_ERROR otherwise.
- */
-static HAL_StatusTypeDef TEMP_cfgCh_(uint32_t channel)
+static Temp_Status_t temp_cfg_channel_(temp_t *t)
 {
-    HAL_StatusTypeDef st;
-    ADC_ChannelConfTypeDef cfg;
+	//t == NULL ecc anche dopo
+    if(t == NULL || t->hadc == NULL)
+		return TEMP_ERR;
 
-    cfg.Channel      = channel;
-    cfg.Rank         = ADC_REGULAR_RANK_1;
-    cfg.SamplingTime = TEMP_ADC_SMPL_TIME;
-    cfg.SingleDiff   = ADC_SINGLE_ENDED;
-    cfg.OffsetNumber = ADC_OFFSET_NONE;
-    cfg.Offset       = 0U;
-
-    st = HAL_ADC_ConfigChannel(l_adc, &cfg);
-    return st;
+    return (HAL_ADC_ConfigChannel(t->hadc, &t->channel_cfg) == HAL_OK) ? TEMP_OK : TEMP_ERR;
 }
 
-/**
- * \brief Performs a single ADC conversion.
- * \return Raw ADC value or 0 on error.
- */
-static uint32_t TEMP_readConv_(void)
+static Temp_Status_t temp_read_once_(temp_t *t, uint32_t *raw)
 {
-    uint32_t adcVal;
-    HAL_StatusTypeDef stStart;
-    HAL_StatusTypeDef stPoll;
+    if (t == NULL || raw == NULL) return TEMP_ERR;
 
-    adcVal = 0U;
+    if (HAL_ADC_Start(t->hadc) != HAL_OK)
+        return TEMP_ERR;
 
-    stStart = HAL_ADC_Start(l_adc);
-    if (stStart == HAL_OK)
-    {
-        stPoll = HAL_ADC_PollForConversion(l_adc, TEMP_ADC_TMO_MS);
-        if (stPoll == HAL_OK)
-        {
-            adcVal = HAL_ADC_GetValue(l_adc);
-        }
-        (void)HAL_ADC_Stop(l_adc);
+    if (HAL_ADC_PollForConversion(t->hadc, t->timeout_ms) != HAL_OK) {
+        HAL_ADC_Stop(t->hadc);
+        return TEMP_ERR;
     }
 
-    return adcVal;
+    *raw = HAL_ADC_GetValue(t->hadc);
+    HAL_ADC_Stop(t->hadc);
+
+    return TEMP_OK;
 }
 
-/* ========== PUBLIC API ========== */
-
-void TEMP_init(ADC_HandleTypeDef * adc)
+static float temp_raw_to_celsius_(uint32_t raw)
 {
+    float v_sense =((float)raw * TEMP_ADC_VREF_MV) / TEMP_ADC_MAX_CNT;
 
-    l_adc = adc;
-    HAL_ADCEx_Calibration_Start(l_adc, ADC_SINGLE_ENDED);
+    return ((v_sense - TEMP_V25_MV) / TEMP_SLOPE_MV_PER_C) + 25.0f;
 }
 
-uint32_t TEMP_readRaw(void)
+static Temp_Status_t temp_read_raw_internal_(temp_t *t, uint8_t samples, uint32_t *raw)
 {
-    uint32_t raw;
+    if (t == NULL || raw == NULL || samples == 0) return TEMP_ERR;
 
-    raw = 0U;
+    if (temp_cfg_channel_(t) != TEMP_OK)
+        return TEMP_ERR;
 
-    if (l_adc != (ADC_HandleTypeDef *)0)
-    {
-        if (TEMP_cfgCh_(TEMP_ADC_CH) == HAL_OK)
-        {
-            raw = TEMP_readConv_();
-        }
+    uint32_t acc = 0U;
+    uint32_t sample;
+
+    for (uint8_t i = 0; i < samples; i++) {
+        if (temp_read_once_(t, &sample) != TEMP_OK)
+            return TEMP_ERR;
+        acc += sample;
     }
 
-    return raw;
+    *raw = acc / samples;
+    t->raw_last = *raw;
+
+    return TEMP_OK;
 }
 
-float TEMP_getCelsius(void)
+/* ================== PUBLIC API ================== */
+
+Temp_Status_t temp_init(temp_t *t, ADC_HandleTypeDef *hadc, const ADC_ChannelConfTypeDef* channel_cfg, uint32_t timeout_ms)
 {
+    if (t == NULL || hadc == NULL) return TEMP_ERR;
+
+    t->hadc          = hadc;
+    t->channel_cfg   = *channel_cfg;
+    t->timeout_ms    = timeout_ms;
+
+    t->raw_last      = 0U;
+    t->temp_c_last   = 0.0f;
+
+    /* calibrazione ADC (una tantum) */
+    if (HAL_ADCEx_Calibration_Start(t->hadc, t->channel_cfg.SingleDiff) != HAL_OK)
+        return TEMP_ERR;
+
+    return TEMP_OK;
+}
+
+Temp_Status_t temp_read_raw_once(temp_t *t, uint32_t *raw)
+{
+    return temp_read_raw_internal_(t, 1, raw);
+}
+
+Temp_Status_t temp_read_raw_avg(temp_t *t, uint8_t samples, uint32_t *raw)
+{
+    return temp_read_raw_internal_(t, samples, raw);
+}
+
+Temp_Status_t temp_get_celsius_once(temp_t *t, float *temp_c)
+{
+    if (t == NULL || temp_c == NULL) return TEMP_ERR;
+
     uint32_t raw;
-    float vSense;
-    float tempC;
 
-    raw = TEMP_readRaw();
+    if (temp_read_raw_once(t, &raw) != TEMP_OK)
+        return TEMP_ERR;
 
-    /* Convert ADC reading to millivolts */
-    vSense = ((float)raw * TEMP_ADC_VREF_MV) / TEMP_ADC_MAX_CNT;
+    t->temp_c_last = temp_raw_to_celsius_(raw);
+    *temp_c = t->temp_c_last;
 
-    /* Apply STM32 linear formula */
-    tempC = ((vSense - TEMP_V25_MV) / TEMP_SLOPE_MV) + 25.0F;
+    return TEMP_OK;
+}
 
-    return tempC;
+Temp_Status_t temp_get_celsius_avg(temp_t *t, uint8_t samples, float *temp_c)
+{
+    if (t == NULL || temp_c == NULL) return TEMP_ERR;
+
+    uint32_t raw;
+
+    if (temp_read_raw_avg(t, samples, &raw) != TEMP_OK)
+        return TEMP_ERR;
+
+    t->temp_c_last = temp_raw_to_celsius_(raw);
+    *temp_c = t->temp_c_last;
+
+    return TEMP_OK;
+}
+
+Temp_Status_t temp_get_last_raw(const temp_t *t, uint32_t *raw)
+{
+    if (t == NULL || raw == NULL) return TEMP_ERR;
+
+    *raw = t->raw_last;
+    return TEMP_OK;
+}
+
+Temp_Status_t temp_get_last_celsius(const temp_t *t, float *temp_c)
+{
+    if (t == NULL || temp_c == NULL) return TEMP_ERR;
+
+    *temp_c = t->temp_c_last;
+    return TEMP_OK;
 }

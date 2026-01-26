@@ -1,6 +1,7 @@
 #include "hw_config.h"
 #include "hw_calibration.h"
 #include "tim.h"
+#include "adc.h"
 
 /* ===================== MOTORS ===================== */
 
@@ -19,6 +20,15 @@ const Encoder_HW_Config_t ENCODER_HW_CONFIG[ENCODER_COUNT] = {
     [ENCODER_BA] = { &htim1,  { PULSES_PER_REVOLUTION, GEAR_RATIO } },
     [ENCODER_BB] = { &htim8,  { PULSES_PER_REVOLUTION, GEAR_RATIO } },
 };
+
+/* ===================== ADC ===================== */
+
+const ADC_HW_Config_t ADC_HW_CONFIG[ADC_COUNT] = {
+	[ADC_TEMP_SENSOR] = { &hadc1, { ADC_CHANNEL_TEMPSENSOR_ADC1, ADC_REGULAR_RANK_1, ADC_SAMPLETIME_247CYCLES_5, ADC_SINGLE_ENDED, ADC_OFFSET_NONE, 0U } },
+	[ADC_BATTERY_VOLTAGE] = { &hadc1, { ADC_CHANNEL_9, ADC_REGULAR_RANK_1, ADC_SAMPLETIME_247CYCLES_5, ADC_SINGLE_ENDED, ADC_OFFSET_NONE, 0U } },
+};
+
+
 
 
 

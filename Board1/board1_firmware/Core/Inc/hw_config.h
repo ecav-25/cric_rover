@@ -4,6 +4,7 @@
 #include "motor.h"
 #include "encoder.h"
 
+
 /* ===================== MOTORS ===================== */
 
 typedef enum {
@@ -39,5 +40,20 @@ typedef struct {
 
 
 extern const Encoder_HW_Config_t ENCODER_HW_CONFIG[ENCODER_COUNT];
+
+/* ===================== ADC ===================== */
+
+typedef enum {
+	ADC_TEMP_SENSOR = 0,
+	ADC_BATTERY_VOLTAGE,
+	ADC_COUNT
+} ADC_Id_t;
+
+typedef struct {
+	ADC_HandleTypeDef* hadc;
+	ADC_ChannelConfTypeDef channel_cfg;
+} ADC_HW_Config_t;
+
+extern const ADC_HW_Config_t ADC_HW_CONFIG[ADC_COUNT];
 
 #endif /* INC_HW_CONFIG_H_ */
