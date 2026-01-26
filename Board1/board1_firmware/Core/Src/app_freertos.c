@@ -577,8 +577,6 @@ void lightsTask(void *argument)
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
 void executeSupervision(){
-	HAL_TIM_Base_Start_IT(&htim4);
-
 	debug_time = HAL_GetTick();
 
 	do{
@@ -605,16 +603,9 @@ void executeSupervision(){
 
 	debug_diff = HAL_GetTick() - debug_time;
 
-	HAL_TIM_Base_Stop_IT(&htim4);
-	__HAL_TIM_SET_COUNTER(&htim4, 0);
-
 	if (retransmit_seen_in_cycle){
 		count_retransmit++;
 		retransmit_seen_in_cycle = false;
-	}
-
-	if(deadline){
-		deadlineProcedure();
 	}
 
 	debug_output = Board1_Y.output;

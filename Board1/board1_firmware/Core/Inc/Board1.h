@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board1'.
  *
- * Model version                  : 1.2148
+ * Model version                  : 1.2172
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Sun Jan 25 15:46:25 2026
+ * C/C++ source code generated on : Mon Jan 26 12:24:24 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -98,11 +98,11 @@ typedef struct {
   uint8_T is_Not_moving_routine;       /* '<Root>/Board1' */
   uint8_T is_Special_retro_routine;    /* '<Root>/Board1' */
   uint8_T is_Stop_slow_routine;        /* '<Root>/Board1' */
-  uint8_T is_active_Lights_manager;    /* '<Root>/Board1' */
-  uint8_T is_Lights_manager;           /* '<Root>/Board1' */
-  uint8_T is_Normal_voltage_g;         /* '<Root>/Board1' */
   uint8_T is_active_Mode_manager;      /* '<Root>/Board1' */
   uint8_T is_Mode_manager;             /* '<Root>/Board1' */
+  uint8_T is_Normal_voltage_g;         /* '<Root>/Board1' */
+  uint8_T is_active_Lights_manager;    /* '<Root>/Board1' */
+  uint8_T is_Lights_manager;           /* '<Root>/Board1' */
   uint8_T is_Normal_voltage_f;         /* '<Root>/Board1' */
   uint8_T is_active_Relay_manager;     /* '<Root>/Board1' */
   uint8_T is_Relay_manager;            /* '<Root>/Board1' */
