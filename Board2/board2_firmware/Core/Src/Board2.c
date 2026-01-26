@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board2'.
  *
- * Model version                  : 1.2174
+ * Model version                  : 1.2189
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Mon Jan 26 16:31:55 2026
+ * C/C++ source code generated on : Mon Jan 26 19:03:08 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -723,23 +723,68 @@ static boolean_T Board2_Critical_Voltage(void)
 /* Function for Chart: '<Root>/Board2' */
 static boolean_T Board2_Is_Rover_Stationary(void)
 {
-  int32_T k;
-  boolean_T x[4];
+  int32_T b_k;
+  int16_T b_y;
+  boolean_T b_x[4];
   boolean_T exitg1;
   boolean_T y;
-  x[0] = (Board2_DW.global_state.stateB1.velocity_FA == 0);
-  x[1] = (Board2_DW.global_state.stateB1.velocity_FB == 0);
-  x[2] = (Board2_DW.global_state.stateB1.velocity_BA == 0);
-  x[3] = (Board2_DW.global_state.stateB1.velocity_BB == 0);
+  if (Board2_DW.global_state.stateB1.velocity_FA < 0) {
+    b_k = -Board2_DW.global_state.stateB1.velocity_FA;
+    if (-Board2_DW.global_state.stateB1.velocity_FA > 32767) {
+      b_k = 32767;
+    }
+
+    b_y = (int16_T)b_k;
+  } else {
+    b_y = Board2_DW.global_state.stateB1.velocity_FA;
+  }
+
+  b_x[0] = (b_y <= Board2_STOP_THRESHOLD);
+  if (Board2_DW.global_state.stateB1.velocity_FB < 0) {
+    b_k = -Board2_DW.global_state.stateB1.velocity_FB;
+    if (-Board2_DW.global_state.stateB1.velocity_FB > 32767) {
+      b_k = 32767;
+    }
+
+    b_y = (int16_T)b_k;
+  } else {
+    b_y = Board2_DW.global_state.stateB1.velocity_FB;
+  }
+
+  b_x[1] = (b_y <= Board2_STOP_THRESHOLD);
+  if (Board2_DW.global_state.stateB1.velocity_BA < 0) {
+    b_k = -Board2_DW.global_state.stateB1.velocity_BA;
+    if (-Board2_DW.global_state.stateB1.velocity_BA > 32767) {
+      b_k = 32767;
+    }
+
+    b_y = (int16_T)b_k;
+  } else {
+    b_y = Board2_DW.global_state.stateB1.velocity_BA;
+  }
+
+  b_x[2] = (b_y <= Board2_STOP_THRESHOLD);
+  if (Board2_DW.global_state.stateB1.velocity_BB < 0) {
+    b_k = -Board2_DW.global_state.stateB1.velocity_BB;
+    if (-Board2_DW.global_state.stateB1.velocity_BB > 32767) {
+      b_k = 32767;
+    }
+
+    b_y = (int16_T)b_k;
+  } else {
+    b_y = Board2_DW.global_state.stateB1.velocity_BB;
+  }
+
+  b_x[3] = (b_y <= Board2_STOP_THRESHOLD);
   y = true;
-  k = 0;
+  b_k = 0;
   exitg1 = false;
-  while ((!exitg1) && (k < 4)) {
-    if (!x[k]) {
+  while ((!exitg1) && (b_k < 4)) {
+    if (!b_x[b_k]) {
       y = false;
       exitg1 = true;
     } else {
-      k++;
+      b_k++;
     }
   }
 
@@ -902,7 +947,7 @@ static boolean_T Board2_Stop_B_Pressed(void)
 static void Board2_Process_Evasive_Commands(void)
 {
   int32_T MAX_SPEED;
-  int32_T steering_eff;
+  int32_T steering;
   real32_T forward;
   real32_T throttle;
   real32_T turn;
@@ -914,34 +959,34 @@ static void Board2_Process_Evasive_Commands(void)
 
   throttle = ((real32_T)Board2_DW.global_state.stateB2.controller_y -
               Board2_CENTER) / Board2_CENTER;
-  forward = throttle * (real32_T)MAX_SPEED;
   switch (Board2_DW.global_state.mov_obs) {
    case MOVING_FROM_RIGHT:
-    steering_eff = 1;
+    steering = 1;
     break;
 
    case MOVING_FROM_LEFT:
-    steering_eff = -1;
+    steering = -1;
     break;
 
    default:
-    steering_eff = 0;
+    steering = 1;
     break;
   }
 
-  turn = (real32_T)(steering_eff * MAX_SPEED);
+  forward = throttle * (real32_T)MAX_SPEED;
+  turn = (real32_T)(steering * MAX_SPEED);
   if (fabsf(throttle) < Board2_PURE_TURN_EPS) {
     forward = 0.0F;
   } else {
     throttle = fabsf(forward) * Board2_TURN_RATIO;
     if (fabsf(turn) > throttle) {
       if (turn < 0.0F) {
-        steering_eff = -1;
+        steering = -1;
       } else {
-        steering_eff = (turn > 0.0F);
+        steering = (turn > 0.0F);
       }
 
-      turn = (real32_T)steering_eff * throttle;
+      turn = (real32_T)steering * throttle;
     }
   }
 
