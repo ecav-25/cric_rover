@@ -489,12 +489,14 @@ void readSensorsTask(void *argument)
 
 
 		if(temp_get_celsius_once(&temp_sensor, &temperature) != TEMP_OK){
-			Error_Handler();
+			//Error_Handler();
+			NOP();
 		}
 
 
 		if(batt_get_voltage_once(&battery_sensor, &battery_voltage) != BATT_OK){
-			Error_Handler();
+			//Error_Handler();
+			NOP();
 		}
 
 		debug_temperature = temperature;

@@ -43,18 +43,18 @@ typedef struct {
 
 /* ===================== TELEMETRY ===================== */
 
-typedef enum {
+typedef enum: uint8_t {
     BW_NORMAL,
     BW_SPECIAL
 } BackwardMode;
 
-typedef enum {
+typedef enum: uint8_t {
     OM_NORMAL,
     OM_SINGLE_BOARD,
     OM_DEGRADED
 } OperatingMode;
 
-typedef enum {
+typedef enum: uint8_t {
     LIGHT_OFF,
     LIGHT_ON,
     LIGHT_AUTO

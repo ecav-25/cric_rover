@@ -51,11 +51,12 @@ ControllerStatus_t telecontrol_send_telemetry(Controller_t *telecontrol, Telemet
         return CONTROLLER_ERR;
     }
 
-    HAL_StatusTypeDef status = HAL_I2C_Master_Transmit(telecontrol->i2c, 0x55 << 1, (uint8_t *)telemetry, sizeof(Telemetry_t), 20u);
+    HAL_StatusTypeDef status = HAL_I2C_Master_Transmit(telecontrol->i2c, 0x55 << 1, (uint8_t *)telemetry, sizeof(Telemetry_t), 100);
 
     if (status == HAL_OK) {
         return CONTROLLER_OK;
-    } else {
+    } else if(status == HAL_ERROR){
+    	HAL_GPIO_TogglePin(debug_pin_GPIO_Port, debug_pin_Pin);
         return CONTROLLER_ERR;
     }
 }

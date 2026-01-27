@@ -18,8 +18,6 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include <hw_config.h>
-#include <utils.h>
 #include "FreeRTOS.h"
 #include "task.h"
 #include "main.h"
@@ -386,13 +384,19 @@ void supervisionTask(void *argument)
 /* USER CODE END Header_telemetryLoggerTask */
 void telemetryLoggerTask(void *argument)
 {
+  /* USER CODE BEGIN telemetryLoggerTask */
     TickType_t xLastWakeTime = xTaskGetTickCount();
     const TickType_t xFrequency = pdMS_TO_TICKS(TELEMETRY_LOGGER_PERIOD);
 
     Telemetry_t telemetry;
+
     StateBusB1 stateB1;
     StateBusB2 stateB2;
     DecBus output;
+
+    uint8_t supervision_state;
+    uint8_t light_state;
+    boolean_T special_retro;
 
     if (telemetry_init(&telemetry) != CONTROLLER_OK) {
         Error_Handler();
@@ -402,78 +406,104 @@ void telemetryLoggerTask(void *argument)
     {
         vTaskDelayUntil(&xLastWakeTime, xFrequency);
 
+        /* ===================== SNAPSHOT ATOMICO ===================== */
         taskENTER_CRITICAL();
 
-        output  = Board2_Y.output;
+        output = Board2_Y.output;
         stateB2 = Board2_DW.state;
 
-        /* ===================== NORMAL MODE ===================== */
-        if (Board2_DW.is_Supervision_task == Board2_IN_Normal){
+        supervision_state = Board2_DW.is_Supervision_task;
+        light_state       = Board2_DW.is_Normal_voltage_f;
+        special_retro     = Board2_DW.special_retro;
+
+        if (supervision_state == Board2_IN_Normal) {
             stateB1 = Board2_DW.global_state.stateB1;
+        }
 
-            if (telemetry_set_backward_mode(&telemetry, Board2_DW.special_retro ? BW_SPECIAL : BW_NORMAL) != CONTROLLER_OK){
-                Error_Handler();
-            }
+        taskEXIT_CRITICAL();
+        /* ============================================================ */
 
-            if (telemetry_set_battery(&telemetry, calculate_battery_percent(stateB1.battery_voltage)) != CONTROLLER_OK){
-                Error_Handler();
-            }
+        /* ===================== NORMAL MODE ===================== */
+        if (supervision_state == Board2_IN_Normal)
+        {
+            telemetry_set_backward_mode(
+                &telemetry,
+                special_retro ? BW_SPECIAL : BW_NORMAL
+            );
 
-            if (telemetry_set_temperature(&telemetry, saturate_temperature(stateB1.temperature)) != CONTROLLER_OK){
-                Error_Handler();
-            }
+            telemetry_set_battery(
+                &telemetry,
+                calculate_battery_percent(stateB1.battery_voltage)
+            );
 
-            if (telemetry_set_light_mode(&telemetry, get_light_mode(Board2_DW.is_Normal_voltage_n)) != CONTROLLER_OK){
-                Error_Handler();
-            }
+            telemetry_set_temperature(
+                &telemetry,
+                saturate_temperature(stateB1.temperature)
+            );
 
-            if (telemetry_set_rpm(&telemetry, stateB1.velocity_FA, stateB1.velocity_FB, stateB1.velocity_BA, stateB1.velocity_BB) != CONTROLLER_OK){
-                Error_Handler();
-            }
+            telemetry_set_light_mode(
+                &telemetry,
+                get_light_mode(light_state)
+            );
 
-            if (telemetry_set_operating_mode(&telemetry, OM_NORMAL) != CONTROLLER_OK){
-                Error_Handler();
-            }
+            telemetry_set_rpm(
+                &telemetry,
+                stateB1.velocity_FA,
+                stateB1.velocity_FB,
+                stateB1.velocity_BA,
+                stateB1.velocity_BB
+            );
+
+            telemetry_set_operating_mode(&telemetry, OM_NORMAL);
         }
         /* ===================== NON-NORMAL MODES ===================== */
-        else{
-            if (telemetry_set_backward_mode(&telemetry, BW_NORMAL) != CONTROLLER_OK ||
-                telemetry_set_battery(&telemetry, 0) != CONTROLLER_OK ||
-                telemetry_set_temperature(&telemetry, 0) != CONTROLLER_OK ||
-                telemetry_set_light_mode(&telemetry, LIGHT_OFF) != CONTROLLER_OK ||
-                telemetry_set_rpm(&telemetry, 0, 0, 0, 0) != CONTROLLER_OK){
-                Error_Handler();
-            }
+        else
+        {
+            telemetry_set_backward_mode(&telemetry, BW_NORMAL);
+            telemetry_set_battery(&telemetry, 0);
+            telemetry_set_temperature(&telemetry, 0);
+            telemetry_set_light_mode(&telemetry, LIGHT_OFF);
 
-            if (telemetry_set_operating_mode(&telemetry, (Board2_DW.is_Supervision_task == Board2_IN_Degraded) ? OM_DEGRADED : OM_SINGLE_BOARD) != CONTROLLER_OK){
-                Error_Handler();
-            }
+            telemetry_set_rpm(&telemetry, 0, 0, 0, 0);
+
+            telemetry_set_operating_mode(
+                &telemetry,
+                (supervision_state == Board2_IN_Degraded)
+                    ? OM_DEGRADED
+                    : OM_SINGLE_BOARD
+            );
         }
 
         /* ===================== COMMON FIELDS ===================== */
 
-        if (telemetry_set_sonars(&telemetry, stateB2.sonar1, stateB2.sonar2, stateB2.sonar3) != CONTROLLER_OK){
-            Error_Handler();
-        }
+        telemetry_set_sonars(
+            &telemetry,
+            stateB2.sonar1,
+            stateB2.sonar2,
+            stateB2.sonar3
+        );
 
-        if (telemetry_set_targets(&telemetry, output.rif_FA, output.rif_FB, output.rif_BA, output.rif_BB) != CONTROLLER_OK){
-            Error_Handler();
-        }
+        telemetry_set_targets(
+            &telemetry,
+            output.rif_FA,
+            output.rif_FB,
+            output.rif_BA,
+            output.rif_BB);
 
-        taskEXIT_CRITICAL();
+        /* ===================== TX ===================== */
 
-        if (telecontrol_send_telemetry(&controller, &telemetry) != CONTROLLER_OK){
-            Error_Handler();
-        }
+        //Qui va fatta una gestione senza ErrorHandler in caso di errore
+        telecontrol_send_telemetry(&controller, &telemetry);
     }
+  /* USER CODE END telemetryLoggerTask */
 }
-
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
 static void supervision_read_inputs(void)
 {
     // Lettura hardware
+    //Qui va fatta una gestione senza ErrorHandler in caso di errore
     telecontrol_read(&controller);
     mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
     mpu6050_get_accel_value(&mpu_device, &acceleration);
