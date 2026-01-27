@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board2'.
  *
- * Model version                  : 1.2189
+ * Model version                  : 1.2191
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Mon Jan 26 19:03:08 2026
+ * C/C++ source code generated on : Tue Jan 27 15:24:48 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -947,10 +947,9 @@ static boolean_T Board2_Stop_B_Pressed(void)
 static void Board2_Process_Evasive_Commands(void)
 {
   int32_T MAX_SPEED;
-  int32_T steering;
   real32_T forward;
+  real32_T steering;
   real32_T throttle;
-  real32_T turn;
   if (Board2_DW.global_state.limit_vel) {
     MAX_SPEED = (int32_T)Board2_LIMITED_RPM;
   } else {
@@ -961,42 +960,43 @@ static void Board2_Process_Evasive_Commands(void)
               Board2_CENTER) / Board2_CENTER;
   switch (Board2_DW.global_state.mov_obs) {
    case MOVING_FROM_RIGHT:
-    steering = 1;
+    steering = 0.5F;
     break;
 
    case MOVING_FROM_LEFT:
-    steering = -1;
+    steering = -0.5F;
     break;
 
    default:
-    steering = 1;
+    steering = 0.5F;
     break;
   }
 
   forward = throttle * (real32_T)MAX_SPEED;
-  turn = (real32_T)(steering * MAX_SPEED);
+  steering *= (real32_T)MAX_SPEED;
   if (fabsf(throttle) < Board2_PURE_TURN_EPS) {
     forward = 0.0F;
   } else {
     throttle = fabsf(forward) * Board2_TURN_RATIO;
-    if (fabsf(turn) > throttle) {
-      if (turn < 0.0F) {
-        steering = -1;
+    if (fabsf(steering) > throttle) {
+      int32_T tmp;
+      if (steering < 0.0F) {
+        tmp = -1;
       } else {
-        steering = (turn > 0.0F);
+        tmp = (steering > 0.0F);
       }
 
-      turn = (real32_T)steering * throttle;
+      steering = (real32_T)tmp * throttle;
     }
   }
 
-  throttle = forward + turn;
-  forward -= turn;
-  turn = fmaxf(fabsf(throttle), fabsf(forward));
-  if (turn > MAX_SPEED) {
-    turn = (real32_T)MAX_SPEED / turn;
-    throttle *= turn;
-    forward *= turn;
+  throttle = forward + steering;
+  forward -= steering;
+  steering = fmaxf(fabsf(throttle), fabsf(forward));
+  if (steering > MAX_SPEED) {
+    steering = (real32_T)MAX_SPEED / steering;
+    throttle *= steering;
+    forward *= steering;
   }
 
   Board2_DW.decision.rif_FA = throttle;
