@@ -18,12 +18,10 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include <utils.h>
 #include "FreeRTOS.h"
 #include "task.h"
 #include "main.h"
 #include "cmsis_os.h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "Board1.h"
@@ -37,6 +35,7 @@
 #include "led.h"
 #include "led_stripes.h"
 #include "deadline_watchdog.h"
+#include "utils.h"
 #include "hw_config.h"
 /* USER CODE END Includes */
 
@@ -490,13 +489,13 @@ void readSensorsTask(void *argument)
 
 		if(temp_get_celsius_once(&temp_sensor, &temperature) != TEMP_OK){
 			//Error_Handler();
-			NOP();
+			__NOP();
 		}
 
 
 		if(batt_get_voltage_once(&battery_sensor, &battery_voltage) != BATT_OK){
 			//Error_Handler();
-			NOP();
+			__NOP();
 		}
 
 		debug_temperature = temperature;
