@@ -579,16 +579,16 @@ void pidTask(void *argument)
 
 	    switch (rover_mode)
 	    {
-	        case DEFAULT:
-	            ramp_step = RAMP_STEP_DEFAULT;
-	            break;
-
 	        case SPORT:
 	            ramp_step = RAMP_STEP_SPORT;
 	            break;
 
+	        case ECO:
+	        	ramp_step = RAMP_STEP_ECO;
+	            break;
+
 	        default:
-	            ramp_step = RAMP_STEP_ECO;
+	            ramp_step = RAMP_STEP_DEFAULT;
 	            break;
 	    }
 
