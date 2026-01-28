@@ -45,3 +45,13 @@ LightOperatingMode get_light_mode(uint32_T state){
     }
     return LIGHT_OFF;
 }
+
+DrivingMode get_driving_mode(uint32_T state){
+	if (state == Board2_IN_Mode_SPORT) {
+		return DM_SPORT;
+	}
+	if (state == Board2_IN_Mode_ECO) {
+		return DM_ECO;
+	}
+	return DM_DEFAULT;
+}
