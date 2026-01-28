@@ -33,6 +33,8 @@
 #include "motor.h"
 #include "stdlib.h"
 #include "deadline_watchdog.h"
+#include "hw_config.h"
+#include "utils.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
