@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board2'.
  *
- * Model version                  : 1.2191
+ * Model version                  : 1.2271
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Tue Jan 27 15:24:48 2026
+ * C/C++ source code generated on : Wed Jan 28 17:27:54 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -53,13 +53,17 @@ typedef struct {
   real32_T TURN_THRESHOLD;             /* '<Root>/Board2' */
   int32_T sfEvent;                     /* '<Root>/Board2' */
   uint32_T time_temp;                  /* '<Root>/Board2' */
-  uint32_T time_obs;                   /* '<Root>/Board2' */
-  uint32_T time_button;                /* '<Root>/Board2' */
+  uint32_T time_obs_s1;                /* '<Root>/Board2' */
+  uint32_T time_button_retro;          /* '<Root>/Board2' */
   uint32_T time_comm;                  /* '<Root>/Board2' */
+  uint32_T time_obs_s3;                /* '<Root>/Board2' */
+  uint32_T time_button_obs;            /* '<Root>/Board2' */
+  uint32_T time_button_vel;            /* '<Root>/Board2' */
   MOVING_OBSTACLE_TYPE moving_obstacle;/* '<Root>/Board2' */
   uint16_T distance_threshold;         /* '<Root>/Board2' */
   uint8_T retransmitted;               /* '<Root>/Board2' */
   uint8_T receivedPing;                /* '<Root>/Board2' */
+  uint8_T max_vel;                     /* '<Root>/Board2' */
   uint8_T is_active_c1_Board2;         /* '<Root>/Board2' */
   uint8_T is_c1_Board2;                /* '<Root>/Board2' */
   uint8_T is_Supervision_task;         /* '<Root>/Board2' */
@@ -74,11 +78,6 @@ typedef struct {
   uint8_T is_Obstacle_from_left;       /* '<Root>/Board2' */
   uint8_T is_active_Obstacle_from_right;/* '<Root>/Board2' */
   uint8_T is_Obstacle_from_right;      /* '<Root>/Board2' */
-  uint8_T is_active_Combo;             /* '<Root>/Board2' */
-  uint8_T is_active_Special_retro;     /* '<Root>/Board2' */
-  uint8_T is_Special_retro;            /* '<Root>/Board2' */
-  uint8_T is_active_Obstacle_detection;/* '<Root>/Board2' */
-  uint8_T is_Obstacle_detection;       /* '<Root>/Board2' */
   uint8_T is_active_Battery_temperature_m;/* '<Root>/Board2' */
   uint8_T is_active_Normal_velocity;   /* '<Root>/Board2' */
   uint8_T is_Normal_velocity;          /* '<Root>/Board2' */
@@ -86,6 +85,14 @@ typedef struct {
   uint8_T is_Battery_manager;          /* '<Root>/Board2' */
   uint8_T is_active_Temperature_manager;/* '<Root>/Board2' */
   uint8_T is_Temperature_manager;      /* '<Root>/Board2' */
+  uint8_T is_active_Combo;             /* '<Root>/Board2' */
+  uint8_T is_active_Special_retro;     /* '<Root>/Board2' */
+  uint8_T is_Special_retro;            /* '<Root>/Board2' */
+  uint8_T is_active_Obstacle_detection;/* '<Root>/Board2' */
+  uint8_T is_Obstacle_detection;       /* '<Root>/Board2' */
+  uint8_T is_active_Change_max_velocity;/* '<Root>/Board2' */
+  uint8_T is_Change_max_velocity;      /* '<Root>/Board2' */
+  uint8_T is_Manager_combo_velocity;   /* '<Root>/Board2' */
   uint8_T is_active_Actions;           /* '<Root>/Board2' */
   uint8_T is_active_Routine_manager;   /* '<Root>/Board2' */
   uint8_T is_Routine_manager;          /* '<Root>/Board2' */
@@ -101,16 +108,18 @@ typedef struct {
   uint8_T is_Stop_slow_routine;        /* '<Root>/Board2' */
   uint8_T is_active_Mode_manager;      /* '<Root>/Board2' */
   uint8_T is_Mode_manager;             /* '<Root>/Board2' */
-  uint8_T is_Normal_voltage_f;         /* '<Root>/Board2' */
+  uint8_T is_Normal_voltage_m;         /* '<Root>/Board2' */
   uint8_T is_active_Lights_manager;    /* '<Root>/Board2' */
   uint8_T is_Lights_manager;           /* '<Root>/Board2' */
-  uint8_T is_Normal_voltage_d;         /* '<Root>/Board2' */
+  uint8_T is_Normal_voltage_h;         /* '<Root>/Board2' */
   uint8_T is_active_Relay_manager;     /* '<Root>/Board2' */
   uint8_T is_Relay_manager;            /* '<Root>/Board2' */
   uint8_T is_Single_Board;             /* '<Root>/Board2' */
   boolean_T special_retro;             /* '<Root>/Board2' */
   boolean_T limit_velocity;            /* '<Root>/Board2' */
   boolean_T obs_detection;             /* '<Root>/Board2' */
+  boolean_T prev_limit_state;          /* '<Root>/Board2' */
+  boolean_T prev_button1_vel;          /* '<Root>/Board2' */
   boolean_T prev_button1_retro;        /* '<Root>/Board2' */
   boolean_T prev_button2_retro;        /* '<Root>/Board2' */
   boolean_T prev_button1_obs;          /* '<Root>/Board2' */
@@ -190,6 +199,7 @@ extern RT_MODEL_Board2_T *const Board2_M;
 #define B_IN_Control_controller_routine ((uint8_T)1U)
 #define B_IN_Moving_obstacle_from_right ((uint8_T)1U)
 #define Bo_GLOBAL_STATE_RECEIVE_TIMEOUT (5500U)
+#define Bo_IN_Change_max_velocity_start ((uint8_T)1U)
 #define Bo_IN_Moving_obstacle_from_left ((uint8_T)1U)
 #define Boa_IN_Emergency_button_routine ((uint8_T)2U)
 #define Boar_IN_Connection_restablished ((uint8_T)1U)
@@ -207,6 +217,8 @@ extern RT_MODEL_Board2_T *const Board2_M;
 #define Board2_DECISION_SEND_TIMEOUT   (2900U)
 #define Board2_HIGH_TEMPERATURE        (60.0F)
 #define Board2_IMM_DISTANCE            ((uint16_T)70U)
+#define Board2_INCLINATION_DECREASE_VEL ((uint16_T)60U)
+#define Board2_INCLINATION_INCREASE_VEL ((uint16_T)450U)
 #define Board2_INITIAL_TIMEOUT         (1500U)
 #define Board2_IN_Control_battery_stop ((uint8_T)1U)
 #define Board2_IN_Critical_voltage     ((uint8_T)1U)
@@ -215,6 +227,7 @@ extern RT_MODEL_Board2_T *const Board2_M;
 #define Board2_IN_Emergency_button     ((uint8_T)1U)
 #define Board2_IN_Emergency_sonar      ((uint8_T)1U)
 #define Board2_IN_First_button         ((uint8_T)1U)
+#define Board2_IN_First_button_p       ((uint8_T)2U)
 #define Board2_IN_Global_state_received ((uint8_T)3U)
 #define Board2_IN_High_temperature     ((uint8_T)1U)
 #define Board2_IN_Lights_AUTO          ((uint8_T)1U)
@@ -222,6 +235,8 @@ extern RT_MODEL_Board2_T *const Board2_M;
 #define Board2_IN_Lights_ON            ((uint8_T)3U)
 #define Board2_IN_Limited              ((uint8_T)1U)
 #define Board2_IN_Limited_e            ((uint8_T)2U)
+#define Board2_IN_Max_velocity_decrease ((uint8_T)3U)
+#define Board2_IN_Max_velocity_increase ((uint8_T)4U)
 #define Board2_IN_Mode_DEFAULT         ((uint8_T)1U)
 #define Board2_IN_Mode_ECO             ((uint8_T)2U)
 #define Board2_IN_Mode_SPORT           ((uint8_T)3U)
@@ -267,16 +282,17 @@ extern RT_MODEL_Board2_T *const Board2_M;
 #define Board2_IN_Turn_right_j         ((uint8_T)1U)
 #define Board2_IN_Waiting              ((uint8_T)3U)
 #define Board2_IN_Waiting_comunication ((uint8_T)13U)
-#define Board2_LIMITED_RPM             (80.0F)
+#define Board2_LIMITED_RPM             ((uint8_T)80U)
 #define Board2_LOW_CONTROLLER_BATTERY  ((uint8_T)5U)
 #define Board2_LOW_VOLTAGE             (9.83F)
 #define Board2_MAX_DISTANCE            ((uint16_T)300U)
 #define Board2_MAX_RETRANSMIT          ((uint8_T)1U)
-#define Board2_MAX_RPM                 (150.0F)
+#define Board2_MAX_RPM                 ((uint8_T)150U)
 #define Board2_MIN_DISTANCE            ((uint16_T)150U)
+#define Board2_MIN_RPM                 ((uint8_T)50U)
 #define Board2_OBS_TIMEOUT             (5000U)
 #define Board2_PERIOD                  (0.06F)
-#define Board2_PROTECTION_DISTANCE     ((uint16_T)20U)
+#define Board2_PROTECTION_DISTANCE     ((uint16_T)40U)
 #define Board2_PURE_TURN_EPS           (0.01F)
 #define Board2_STATE_RECEIVE_TIMEOUT   (2700U)
 #define Board2_STATE_SEND_TIMEOUT      (3300U)
@@ -287,9 +303,11 @@ extern RT_MODEL_Board2_T *const Board2_M;
 #define Board2_TURN_BACK_RPM           (40.0F)
 #define Board2_TURN_RATIO              (0.35F)
 #define Board2_TURN_RPM                (20.0F)
+#define Board2_VEL_CHANGE              ((uint8_T)10U)
 #define Board2_WAIT_TIMEOUT            (500U)
 #define Board2_event_STEP              (1750)
 #define Board_GLOBAL_STATE_SEND_TIMEOUT (5000U)
+#define Board_IN_Manager_combo_velocity ((uint8_T)1U)
 #define Board_IN_Starting_to_restablish ((uint8_T)4U)
 #define IN_Global_Local_state_transmitt ((uint8_T)2U)
 #define IN_Low_controller_battery_routi ((uint8_T)4U)

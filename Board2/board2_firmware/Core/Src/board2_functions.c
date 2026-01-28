@@ -76,7 +76,7 @@ static void Copy_GSBus(GSBus* dest, const GSBus* src) {
     Copy_StateBusB2(&dest->stateB2, &src->stateB2);
     dest->mov_obs = src->mov_obs;
     dest->spc_retro = src->spc_retro;
-    dest->limit_vel = src->limit_vel;
+    dest->max_vel = src->max_vel;
     dest->obs_detection = src->obs_detection;
 }
 

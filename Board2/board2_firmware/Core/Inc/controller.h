@@ -43,24 +43,44 @@ typedef struct {
 
 /* ===================== TELEMETRY ===================== */
 
-typedef enum: uint8_t {
-    BW_NORMAL,
+typedef uint8_t BackwardMode;
+enum {
+    BW_NORMAL = 0,
     BW_SPECIAL
-} BackwardMode;
+};
 
-typedef enum: uint8_t {
-    OM_NORMAL,
+typedef uint8_t OperatingMode;
+enum {
+    OM_NORMAL = 0,
     OM_SINGLE_BOARD,
     OM_DEGRADED
-} OperatingMode;
+};
 
-typedef enum: uint8_t {
-    LIGHT_OFF,
+typedef uint8_t LightOperatingMode;
+enum {
+    LIGHT_OFF = 0,
     LIGHT_ON,
     LIGHT_AUTO
-} LightOperatingMode;
+};
+
+typedef uint8_t DrivingMode;
+enum {
+    DM_DEFAULT = 0,
+    DM_SPORT,
+    DM_ECO
+};
+
+typedef uint8_t ObstacleAvoidanceMode;
+enum {
+    COMPLETE = 0,
+    MINIMAL
+};
 
 typedef struct __attribute__((packed)) {
+	uint16_t sonar_l;
+	uint16_t sonar_c;
+	uint16_t sonar_r;
+
     int16_t rpm_fl;
     int16_t rpm_fr;
     int16_t rpm_rl;
@@ -71,16 +91,16 @@ typedef struct __attribute__((packed)) {
     int16_t target_rl;
     int16_t target_rr;
 
+    uint8_t max_velocity;
+
     uint8_t battery_percent;
     int8_t  temperature;
-
-    uint16_t sonar_l;
-    uint16_t sonar_c;
-    uint16_t sonar_r;
 
     BackwardMode backward_mode;
     OperatingMode operating_mode;
     LightOperatingMode light_mode;
+    DrivingMode driving_mode;
+    ObstacleAvoidanceMode obstacle_mode;
 } Telemetry_t;
 
 /* ===================== CONTROLLER API ===================== */
@@ -117,6 +137,10 @@ ControllerStatus_t telemetry_set_operating_mode(Telemetry_t *telemetry, Operatin
 
 ControllerStatus_t telemetry_set_backward_mode(Telemetry_t *telemetry, BackwardMode mode);
 
+ControllerStatus_t telemetry_set_driving_mode(Telemetry_t *telemetry, DrivingMode  mode);
+
+ControllerStatus_t telemetry_set_obstacle_avoidance_mode(Telemetry_t *telemetry, ObstacleAvoidanceMode  mode);
+
 ControllerStatus_t telemetry_set_battery(Telemetry_t *telemetry, uint8_t percent);
 
 ControllerStatus_t telemetry_set_temperature(Telemetry_t *telemetry, int8_t temp);
@@ -124,6 +148,8 @@ ControllerStatus_t telemetry_set_temperature(Telemetry_t *telemetry, int8_t temp
 ControllerStatus_t telemetry_set_rpm(Telemetry_t *telemetry, int16_t fl, int16_t fr,int16_t rl, int16_t rr);
 
 ControllerStatus_t telemetry_set_targets(Telemetry_t *telemetry, int16_t fl, int16_t fr,int16_t rl, int16_t rr);
+
+ControllerStatus_t telemetry_set_max_velocity(Telemetry_t *telemetry, uint8_t max_vel);
 
 ControllerStatus_t telemetry_set_sonars(Telemetry_t *telemetry, uint16_t left, uint16_t center, uint16_t right);
 

@@ -171,6 +171,24 @@ ControllerStatus_t telemetry_set_backward_mode(Telemetry_t *telemetry, BackwardM
     return CONTROLLER_OK;
 }
 
+ControllerStatus_t telemetry_set_driving_mode(Telemetry_t *telemetry, DrivingMode  mode){
+	if (telemetry == NULL) {
+		return CONTROLLER_ERR;
+	}
+
+	telemetry->driving_mode = mode;
+	return CONTROLLER_OK;
+}
+
+ControllerStatus_t telemetry_set_obstacle_avoidance_mode(Telemetry_t *telemetry, ObstacleAvoidanceMode  mode){
+	if (telemetry == NULL) {
+		return CONTROLLER_ERR;
+	}
+
+	telemetry->obstacle_mode = mode;
+	return CONTROLLER_OK;
+}
+
 ControllerStatus_t telemetry_set_battery(Telemetry_t *telemetry, uint8_t percent){
     if (telemetry == NULL) {
         return CONTROLLER_ERR;
@@ -202,8 +220,7 @@ ControllerStatus_t telemetry_set_rpm(Telemetry_t *telemetry, int16_t fl, int16_t
     return CONTROLLER_OK;
 }
 
-ControllerStatus_t telemetry_set_targets(Telemetry_t *telemetry, int16_t fl, int16_t fr, int16_t rl, int16_t rr)
-{
+ControllerStatus_t telemetry_set_targets(Telemetry_t *telemetry, int16_t fl, int16_t fr, int16_t rl, int16_t rr){
     if (telemetry == NULL) {
         return CONTROLLER_ERR;
     }
@@ -216,6 +233,15 @@ ControllerStatus_t telemetry_set_targets(Telemetry_t *telemetry, int16_t fl, int
     return CONTROLLER_OK;
 }
 
+ControllerStatus_t telemetry_set_max_velocity(Telemetry_t *telemetry, uint8_t max_vel){
+	if (telemetry == NULL) {
+		return CONTROLLER_ERR;
+	}
+
+	telemetry->max_velocity = max_vel;
+
+	return CONTROLLER_OK;
+}
 ControllerStatus_t telemetry_set_sonars(Telemetry_t *telemetry, uint16_t left, uint16_t center, uint16_t right){
     if (telemetry == NULL) {
         return CONTROLLER_ERR;

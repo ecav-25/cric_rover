@@ -20,4 +20,6 @@ int8_T saturate_temperature(real32_T temp);
 
 LightOperatingMode get_light_mode(uint32_T state);
 
+DrivingMode get_driving_mode(uint32_T state);
+
 #endif /* UTILS_H */
