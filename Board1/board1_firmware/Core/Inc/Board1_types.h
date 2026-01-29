@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board1'.
  *
- * Model version                  : 1.2285
+ * Model version                  : 1.2312
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Thu Jan 29 12:37:18 2026
+ * C/C++ source code generated on : Thu Jan 29 18:13:58 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -38,7 +38,8 @@ typedef enum {
   OFF = 0,                             /* Default value */
   WHITE,
   RED,
-  BLINKING_RED
+  BLINKING_RED,
+  BLINKING_WHITE
 } LED_TYPE;
 
 #endif
@@ -52,7 +53,8 @@ typedef enum {
   BRAKING_LIGHT,
   BACKWARD_LIGHTS,
   ARROW_LEFT,
-  ARROW_RIGHT
+  ARROW_RIGHT,
+  SPECIAL_LIGHTS
 } REAR_LED_TYPE;
 
 #endif

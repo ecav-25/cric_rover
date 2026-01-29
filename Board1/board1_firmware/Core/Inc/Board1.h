@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board1'.
  *
- * Model version                  : 1.2285
+ * Model version                  : 1.2312
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Thu Jan 29 12:37:18 2026
+ * C/C++ source code generated on : Thu Jan 29 18:13:58 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -67,7 +67,8 @@ typedef struct {
   uint8_T max_vel;                     /* '<Root>/Board1' */
   uint8_T is_active_c2_Board1;         /* '<Root>/Board1' */
   uint8_T is_c2_Board1;                /* '<Root>/Board1' */
-  uint8_T is_Supervision_task;         /* '<Root>/Board1' */
+  uint8_T is_active_Board_state;       /* '<Root>/Board1' */
+  uint8_T is_Board_state;              /* '<Root>/Board1' */
   uint8_T is_Degraded;                 /* '<Root>/Board1' */
   uint8_T is_Restablish;               /* '<Root>/Board1' */
   uint8_T is_active_Supervisor;        /* '<Root>/Board1' */
@@ -94,10 +95,11 @@ typedef struct {
   uint8_T is_active_Change_max_velocity;/* '<Root>/Board1' */
   uint8_T is_Change_max_velocity;      /* '<Root>/Board1' */
   uint8_T is_Manager_combo_velocity;   /* '<Root>/Board1' */
-  uint8_T is_active_Actions;           /* '<Root>/Board1' */
+  uint8_T is_Single_Board;             /* '<Root>/Board1' */
+  uint8_T is_active_Board_actions;     /* '<Root>/Board1' */
   uint8_T is_active_Routine_manager;   /* '<Root>/Board1' */
   uint8_T is_Routine_manager;          /* '<Root>/Board1' */
-  uint8_T is_Normal_voltage;           /* '<Root>/Board1' */
+  uint8_T is_Normal_voltage_routine;   /* '<Root>/Board1' */
   uint8_T is_Control_controller_routine;/* '<Root>/Board1' */
   uint8_T is_Emergency_button_routine; /* '<Root>/Board1' */
   uint8_T is_Emergency_sonar_routine;  /* '<Root>/Board1' */
@@ -109,16 +111,16 @@ typedef struct {
   uint8_T is_Stop_slow_routine;        /* '<Root>/Board1' */
   uint8_T is_active_Mode_manager;      /* '<Root>/Board1' */
   uint8_T is_Mode_manager;             /* '<Root>/Board1' */
-  uint8_T is_Normal_voltage_e;         /* '<Root>/Board1' */
+  uint8_T is_Normal_voltage_driving;   /* '<Root>/Board1' */
   uint8_T is_active_Lights_manager;    /* '<Root>/Board1' */
   uint8_T is_Lights_manager;           /* '<Root>/Board1' */
-  uint8_T is_Normal_voltage_k;         /* '<Root>/Board1' */
+  uint8_T is_Normal_voltage_lights;    /* '<Root>/Board1' */
   uint8_T is_active_Relay_manager;     /* '<Root>/Board1' */
   uint8_T is_Relay_manager;            /* '<Root>/Board1' */
-  uint8_T is_Single_Board;             /* '<Root>/Board1' */
   boolean_T special_retro;             /* '<Root>/Board1' */
   boolean_T limit_velocity;            /* '<Root>/Board1' */
   boolean_T obs_detection;             /* '<Root>/Board1' */
+  boolean_T special_retro_rotating;    /* '<Root>/Board1' */
   boolean_T prev_button1_retro;        /* '<Root>/Board1' */
   boolean_T prev_button1_vel;          /* '<Root>/Board1' */
   boolean_T prev_button2_retro;        /* '<Root>/Board1' */
@@ -193,9 +195,12 @@ extern RT_MODEL_Board1_T *const Board1_M;
 #define Bo_GLOBAL_STATE_RECEIVE_TIMEOUT (5500U)
 #define Bo_IN_Change_max_velocity_start ((uint8_T)1U)
 #define Bo_IN_Moving_obstacle_from_left ((uint8_T)1U)
+#define Boa_IN_Critical_voltage_driving ((uint8_T)1U)
+#define Boa_IN_Critical_voltage_routine ((uint8_T)1U)
 #define Boa_IN_Emergency_button_routine ((uint8_T)2U)
 #define Boar_IN_Connection_restablished ((uint8_T)1U)
 #define Boar_IN_Control_from_controller ((uint8_T)1U)
+#define Boar_IN_Critical_voltage_lights ((uint8_T)1U)
 #define Boar_IN_Emergency_sonar_routine ((uint8_T)3U)
 #define Boar_IN_Local_state_transmitted ((uint8_T)5U)
 #define Board1_BUTTON_TIMEOUT          (700U)
@@ -211,7 +216,6 @@ extern RT_MODEL_Board1_T *const Board1_M;
 #define Board1_IMM_DISTANCE            ((uint16_T)70U)
 #define Board1_INCLINATION_INCREASE_VEL ((uint16_T)450U)
 #define Board1_IN_Control_battery_stop ((uint8_T)1U)
-#define Board1_IN_Critical_voltage     ((uint8_T)1U)
 #define Board1_IN_Decision_received    ((uint8_T)1U)
 #define Board1_IN_Decision_transmitted ((uint8_T)2U)
 #define Board1_IN_Degraded             ((uint8_T)1U)
@@ -236,7 +240,8 @@ extern RT_MODEL_Board1_T *const Board1_M;
 #define Board1_IN_No_movements         ((uint8_T)1U)
 #define Board1_IN_Normal               ((uint8_T)2U)
 #define Board1_IN_Normal_g             ((uint8_T)3U)
-#define Board1_IN_Normal_voltage       ((uint8_T)2U)
+#define Board1_IN_Normal_voltage_lights ((uint8_T)2U)
+#define Board1_IN_Normal_voltage_relay ((uint8_T)2U)
 #define Board1_IN_Not_moving           ((uint8_T)1U)
 #define Board1_IN_Not_moving_routine   ((uint8_T)7U)
 #define Board1_IN_Obstacle_left        ((uint8_T)2U)
@@ -301,7 +306,10 @@ extern RT_MODEL_Board1_T *const Board1_M;
 #define Board1_WAIT_TIMEOUT            (500U)
 #define Board1_event_STEP              (1483)
 #define Board_GLOBAL_STATE_SEND_TIMEOUT (5000U)
+#define Board_IN_Critical_voltage_relay ((uint8_T)1U)
 #define Board_IN_Manager_combo_velocity ((uint8_T)1U)
+#define Board_IN_Normal_voltage_driving ((uint8_T)2U)
+#define Board_IN_Normal_voltage_routine ((uint8_T)2U)
 #define IN_Global_Local_state_transmitt ((uint8_T)3U)
 #define IN_Low_controller_battery_routi ((uint8_T)4U)
 #define IN_Moving_obstacle_from_left_ro ((uint8_T)5U)

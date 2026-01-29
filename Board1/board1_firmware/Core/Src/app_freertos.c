@@ -109,6 +109,11 @@ uint8_t out_BA = 0;
 uint8_t out_FB = 0;
 uint8_t out_FA = 0;
 
+PID_t pid_FA;
+PID_t pid_FB;
+PID_t pid_BA;
+PID_t pid_BB;
+/*
 PID_Law_t pid_FA;
 PID_Law_t pid_FB;
 PID_Law_t pid_BA;
@@ -117,6 +122,20 @@ PID_Law_t pid_BB;
 real32_T a1 = 1;
 real32_T b0_FA = 0.011526, b0_FB = 0.012068, b0_BA = 0.01182, b0_BB = 0.011206;
 real32_T b1_FA = -0.0062, b1_FB = -0.0066, b1_BA = -0.0062, b1_BB = -0.0059;
+*/
+
+/*Variabili per il pid classico*/
+float kpFA = 0.009319;
+float kiFA = 1.1;
+
+float kpFB = 0.008858;
+float kiFB = 1.067;
+
+float kpBA = 0.008989;
+float kiBA = 1.133;
+
+float kpBB = 0.008543;
+float kiBB = 1.065;
 
 DecBus debug_output;
 volatile uint32_t debug_count_step = 0;
@@ -363,6 +382,27 @@ void MX_FREERTOS_Init(void) {
 		return;
 	}
 
+	if (PID_init(&pid_FA, kpFA, kiFA, 0, 5, 0) != PID_OK) {
+		Error_Handler();
+		return;
+	}
+
+	if (PID_init(&pid_FB, kpFB, kiFB, 0, 5, 0) != PID_OK) {
+		Error_Handler();
+		return;
+	}
+
+	if (PID_init(&pid_BA, kpBA, kiBA, 0, 5, 0) != PID_OK) {
+		Error_Handler();
+		return;
+	}
+
+	if (PID_init(&pid_BB, kpBB, kiBB, 0, 5, 0) != PID_OK) {
+		Error_Handler();
+		return;
+	}
+
+	/*
 	if (PID_Law_init(&pid_FA, a1, b0_FA, b1_FA) != PID_LAW_OK) {
 	    Error_Handler();
 		return;
@@ -382,6 +422,7 @@ void MX_FREERTOS_Init(void) {
 	    Error_Handler();
 	    return;
 	}
+	*/
 
 	led_stripe_init(&cfg);
 	led_init(&ledA, ledA_ports, ledA_pins, OFF, led_init_state, 20);
@@ -445,9 +486,9 @@ void supervisionTask(void *argument)
   /* USER CODE BEGIN supervisionTask */
 
 	for(;;){
-			osEventFlagsWait(SessionEventHandle, EVT_SESSION, osFlagsWaitAny, pdMS_TO_TICKS(SUPERVISION_PERIOD));
-			executeSupervision();
-			DWD_Notify(&hard_rt_deadline_wd, DWD_FLAG_SUPERVISION);
+		osEventFlagsWait(SessionEventHandle, EVT_SESSION, osFlagsWaitAny, pdMS_TO_TICKS(SUPERVISION_PERIOD));
+		executeSupervision();
+		DWD_Notify(&hard_rt_deadline_wd, DWD_FLAG_SUPERVISION);
 	}
   /* USER CODE END supervisionTask */
 }
@@ -543,8 +584,6 @@ void pidTask(void *argument)
 	static real32_T rif_BA_r = 0;
 	static real32_T rif_BB_r = 0;
 
-
-
 	for (;;)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
@@ -614,6 +653,27 @@ void pidTask(void *argument)
 	        rif_BB_r = ramp(rif_BB_r, rif_BB, ramp_step);
 	    }
 
+	    if (PID_compute(&pid_FA, rif_FA_r, encoder_FA_pid.velocity, &control_FA) != PID_OK) {
+			Error_Handler();
+		}
+		out_FA = abs(round(control_FA * MOTOR_MAX_DUTY / U_MAX));
+
+		if (PID_compute(&pid_FB, rif_FB_r, encoder_FB_pid.velocity, &control_FB) != PID_OK) {
+			Error_Handler();
+		}
+		out_FB = abs(round(control_FB * MOTOR_MAX_DUTY / U_MAX));
+
+		if (PID_compute(&pid_BA, rif_BA_r, encoder_BA_pid.velocity, &control_BA) != PID_OK) {
+			Error_Handler();
+		}
+		out_BA = abs(round(control_BA * MOTOR_MAX_DUTY / U_MAX));
+
+		if (PID_compute(&pid_BB, rif_BB_r, encoder_BB_pid.velocity, &control_BB) != PID_OK) {
+			Error_Handler();
+		}
+		out_BB = abs(round(control_BB * MOTOR_MAX_DUTY / U_MAX));
+
+		/*
 	    if (PID_Law_compute(&pid_FA, rif_FA_r, encoder_FA_pid.velocity, &control_FA) != PID_LAW_OK) {
 	        Error_Handler();
 	    }
@@ -633,8 +693,7 @@ void pidTask(void *argument)
 	        Error_Handler();
 	    }
 	    out_BB = abs(round(control_BB * MOTOR_MAX_DUTY / U_MAX));
-
-
+	    */
 
 	    if (motor_set(&motor_FA, out_FA, (control_FA > 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
 	        Error_Handler();
@@ -651,7 +710,6 @@ void pidTask(void *argument)
 	    if (motor_set(&motor_BB, out_BB, (control_BB > 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
 	        Error_Handler();
 	    }
-
 
 
 		DWD_Notify(&hard_rt_deadline_wd, DWD_FLAG_PID);
@@ -710,19 +768,19 @@ void executeSupervision(){
 		debug_count_step++;
 		Board1_step();
 
-		if(Board1_DW.is_Supervision_task != Board1_IN_Normal)
+		if(Board1_DW.is_Board_state != Board1_IN_Normal)
 				degraded=degraded+1;
 
-		if(Board1_DW.is_Supervision_task == Board1_IN_Single_Board)
-					debug_decision = Board1_DW.decision;
+		if(Board1_DW.is_Board_state == Board1_IN_Single_Board)
+				debug_decision = Board1_DW.decision;
 
-		if(Board1_DW.is_Supervision_task == Board1_IN_Normal && Board1_DW.retransmitted)
+		if(Board1_DW.is_Board_state == Board1_IN_Normal && Board1_DW.retransmitted)
 			retransmit_seen_in_cycle = true;
 	}
 	while(Board1_DW.is_Supervisor != Board1_IN_Same_decision &&
 			Board1_DW.is_Single_Board != Board1_IN_Other_board_failure &&
 				Board1_DW.is_Degraded != Board1_IN_Restarting &&
-					Board1_DW.is_Restablish != Boar_IN_Connection_restablished && !deadline);
+					Board1_DW.is_Restablish != Boar_IN_Connection_restablished);
 
 	debug_diff = HAL_GetTick() - debug_time;
 
