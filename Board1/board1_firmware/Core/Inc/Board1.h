@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board1'.
  *
- * Model version                  : 1.2271
+ * Model version                  : 1.2285
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Wed Jan 28 17:23:18 2026
+ * C/C++ source code generated on : Thu Jan 29 12:37:18 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -120,13 +120,13 @@ typedef struct {
   boolean_T limit_velocity;            /* '<Root>/Board1' */
   boolean_T obs_detection;             /* '<Root>/Board1' */
   boolean_T prev_button1_retro;        /* '<Root>/Board1' */
-  boolean_T prev_l_stick_button;       /* '<Root>/Board1' */
-  boolean_T prev_r_stick_button;       /* '<Root>/Board1' */
+  boolean_T prev_button1_vel;          /* '<Root>/Board1' */
   boolean_T prev_button2_retro;        /* '<Root>/Board1' */
   boolean_T prev_button2_obs;          /* '<Root>/Board1' */
   boolean_T prev_button1_obs;          /* '<Root>/Board1' */
-  boolean_T prev_button1_vel;          /* '<Root>/Board1' */
   boolean_T prev_limit_state;          /* '<Root>/Board1' */
+  boolean_T prev_r_stick_button;       /* '<Root>/Board1' */
+  boolean_T prev_l_stick_button;       /* '<Root>/Board1' */
 } DW_Board1_T;
 
 /* External inputs (root inport signals with default storage) */
@@ -282,6 +282,7 @@ extern RT_MODEL_Board1_T *const Board1_M;
 #define Board1_MAX_RETRANSMIT          ((uint8_T)1U)
 #define Board1_MAX_RPM                 ((uint8_T)150U)
 #define Board1_MIN_DISTANCE            ((uint16_T)150U)
+#define Board1_MIN_TURN_SCALE_EVASIVE  (0.2F)
 #define Board1_OBS_TIMEOUT             (5000U)
 #define Board1_PERIOD                  (0.06F)
 #define Board1_PROTECTION_DISTANCE     ((uint16_T)40U)

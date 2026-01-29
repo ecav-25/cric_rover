@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board1'.
  *
- * Model version                  : 1.2271
+ * Model version                  : 1.2285
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Wed Jan 28 17:23:18 2026
+ * C/C++ source code generated on : Thu Jan 29 12:37:18 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -167,7 +167,7 @@ static void Board1_enter_internal_Normal(void)
   Board1_DW.is_Temperature_manager = Board1_IN_Normal_g;
   Board1_DW.is_active_Combo = 1U;
   Board1_DW.is_active_Special_retro = 1U;
-  Board1_DW.special_retro = false;
+  Board1_DW.special_retro = true;
   Board1_DW.is_Special_retro = Board1_IN_Special_retro_start;
   Board1_DW.is_active_Obstacle_detection = 1U;
   Board1_DW.obs_detection = true;
@@ -960,50 +960,50 @@ static boolean_T Board1_Stop_B_Pressed(void)
 /* Function for Chart: '<Root>/Board1' */
 static void Board1_Process_Evasive_Commands(void)
 {
+  int32_T steering_dir;
   real32_T forward;
-  real32_T steering;
   real32_T throttle;
+  real32_T turn;
   throttle = ((real32_T)Board1_DW.global_state.stateB2.controller_y -
               Board1_CENTER) / Board1_CENTER;
   switch (Board1_DW.global_state.mov_obs) {
    case MOVING_FROM_RIGHT:
-    steering = 0.5F;
+    steering_dir = 1;
     break;
 
    case MOVING_FROM_LEFT:
-    steering = -0.5F;
+    steering_dir = -1;
     break;
 
    default:
-    steering = 0.5F;
+    steering_dir = 1;
     break;
   }
 
   forward = throttle * (real32_T)Board1_DW.global_state.max_vel;
-  steering *= (real32_T)Board1_DW.global_state.max_vel;
-  if (fabsf(throttle) < Board1_PURE_TURN_EPS) {
-    forward = 0.0F;
-  } else {
+  throttle = fabsf(throttle);
+  turn = (0.3F * throttle + Board1_MIN_TURN_SCALE_EVASIVE) * (real32_T)
+    (steering_dir * Board1_DW.global_state.max_vel);
+  if (throttle >= Board1_PURE_TURN_EPS) {
     throttle = fabsf(forward) * Board1_TURN_RATIO;
-    if (fabsf(steering) > throttle) {
-      int32_T tmp;
-      if (steering < 0.0F) {
-        tmp = -1;
+    if (fabsf(turn) > throttle) {
+      if (turn < 0.0F) {
+        steering_dir = -1;
       } else {
-        tmp = (steering > 0.0F);
+        steering_dir = (turn > 0.0F);
       }
 
-      steering = (real32_T)tmp * throttle;
+      turn = (real32_T)steering_dir * throttle;
     }
   }
 
-  throttle = forward + steering;
-  forward -= steering;
-  steering = fmaxf(fabsf(throttle), fabsf(forward));
-  if (steering > Board1_DW.global_state.max_vel) {
-    steering = (real32_T)Board1_DW.global_state.max_vel / steering;
-    throttle *= steering;
-    forward *= steering;
+  throttle = forward + turn;
+  forward -= turn;
+  turn = fmaxf(fabsf(throttle), fabsf(forward));
+  if (turn > Board1_DW.global_state.max_vel) {
+    turn = (real32_T)Board1_DW.global_state.max_vel / turn;
+    throttle *= turn;
+    forward *= turn;
   }
 
   Board1_DW.decision.rif_FA = throttle;
@@ -1019,10 +1019,10 @@ static boolean_T Board1_Is_Rover_Moving_Forward(void)
   boolean_T x[4];
   boolean_T exitg1;
   boolean_T y;
-  x[0] = (Board1_DW.global_state.stateB1.velocity_FA > 0);
-  x[1] = (Board1_DW.global_state.stateB1.velocity_FB > 0);
-  x[2] = (Board1_DW.global_state.stateB1.velocity_BA > 0);
-  x[3] = (Board1_DW.global_state.stateB1.velocity_BB > 0);
+  x[0] = (Board1_DW.global_state.stateB1.velocity_FA > Board1_STOP_THRESHOLD);
+  x[1] = (Board1_DW.global_state.stateB1.velocity_FB > Board1_STOP_THRESHOLD);
+  x[2] = (Board1_DW.global_state.stateB1.velocity_BA > Board1_STOP_THRESHOLD);
+  x[3] = (Board1_DW.global_state.stateB1.velocity_BB > Board1_STOP_THRESHOLD);
   y = true;
   k = 0;
   exitg1 = false;
@@ -1123,17 +1123,9 @@ static boolean_T Low_Controller_Battery_Routine(void)
 /* Function for Chart: '<Root>/Board1' */
 static boolean_T Board1_Spec_Retro_Routine(void)
 {
-  boolean_T y;
-  if (Board1_DW.sfEvent == Board1_event_STEP) {
-    y = (Board1_Is_Rover_Stationary() &&
-         ((Board1_DW.global_state.stateB2.controller_y < Board1_CONTROLLER_ZERO)
-          && (Board1_DW.global_state.stateB2.controller_x ==
-              Board1_CONTROLLER_ZERO) && Board1_DW.global_state.spc_retro));
-  } else {
-    y = false;
-  }
-
-  return y;
+  return (Board1_DW.sfEvent == Board1_event_STEP) &&
+    (Board1_DW.global_state.stateB2.controller_y < Board1_CONTROLLER_ZERO) &&
+    Board1_DW.global_state.spc_retro;
 }
 
 /* Function for Chart: '<Root>/Board1' */
@@ -1605,12 +1597,12 @@ static void Board1_Update_Rover_Lights(boolean_T white_led_when_stopped)
     Board1_DW.decision.rear_led = BRAKING_LIGHT;
   } else if (((Board1_DW.decision.rif_FA + Board1_DW.decision.rif_BA) / 2.0F <
               0.0F) && ((Board1_DW.decision.rif_FB + Board1_DW.decision.rif_BB) /
-                        2.0F > 0.0F)) {
+                        2.0F > 1.0F)) {
     Board1_DW.decision.led_A = BLINKING_RED;
     Board1_DW.decision.led_B = WHITE;
     Board1_DW.decision.rear_led = ARROW_LEFT;
   } else if (((Board1_DW.decision.rif_FA + Board1_DW.decision.rif_BA) / 2.0F >
-              0.0F) && ((Board1_DW.decision.rif_FB + Board1_DW.decision.rif_BB) /
+              1.0F) && ((Board1_DW.decision.rif_FB + Board1_DW.decision.rif_BB) /
                         2.0F < 0.0F)) {
     Board1_DW.decision.led_A = WHITE;
     Board1_DW.decision.led_B = BLINKING_RED;
@@ -1621,7 +1613,7 @@ static void Board1_Update_Rover_Lights(boolean_T white_led_when_stopped)
     boolean_T e_y;
     left_ref = (Board1_DW.decision.rif_FA + Board1_DW.decision.rif_BA) / 2.0F;
     right_ref = (Board1_DW.decision.rif_FB + Board1_DW.decision.rif_BB) / 2.0F;
-    e_y = ((left_ref > 0.0F) && (right_ref > 0.0F));
+    e_y = ((left_ref > 1.0F) && (right_ref > 1.0F));
     if (e_y && (right_ref - left_ref > Board1_TURN_THRESHOLD)) {
       Board1_DW.decision.led_A = BLINKING_RED;
       Board1_DW.decision.led_B = WHITE;
@@ -1656,10 +1648,10 @@ static void Board1_Update_Rover_Lights(boolean_T white_led_when_stopped)
         Board1_DW.decision.led_B = WHITE;
         Board1_DW.decision.rear_led = BACKWARD_LIGHTS;
       } else {
-        x[0] = (Board1_DW.decision.rif_FA > 0.0F);
-        x[1] = (Board1_DW.decision.rif_FB > 0.0F);
-        x[2] = (Board1_DW.decision.rif_BA > 0.0F);
-        x[3] = (Board1_DW.decision.rif_BB > 0.0F);
+        x[0] = (Board1_DW.decision.rif_FA > 1.0F);
+        x[1] = (Board1_DW.decision.rif_FB > 1.0F);
+        x[2] = (Board1_DW.decision.rif_BA > 1.0F);
+        x[3] = (Board1_DW.decision.rif_BB > 1.0F);
         e_y = true;
         k = 0;
         exitg1 = false;
