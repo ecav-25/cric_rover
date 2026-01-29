@@ -87,12 +87,18 @@ boolean_T button3 = 0;
 boolean_T button4 = 0;
 uint8_T controller_battery = 0;
 
-boolean_T b_r_stick = 0;
-volatile boolean_T debug_r_stick = 0;
-volatile boolean_T debug_button1 = 0;
-volatile boolean_T debug_button2 = 0;
-volatile boolean_T debug_button3 = 0;
-volatile boolean_T debug_button4 = 0;
+volatile uint16_t dbg_controller_x = 255;
+volatile uint16_t dbg_controller_y = 255;
+
+volatile uint8_t dbg_B1 = 0;
+volatile uint8_t dbg_B2 = 0;
+volatile uint8_t dbg_B3 = 0;
+volatile uint8_t dbg_B4 = 0;
+
+volatile uint8_t dbg_B_r_stick = 0;
+volatile uint8_t dbg_B_l_stick = 0;
+
+volatile uint8_t dbg_controller_battery = 100;
 
 DecBus debug_decision;
 
@@ -118,8 +124,6 @@ volatile MPU60X0_StatusTypeDef status_gyro = 0;
 volatile real32_T debug_acc_x = 0;
 volatile real32_T debug_acc_y = 0;
 volatile real32_T debug_gyroYaw = 0;
-volatile int16_t debug_controller_x = 255;
-volatile int16_t debug_controller_y = 255;
 uint32_t debug_time = 0, debug_diff = 0, debug_diff_2 = 0;
 uint32_t degraded=0;
 uint8_t state_good=0;
@@ -397,9 +401,13 @@ void telemetryLoggerTask(void *argument)
 
     uint16_T sonar1, sonar2, sonar3;
 
-    uint8_T supervision_state;
-    uint8_T  light_state;
+    uint8_t supervision_state;
+    uint8_t light_state;
+    uint8_t driving_mode;
+
+    uint8_t max_velocity;
     boolean_T special_retro;
+    boolean_T obs_avoidance;
 
     if (telemetry_init(&telemetry) != CONTROLLER_OK) {
         Error_Handler();
@@ -418,9 +426,12 @@ void telemetryLoggerTask(void *argument)
 
         output = Board2_Y.output;
 
-        supervision_state = Board2_DW.is_Supervision_task;
-        light_state       = Board2_DW.is_Normal_voltage_h;
+        supervision_state = Board2_DW.is_Board_state;
+        light_state       = Board2_DW.is_Normal_voltage_lights;
         special_retro     = Board2_DW.special_retro;
+        obs_avoidance     = Board2_DW.obs_detection;
+        driving_mode      = Board2_DW.is_Normal_voltage_driving;
+        max_velocity     = Board2_DW.max_vel;
 
         if (supervision_state == Board2_IN_Normal) {
             stateB1 = Board2_DW.global_state.stateB1;
@@ -452,6 +463,16 @@ void telemetryLoggerTask(void *argument)
                 get_light_mode(light_state)
             );
 
+            telemetry_set_obstacle_avoidance_mode(
+				&telemetry,
+				obs_avoidance ? COMPLETE : MINIMAL
+			);
+
+            telemetry_set_driving_mode(
+				&telemetry,
+				get_driving_mode(driving_mode)
+			);
+
             telemetry_set_rpm(
                 &telemetry,
                 stateB1.velocity_FA,
@@ -469,6 +490,8 @@ void telemetryLoggerTask(void *argument)
             telemetry_set_battery(&telemetry, 0);
             telemetry_set_temperature(&telemetry, 0);
             telemetry_set_light_mode(&telemetry, LIGHT_OFF);
+            telemetry_set_obstacle_avoidance_mode(&telemetry, COMPLETE);
+            telemetry_set_driving_mode(&telemetry, DEFAULT);
 
             telemetry_set_rpm(&telemetry, 0, 0, 0, 0);
 
@@ -496,6 +519,8 @@ void telemetryLoggerTask(void *argument)
             output.rif_BA,
             output.rif_BB);
 
+        telemetry_set_max_velocity(&telemetry, max_velocity);
+
         /* ===================== TX ===================== */
 
         //Qui va fatta una gestione senza ErrorHandler in caso di errore
@@ -510,7 +535,8 @@ static void supervision_read_inputs(void)
 {
     // Lettura hardware
     //Qui va fatta una gestione senza ErrorHandler in caso di errore
-    telecontrol_read(&controller);
+
+	telecontrol_read(&controller);
     mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
     mpu6050_get_accel_value(&mpu_device, &acceleration);
 
@@ -523,6 +549,22 @@ static void supervision_read_inputs(void)
     Board2_U.B_r_stick = get_telecontrol_b_btn(&controller);
     Board2_U.B_l_stick = get_telecontrol_a_btn(&controller);
     Board2_U.controller_battery = get_telecontrol_percentage(&controller);
+
+    /*
+    Board2_U.controller_x = dbg_controller_x;
+	Board2_U.controller_y = dbg_controller_y;
+
+	Board2_U.B1 = dbg_B1;
+	Board2_U.B2 = dbg_B2;
+	Board2_U.B3 = dbg_B3;
+	Board2_U.B4 = dbg_B4;
+
+	Board2_U.B_r_stick = dbg_B_r_stick;
+	Board2_U.B_l_stick = dbg_B_l_stick;
+
+	Board2_U.controller_battery = dbg_controller_battery;
+	*/
+
     Board2_U.acceleration_x = acceleration.x;
     Board2_U.acceleration_y = acceleration.y;
     Board2_U.gyroYaw = gyroyaw.z;
@@ -536,19 +578,19 @@ void executeSupervision(){
 			state_good = debug_state;
 		debug_count_step++;
 		Board2_step();
-		if(Board2_DW.is_Supervision_task != Board2_IN_Normal)
+		if(Board2_DW.is_Board_state != Board2_IN_Normal)
 			degraded=degraded+1;
 
-		if(Board2_DW.is_Supervision_task == Board2_IN_Single_Board)
+		if(Board2_DW.is_Board_state == Board2_IN_Single_Board)
 			debug_decision = Board2_DW.decision;
 
-		if(Board2_DW.is_Supervision_task == Board2_IN_Normal && Board2_DW.retransmitted)
+		if(Board2_DW.is_Board_state == Board2_IN_Normal && Board2_DW.retransmitted)
 			retransmit_seen_in_cycle = true;
 	}
 	while(Board2_DW.is_Supervisor != Board2_IN_Same_decision &&
 			Board2_DW.is_Single_Board != Board2_IN_Other_board_failure &&
 				Board2_DW.is_Degraded != Board2_IN_Restarting &&
-					Board2_DW.is_Restablish != Boar_IN_Connection_restablished && !deadline);
+					Board2_DW.is_Restablish != Boar_IN_Connection_restablished);
 
 	if (retransmit_seen_in_cycle){
 	      count_retransmit++;
