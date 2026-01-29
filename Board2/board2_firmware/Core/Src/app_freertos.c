@@ -393,16 +393,13 @@ void telemetryLoggerTask(void *argument)
     Telemetry_t telemetry;
 
     StateBusB1 stateB1;
-    StateBusB2 stateB2;
     DecBus output;
 
-    uint8_t supervision_state;
-    uint8_t light_state;
-    uint8_t driving_mode;
+    uint16_T sonar1, sonar2, sonar3;
 
-    uint8_t max_velocity;
+    uint8_T supervision_state;
+    uint8_T  light_state;
     boolean_T special_retro;
-    boolean_T obs_avoidance;
 
     if (telemetry_init(&telemetry) != CONTROLLER_OK) {
         Error_Handler();
@@ -415,15 +412,15 @@ void telemetryLoggerTask(void *argument)
         /* ===================== SNAPSHOT ATOMICO ===================== */
         taskENTER_CRITICAL();
 
+        sonar1 = Board2_U.sonar1;
+        sonar2 = Board2_U.sonar2;
+        sonar3 = Board2_U.sonar3;
+
         output = Board2_Y.output;
-        stateB2 = Board2_DW.state;
 
         supervision_state = Board2_DW.is_Supervision_task;
         light_state       = Board2_DW.is_Normal_voltage_h;
         special_retro     = Board2_DW.special_retro;
-        obs_avoidance     = Board2_DW.obs_detection;
-        driving_mode      = Board2_DW.is_Normal_voltage_m;
-        max_velocity     = Board2_DW.max_vel;
 
         if (supervision_state == Board2_IN_Normal) {
             stateB1 = Board2_DW.global_state.stateB1;
@@ -455,16 +452,6 @@ void telemetryLoggerTask(void *argument)
                 get_light_mode(light_state)
             );
 
-            telemetry_set_obstacle_avoidance_mode(
-				&telemetry,
-				obs_avoidance ? COMPLETE : MINIMAL
-			);
-
-            telemetry_set_driving_mode(
-				&telemetry,
-				get_driving_mode(driving_mode)
-			);
-
             telemetry_set_rpm(
                 &telemetry,
                 stateB1.velocity_FA,
@@ -482,8 +469,6 @@ void telemetryLoggerTask(void *argument)
             telemetry_set_battery(&telemetry, 0);
             telemetry_set_temperature(&telemetry, 0);
             telemetry_set_light_mode(&telemetry, LIGHT_OFF);
-            telemetry_set_obstacle_avoidance_mode(&telemetry, COMPLETE);
-            telemetry_set_driving_mode(&telemetry, DEFAULT);
 
             telemetry_set_rpm(&telemetry, 0, 0, 0, 0);
 
@@ -499,9 +484,9 @@ void telemetryLoggerTask(void *argument)
 
         telemetry_set_sonars(
             &telemetry,
-            stateB2.sonar1,
-            stateB2.sonar2,
-            stateB2.sonar3
+            sonar1,
+            sonar2,
+            sonar3
         );
 
         telemetry_set_targets(
@@ -510,8 +495,6 @@ void telemetryLoggerTask(void *argument)
             output.rif_FB,
             output.rif_BA,
             output.rif_BB);
-
-        telemetry_set_max_velocity(&telemetry, max_velocity);
 
         /* ===================== TX ===================== */
 

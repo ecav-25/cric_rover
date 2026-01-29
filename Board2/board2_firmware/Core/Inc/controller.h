@@ -76,6 +76,7 @@ enum {
     MINIMAL
 };
 
+/*
 typedef struct __attribute__((packed)) {
 	uint16_t sonar_l;
 	uint16_t sonar_c;
@@ -101,6 +102,30 @@ typedef struct __attribute__((packed)) {
     LightOperatingMode light_mode;
     DrivingMode driving_mode;
     ObstacleAvoidanceMode obstacle_mode;
+} Telemetry_t;
+*/
+
+typedef struct __attribute__((packed)) {
+    int16_t rpm_fl;
+    int16_t rpm_fr;
+    int16_t rpm_rl;
+    int16_t rpm_rr;
+
+    int16_t target_fl;
+    int16_t target_fr;
+    int16_t target_rl;
+    int16_t target_rr;
+
+    uint8_t battery_percent;
+    int8_t  temperature;
+
+    uint16_t sonar_l;
+    uint16_t sonar_c;
+    uint16_t sonar_r;
+
+    BackwardMode backward_mode;
+    OperatingMode operating_mode;
+    LightOperatingMode light_mode;
 } Telemetry_t;
 
 /* ===================== CONTROLLER API ===================== */
