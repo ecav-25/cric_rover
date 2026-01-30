@@ -7,7 +7,7 @@
  * Si interfaccia con le librerie HAL di STM32 e FreeRTOS.
  */
 
-#include "board_functions.h"
+#include "board1_functions.h"
 #include "main.h"
 #include "string.h"
 #include "cmsis_os.h"
