@@ -3,8 +3,8 @@
 static int8_t led_mode_off( led_t* led);
 static int8_t led_mode_white( led_t* led);
 static int8_t led_mode_red( led_t* led);
-//static int8_t led_mode_red_and_white( led_t* led);
 static int8_t led_mode_blinking_red(led_t* led);
+static int8_t led_mode_blinking_white(led_t* led);
 
 
 
@@ -191,6 +191,12 @@ int8_t led_step(led_t* led, led_state_t state){
 			}
 			break;
 
+		case BLINKING_WHITE:
+			if(led_mode_blinking_white(led) == LED_OK){
+				res = LED_OK;
+			}
+			break;
+
 		default:
 			led_off(led, LED_WHITE);
 			led_off(led, LED_RED);
@@ -275,16 +281,33 @@ static int8_t led_mode_blinking_red( led_t* led){
 	}
 
 
-	/*
-	if(led_toggle(led, LED_RED) == LED_OK && led_off(led, LED_WHITE) == LED_OK){
-		res = LED_OK;
-	}*/
-
-	if(led->step == 4 && led->pinState[LED_RED] != GPIO_PIN_RESET){
+	if(led->step == RED_STEPS_ON && led->pinState[LED_RED] != GPIO_PIN_RESET){
 		res = led_off(led,LED_RED);
 	}
 
-	led->step = (led->step + 1) % 8;
+	led->step = (led->step + 1) % BLINKING_RED_STEPS;
+
+	return res;
+}
+
+
+static int8_t led_mode_blinking_white( led_t* led){
+	int8_t res = LED_ERR;
+
+	if(led->pinState[LED_RED] != GPIO_PIN_RESET)
+		res = led_off(led, LED_RED);
+
+
+	if(led->step == 0 && led->pinState[LED_WHITE] != GPIO_PIN_SET){
+		res = led_on(led,LED_WHITE);
+	}
+
+
+	if(led->step == WHITE_STEPS_ON && led->pinState[LED_WHITE] != GPIO_PIN_RESET){
+		res = led_off(led,LED_WHITE);
+	}
+
+	led->step = (led->step + 1) % BLINKING_WHITE_STEPS;
 
 	return res;
 }

@@ -1,5 +1,4 @@
-Core/Src/app_freertos.o: ../Core/Src/app_freertos.c ../Core/Inc/utils.h \
- ../Core/Inc/rtwtypes.h \
+Core/Src/app_freertos.o: ../Core/Src/app_freertos.c \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
  ../Core/Inc/FreeRTOSConfig.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \
@@ -43,7 +42,7 @@ Core/Src/app_freertos.o: ../Core/Src/app_freertos.c ../Core/Inc/utils.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_tim_ex.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart_ex.h \
- ../Core/Inc/Board1_types.h \
+ ../Core/Inc/Board1_types.h ../Core/Inc/rtwtypes.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  ../Core/Inc/Board1.h ../Core/Inc/board_functions.h ../Core/Inc/batt.h \
@@ -52,10 +51,8 @@ Core/Src/app_freertos.o: ../Core/Src/app_freertos.c ../Core/Inc/utils.h \
  ../Core/Inc/motor.h ../Core/Inc/led.h ../Core/Inc/gpio.h \
  ../Core/Inc/led_stripes.h \
  ../Drivers/CMSIS/Device/ST/STM32G4xx/Include/stm32g474xx.h \
- ../Core/Inc/dma.h ../Core/Inc/deadline_watchdog.h \
+ ../Core/Inc/dma.h ../Core/Inc/deadline_watchdog.h ../Core/Inc/utils.h \
  ../Core/Inc/hw_config.h ../Core/Inc/motor.h ../Core/Inc/encoder.h
-../Core/Inc/utils.h:
-../Core/Inc/rtwtypes.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
@@ -101,6 +98,7 @@ Core/Src/app_freertos.o: ../Core/Src/app_freertos.c ../Core/Inc/utils.h \
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart_ex.h:
 ../Core/Inc/Board1_types.h:
+../Core/Inc/rtwtypes.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 ../Core/Inc/Board1.h:
@@ -119,6 +117,7 @@ Core/Src/app_freertos.o: ../Core/Src/app_freertos.c ../Core/Inc/utils.h \
 ../Drivers/CMSIS/Device/ST/STM32G4xx/Include/stm32g474xx.h:
 ../Core/Inc/dma.h:
 ../Core/Inc/deadline_watchdog.h:
+../Core/Inc/utils.h:
 ../Core/Inc/hw_config.h:
 ../Core/Inc/motor.h:
 ../Core/Inc/encoder.h:

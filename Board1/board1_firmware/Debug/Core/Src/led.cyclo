@@ -8,8 +8,9 @@
 ../Core/Src/led.c:113:15:led_get_status	2
 ../Core/Src/led.c:126:15:led_get_port	2
 ../Core/Src/led.c:139:15:led_get_pin_number	2
-../Core/Src/led.c:154:8:led_step	11
-../Core/Src/led.c:209:15:led_mode_off	4
-../Core/Src/led.c:225:15:led_mode_white	4
-../Core/Src/led.c:239:15:led_mode_red	4
-../Core/Src/led.c:266:15:led_mode_blinking_red	6
+../Core/Src/led.c:154:8:led_step	13
+../Core/Src/led.c:215:15:led_mode_off	4
+../Core/Src/led.c:231:15:led_mode_white	4
+../Core/Src/led.c:245:15:led_mode_red	4
+../Core/Src/led.c:272:15:led_mode_blinking_red	6
+../Core/Src/led.c:294:15:led_mode_blinking_white	6

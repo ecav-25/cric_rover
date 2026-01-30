@@ -49,6 +49,7 @@ static led_status_t rear_led_anim_backlights();
 static led_status_t rear_led_anim_arrow_left();
 static led_status_t rear_led_anim_arrow_right();
 static led_status_t rear_led_anim_backward();
+static led_status_t rear_led_special_lights();
 static led_status_t rear_sign_off();
 static led_status_t rear_sign_white();
 static led_status_t rear_sign_orange();
@@ -124,6 +125,12 @@ led_status_t rear_led_step(REAR_LED_TYPE animation){
 			}
 			break;
 
+		case SPECIAL_LIGHTS:
+			if(rear_led_special_lights() == LED_STRIPE_OK){
+				res = LED_STRIPE_OK;
+			}
+			break;
+			
 		default:
 			rear_led_off();
 			res = LED_STRIPE_ERR;
@@ -205,6 +212,68 @@ static led_status_t rear_sign_off(void)
     rear_sign.step = 1;
     return LED_STRIPE_OK;
 }
+
+
+static led_status_t rear_led_special_lights(void)
+{
+    const uint16_t start = rear_led.start;
+    const uint16_t end   = rear_led.end;
+    const uint16_t len   = (uint16_t)(end - start + 1);
+
+    /* centro del segmento */
+    const uint16_t mid_left  = (uint16_t)(start + (len - 1) / 2);
+    const uint16_t mid_right = (uint16_t)(start + len / 2);
+
+    /* numero massimo di step di espansione */
+    const uint16_t max_steps = (uint16_t)((len + 1) / 2);
+
+    /* step 0: frame iniziale spento */
+    if (rear_led.step == 0) {
+        led_set_RGB_range(start, end, 0, 0, 0);
+        g_led_bus.dirty = 1;
+        rear_led.step = 1;
+        return LED_STRIPE_OK;
+    }
+
+    /* step 1..max_steps: espansione simmetrica */
+    uint16_t s = rear_led.step - 1;   /* 0..max_steps-1 */
+
+    if (s < max_steps) {
+
+        led_set_RGB_range(start, end, 0, 0, 0);
+
+        for (uint16_t i = 0; i <= s; i++) {
+
+            /* colore arcobaleno a bande */
+            uint8_t r = 0, g = 0, b = 0;
+            uint8_t phase = (uint8_t)((i * 6) / max_steps);
+
+            switch (phase) {
+                case 0: r = 255; g = 0;   b = 0;   break; // rosso
+                case 1: r = 255; g = 80;  b = 0;   break; // arancio
+                case 2: r = 255; g = 255; b = 0;   break; // giallo
+                case 3: r = 0;   g = 255; b = 0;   break; // verde
+                case 4: r = 0;   g = 0;   b = 255; break; // blu
+                default:r = 160; g = 0;   b = 255; break; // viola
+            }
+
+            if (mid_left >= start + i)
+                led_set_RGB((uint8_t)(mid_left  - i), r, g, b);
+
+            if (mid_right + i <= end)
+                led_set_RGB((uint8_t)(mid_right + i), r, g, b);
+        }
+
+        g_led_bus.dirty = 1;
+        rear_led.step++;
+        return LED_STRIPE_OK;
+    }
+
+    /* fine animazione → ricomincia */
+    rear_led.step = 0;
+    return LED_STRIPE_OK;
+}
+
 
 static led_status_t rear_led_anim_stop(void)
 {

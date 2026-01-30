@@ -9,7 +9,8 @@
 ../Core/Src/led.c:126:15:led_get_port	32	static
 ../Core/Src/led.c:139:15:led_get_pin_number	32	static
 ../Core/Src/led.c:154:8:led_step	24	static
-../Core/Src/led.c:209:15:led_mode_off	24	static
-../Core/Src/led.c:225:15:led_mode_white	24	static
-../Core/Src/led.c:239:15:led_mode_red	24	static
-../Core/Src/led.c:266:15:led_mode_blinking_red	24	static
+../Core/Src/led.c:215:15:led_mode_off	24	static
+../Core/Src/led.c:231:15:led_mode_white	24	static
+../Core/Src/led.c:245:15:led_mode_red	24	static
+../Core/Src/led.c:272:15:led_mode_blinking_red	24	static
+../Core/Src/led.c:294:15:led_mode_blinking_white	24	static
