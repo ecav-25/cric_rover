@@ -6,7 +6,7 @@
  * calcolo CRC-32, gestione GPIO (Master Control) e primitive di sistema.
  */
 
-#include "board_functions.h"
+#include "board2_functions.h"
 #include "main.h"
 #include "string.h"
 #include "cmsis_os.h"
