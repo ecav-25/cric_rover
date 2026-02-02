@@ -45,7 +45,7 @@ Core/Src/app_freertos.o: ../Core/Src/app_freertos.c \
  ../Core/Inc/Board1_types.h ../Core/Inc/rtwtypes.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
- ../Core/Inc/Board1.h ../Core/Inc/board_functions.h ../Core/Inc/batt.h \
+ ../Core/Inc/Board1.h ../Core/Inc/board1_functions.h ../Core/Inc/batt.h \
  ../Core/Inc/temp.h ../Core/Inc/encoder.h ../Core/Inc/tim.h \
  ../Core/Inc/main.h ../Core/Inc/pid.h ../Core/Inc/pid_law.h \
  ../Core/Inc/motor.h ../Core/Inc/led.h ../Core/Inc/gpio.h \
@@ -102,7 +102,7 @@ Core/Src/app_freertos.o: ../Core/Src/app_freertos.c \
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 ../Core/Inc/Board1.h:
-../Core/Inc/board_functions.h:
+../Core/Inc/board1_functions.h:
 ../Core/Inc/batt.h:
 ../Core/Inc/temp.h:
 ../Core/Inc/encoder.h:
