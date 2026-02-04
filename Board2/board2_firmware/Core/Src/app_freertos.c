@@ -552,14 +552,22 @@ void telemetryLoggerTask(void *argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-static void supervision_read_inputs(void)
+static void supervision_recad_inputs(void)
 {
-    // Lettura hardware
-    //Qui va fatta una gestione senza ErrorHandler in caso di errore
+    static ControllerStatus_t telecontroller_status;
+    static MPU60X0_StatusTypeDef mpu_status;
 
-	telecontrol_read(&controller);
-    mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
-    mpu6050_get_accel_value(&mpu_device, &acceleration);
+    telecontroller_status = telecontrol_read(&controller);
+
+    if(telecontroller_status == CONTROLLER_OK){
+        Board2_U.controllerError = 0;
+    }
+    else if(telecontroller_status == CONTROLLER_ERR_COMM){
+        Board2_U.controllerError = 1;
+    }
+    else{
+        Error_Handler();
+    }
 
     Board2_U.controller_x = get_telecontrol_bx(&controller);
     Board2_U.controller_y = get_telecontrol_ay(&controller);
@@ -571,24 +579,33 @@ static void supervision_read_inputs(void)
     Board2_U.B_l_stick = get_telecontrol_a_btn(&controller);
     Board2_U.controller_battery = get_telecontrol_percentage(&controller);
 
+    mpu_status = mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
+
+    if(mpu_status == MPU6050_OK){
+        Board2_U.gyroError = 0;
+    }
+    else if(mpu_status == MPU6050_ERR_COMM){
+        Board2_U.gyroError = 1;
+    }
+    else{
+        Error_Handler();
+    }
+
+    Board2_U.gyroYaw = gyroyaw.z;
     /*
     Board2_U.controller_x = dbg_controller_x;
-	Board2_U.controller_y = dbg_controller_y;
+    Board2_U.controller_y = dbg_controller_y;
 
-	Board2_U.B1 = dbg_B1;
-	Board2_U.B2 = dbg_B2;
-	Board2_U.B3 = dbg_B3;
-	Board2_U.B4 = dbg_B4;
+    Board2_U.B1 = dbg_B1;
+    Board2_U.B2 = dbg_B2;
+    Board2_U.B3 = dbg_B3;
+    Board2_U.B4 = dbg_B4;
 
-	Board2_U.B_r_stick = dbg_B_r_stick;
-	Board2_U.B_l_stick = dbg_B_l_stick;
+    Board2_U.B_r_stick = dbg_B_r_stick;
+    Board2_U.B_l_stick = dbg_B_l_stick;
 
-	Board2_U.controller_battery = dbg_controller_battery;
-	*/
-
-    Board2_U.acceleration_x = acceleration.x;
-    Board2_U.acceleration_y = acceleration.y;
-    Board2_U.gyroYaw = gyroyaw.z;
+    Board2_U.controller_battery = dbg_controller_battery;
+    */
 }
 
 void executeSupervision(){
