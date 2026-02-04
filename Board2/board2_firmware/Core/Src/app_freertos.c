@@ -552,7 +552,7 @@ void telemetryLoggerTask(void *argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-static void supervision_recad_inputs(void)
+static void supervision_read_inputs(void)
 {
     static ControllerStatus_t telecontroller_status;
     static MPU60X0_StatusTypeDef mpu_status;
