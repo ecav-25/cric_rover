@@ -22,6 +22,7 @@
 #include "task.h"
 #include "main.h"
 #include "cmsis_os.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "Board1.h"
@@ -275,22 +276,6 @@ const osEventFlagsAttr_t SessionEvent_attributes = {
 /* USER CODE BEGIN FunctionPrototypes */
 void executeSupervision();
 void deadlineProcedure();
-
-/* USER CODE END FunctionPrototypes */
-
-void supervisionTask(void *argument);
-void readSensorsTask(void *argument);
-void pidTask(void *argument);
-void lightsTask(void *argument);
-
-void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
-
-/**
-  * @brief  FreeRTOS initialization
-  * @param  None
-  * @retval None
-  */
-/* USER CODE BEGIN Init */
 static Encoder_Status_t init_encoders_supervision(void)
 {
     if (encoder_init(&encoder_FA, ENCODER_HW_CONFIG[ENCODER_FA].htim, &ENCODER_HW_CONFIG[ENCODER_FA].calib, SUPERVISION_PERIOD) != ENCODER_OK){
@@ -352,11 +337,23 @@ static Motor_Status_t init_motors(void)
 
     return MOTOR_OK;
 }
+/* USER CODE END FunctionPrototypes */
 
+void supervisionTask(void *argument);
+void readSensorsTask(void *argument);
+void pidTask(void *argument);
+void lightsTask(void *argument);
 
+void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
+
+/**
+  * @brief  FreeRTOS initialization
+  * @param  None
+  * @retval None
+  */
 void MX_FREERTOS_Init(void) {
+  /* USER CODE BEGIN Init */
 	DWD_Init(&hard_rt_deadline_wd, &htim4, SYSTEM_ALIVE_MASK, deadlineProcedure);
-
 
 	if(batt_init(&battery_sensor, ADC_HW_CONFIG[ADC_BATTERY_VOLTAGE].hadc, &ADC_HW_CONFIG[ADC_BATTERY_VOLTAGE].channel_cfg, BATT_DEFAULT_TIMEOUT_MS) != BATT_OK){
 		Error_Handler();
