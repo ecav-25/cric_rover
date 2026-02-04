@@ -38,6 +38,7 @@
 #include "deadline_watchdog.h"
 #include "utils.h"
 #include "hw_config.h"
+#include "utils.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
