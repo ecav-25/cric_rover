@@ -118,6 +118,10 @@ led_status_t led_stripe_init(led_config_t *cfg){
 
 led_status_t rear_led_step(REAR_LED_TYPE animation){
 
+    if (g_led_bus.wr_buf_p != 0) {
+        return LED_STRIPE_OK;   // DMA attivo → non tocco lo stato
+    }
+
 	led_status_t res = LED_STRIPE_ERR;
 
 
@@ -176,6 +180,11 @@ led_status_t rear_led_step(REAR_LED_TYPE animation){
 
 
 led_status_t rear_sign_step(REAR_SIGN_TYPE animation){
+
+
+    if (g_led_bus.wr_buf_p != 0) {
+        return LED_STRIPE_OK;   // DMA attivo → non tocco lo stato
+    }
 
 	led_status_t res = LED_STRIPE_ERR;
 
@@ -249,15 +258,14 @@ static led_status_t rear_sign_off(void)
 
 static led_status_t rear_led_special_lights(void)
 {
-    const uint16_t start = rear_led.start;
-    const uint16_t end   = rear_led.end;
 
-    for (uint16_t i = start; i <= end; i++) {
+    for (uint16_t i = rear_led.start; i <= rear_led.end; i++) {
 
         uint8_t r, g, b;
         random_rainbow(&r, &g, &b);
 
         led_set_RGB((uint8_t)i, r, g, b);
+
     }
 
     g_led_bus.dirty = 1;
@@ -507,7 +515,8 @@ led_status_t led_set_RGB_range(uint16_t start, uint16_t end, uint8_t r, uint8_t 
 // Shuttle the data to the LEDs!
 led_status_t led_render() {
 
-  if(!g_led_bus.dirty) return LED_STRIPE_OK;
+  if(!g_led_bus.dirty)
+	  return LED_STRIPE_OK;
 
   if(g_led_bus.wr_buf_p != 0 || g_led_bus.cfg.hdma->State != HAL_DMA_STATE_READY) {
     // Ongoing transfer, cancel!
