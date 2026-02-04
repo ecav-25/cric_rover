@@ -448,7 +448,7 @@ void telemetryLoggerTask(void *argument)
         special_retro     = Board2_DW.special_retro;
         obs_avoidance     = Board2_DW.obs_detection;
         driving_mode      = Board2_DW.is_Normal_voltage_driving;
-        max_velocity     = Board2_DW.max_vel;
+        max_velocity     = Board2_DW.max_velocity;
 
         if (supervision_state == Board2_IN_Normal) {
             stateB1 = Board2_DW.global_state.stateB1;
@@ -556,10 +556,10 @@ static void supervision_read_inputs(void)
     // Lettura hardware
     //Qui va fatta una gestione senza ErrorHandler in caso di errore
 
-	//telecontrol_read(&controller);
+	telecontrol_read(&controller);
     mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
     mpu6050_get_accel_value(&mpu_device, &acceleration);
-    /*
+
     Board2_U.controller_x = get_telecontrol_bx(&controller);
     Board2_U.controller_y = get_telecontrol_ay(&controller);
     Board2_U.B1 = get_telecontrol_button_btn1(&controller);
@@ -570,7 +570,7 @@ static void supervision_read_inputs(void)
     Board2_U.B_l_stick = get_telecontrol_a_btn(&controller);
     Board2_U.controller_battery = get_telecontrol_percentage(&controller);
 
-    */
+    /*
     Board2_U.controller_x = dbg_controller_x;
 	Board2_U.controller_y = dbg_controller_y;
 
@@ -583,7 +583,7 @@ static void supervision_read_inputs(void)
 	Board2_U.B_l_stick = dbg_B_l_stick;
 
 	Board2_U.controller_battery = dbg_controller_battery;
-
+	*/
 
     Board2_U.acceleration_x = acceleration.x;
     Board2_U.acceleration_y = acceleration.y;
