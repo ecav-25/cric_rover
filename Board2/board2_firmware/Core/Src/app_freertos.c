@@ -202,7 +202,7 @@ void MX_FREERTOS_Init(void) {
 	DWD_Init(&hard_rt_deadline_wd, &htim4, SYSTEM_ALIVE_MASK, deadlineProcedure);
 	(void)DWT_Delay_Init();
 
-	MPU60X0_StatusTypeDef st;
+	MPU60X0_StatusTypeDef status_mpu;
 
 	hcsr04_cfg_t base = {
 	  .htim = &htim2,
@@ -237,12 +237,12 @@ void MX_FREERTOS_Init(void) {
 	    Error_Handler();
 	}
 
-	st = mpu6050_init(&mpu_device, MPU_HW_CONFIG[MPU_MAIN].i2c, MPU_HW_CONFIG[MPU_MAIN].address, &MPU_HW_CONFIG[MPU_MAIN].cfg);
+	status_mpu = mpu6050_init(&mpu_device, MPU_HW_CONFIG[MPU_MAIN].i2c, MPU_HW_CONFIG[MPU_MAIN].address, &MPU_HW_CONFIG[MPU_MAIN].cfg);
 
-	if (st == MPU6050_ERR) {
+	if (status_mpu == MPU6050_ERR) {
 	    Error_Handler();
 	}
-	else if (st == MPU6050_ERR_COMM) {
+	else if (status_mpu == MPU6050_ERR_COMM) {
 	    imu_available = false;
 	}
 	else {
@@ -408,6 +408,7 @@ void telemetryLoggerTask(void *argument)
 {
   /* USER CODE BEGIN telemetryLoggerTask */
     static uint8_t telemetry_tx_failures = 0;
+    static ControllerStatus_t status_telemetry;
     TickType_t xLastWakeTime = xTaskGetTickCount();
     const TickType_t xFrequency = pdMS_TO_TICKS(TELEMETRY_LOGGER_PERIOD);
 
@@ -537,9 +538,9 @@ void telemetryLoggerTask(void *argument)
         }
 
         /* ===================== TX ===================== */
-        ControllerStatus_t st = telecontrol_send_telemetry(&controller, &telemetry);
-        if (st != CONTROLLER_OK) {
-            if (st == CONTROLLER_ERR) {
+        status_telemetry = telecontrol_send_telemetry(&controller, &telemetry);
+        if (status_telemetry != CONTROLLER_OK) {
+            if (status_telemetry == CONTROLLER_ERR) {
                 Error_Handler();
             } else {
                 telemetry_tx_failures++;
