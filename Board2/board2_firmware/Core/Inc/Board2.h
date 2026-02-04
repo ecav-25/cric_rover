@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board2'.
  *
- * Model version                  : 1.2314
+ * Model version                  : 1.2342
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Fri Jan 30 17:07:30 2026
+ * C/C++ source code generated on : Wed Feb  4 12:42:07 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -29,7 +29,7 @@
 #include "Board2_types.h"
 
 
-/* --- Stateflow States (Moved by Script) --- */
+/* --- Stateflow States --- */
 #define B_IN_Control_controller_routine ((uint8_T)1U)
 #define B_IN_Moving_obstacle_from_right ((uint8_T)1U)
 #define Bo_IN_Change_max_velocity_start ((uint8_T)1U)
@@ -105,10 +105,10 @@
 #define Board2_IN_Waiting              ((uint8_T)3U)
 #define Board2_IN_Waiting_comunication ((uint8_T)13U)
 #define Board_IN_Critical_voltage_relay ((uint8_T)1U)
-#define Board_IN_Manager_combo_velocity ((uint8_T)1U)
 #define Board_IN_Normal_voltage_driving ((uint8_T)2U)
 #define Board_IN_Normal_voltage_routine ((uint8_T)2U)
 #define Board_IN_Starting_to_restablish ((uint8_T)4U)
+#define Board_IN_Waiting_change_max_vel ((uint8_T)1U)
 #define IN_Global_Local_state_transmitt ((uint8_T)2U)
 #define IN_Low_controller_battery_routi ((uint8_T)4U)
 #define IN_Moving_obstacle_from_left_ro ((uint8_T)5U)
@@ -146,11 +146,11 @@ typedef struct {
   uint32_T time_obs_s3;                /* '<Root>/Board2' */
   uint32_T time_button_obs;            /* '<Root>/Board2' */
   uint32_T time_button_vel;            /* '<Root>/Board2' */
-  MOVING_OBSTACLE_TYPE moving_obstacle;/* '<Root>/Board2' */
   uint16_T distance_threshold;         /* '<Root>/Board2' */
+  int8_T change_velocity;              /* '<Root>/Board2' */
   uint8_T retransmitted;               /* '<Root>/Board2' */
   uint8_T receivedPing;                /* '<Root>/Board2' */
-  uint8_T max_vel;                     /* '<Root>/Board2' */
+  uint8_T max_velocity;                /* '<Root>/Board2' */
   uint8_T is_active_c1_Board2;         /* '<Root>/Board2' */
   uint8_T is_c1_Board2;                /* '<Root>/Board2' */
   uint8_T is_active_Board_state;       /* '<Root>/Board2' */
@@ -181,11 +181,13 @@ typedef struct {
   uint8_T is_Obstacle_detection;       /* '<Root>/Board2' */
   uint8_T is_active_Change_max_velocity;/* '<Root>/Board2' */
   uint8_T is_Change_max_velocity;      /* '<Root>/Board2' */
-  uint8_T is_Manager_combo_velocity;   /* '<Root>/Board2' */
   uint8_T is_Single_Board;             /* '<Root>/Board2' */
   uint8_T is_active_Board_decision;    /* '<Root>/Board2' */
   uint8_T is_active_Routine_manager;   /* '<Root>/Board2' */
-  uint8_T is_Routine_manager;          /* '<Root>/Board2' */
+  uint8_T is_active_Max_velocity_handler;/* '<Root>/Board2' */
+  uint8_T is_Max_velocity_handler;     /* '<Root>/Board2' */
+  uint8_T is_active_Compute_routine;   /* '<Root>/Board2' */
+  uint8_T is_Compute_routine;          /* '<Root>/Board2' */
   uint8_T is_Normal_voltage_routine;   /* '<Root>/Board2' */
   uint8_T is_Control_controller_routine;/* '<Root>/Board2' */
   uint8_T is_Emergency_button_routine; /* '<Root>/Board2' */
@@ -208,6 +210,8 @@ typedef struct {
   boolean_T limit_velocity;            /* '<Root>/Board2' */
   boolean_T obs_detection;             /* '<Root>/Board2' */
   boolean_T special_retro_rotating;    /* '<Root>/Board2' */
+  boolean_T moving_from_left;          /* '<Root>/Board2' */
+  boolean_T moving_from_right;         /* '<Root>/Board2' */
   boolean_T prev_button1_retro;        /* '<Root>/Board2' */
   boolean_T prev_button2_retro;        /* '<Root>/Board2' */
   boolean_T prev_button1_obs;          /* '<Root>/Board2' */
