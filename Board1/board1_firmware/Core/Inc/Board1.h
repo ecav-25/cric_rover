@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board1'.
  *
- * Model version                  : 1.2314
+ * Model version                  : 1.2337
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Fri Jan 30 17:02:21 2026
+ * C/C++ source code generated on : Wed Feb  4 12:38:31 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -29,7 +29,7 @@
 #include "Board1_types.h"
 
 
-/* --- Stateflow States (Moved by Script) --- */
+/* --- Stateflow States --- */
 #define B_IN_Control_controller_routine ((uint8_T)1U)
 #define B_IN_Moving_obstacle_from_right ((uint8_T)1U)
 #define Bo_IN_Change_max_velocity_start ((uint8_T)1U)
@@ -51,7 +51,7 @@
 #define Board1_IN_First_button         ((uint8_T)1U)
 #define Board1_IN_First_button_c       ((uint8_T)2U)
 #define Board1_IN_Global_state_received ((uint8_T)4U)
-#define Board1_IN_High_Temperature     ((uint8_T)1U)
+#define Board1_IN_High_temperature     ((uint8_T)1U)
 #define Board1_IN_Lights_AUTO          ((uint8_T)1U)
 #define Board1_IN_Lights_OFF           ((uint8_T)2U)
 #define Board1_IN_Lights_ON            ((uint8_T)3U)
@@ -108,9 +108,9 @@
 #define Board1_IN_Waiting_to_restablish ((uint8_T)6U)
 #define Board1_IN_Waiting_to_start     ((uint8_T)14U)
 #define Board_IN_Critical_voltage_relay ((uint8_T)1U)
-#define Board_IN_Manager_combo_velocity ((uint8_T)1U)
 #define Board_IN_Normal_voltage_driving ((uint8_T)2U)
 #define Board_IN_Normal_voltage_routine ((uint8_T)2U)
+#define Board_IN_Waiting_change_max_vel ((uint8_T)1U)
 #define IN_Global_Local_state_transmitt ((uint8_T)3U)
 #define IN_Low_controller_battery_routi ((uint8_T)4U)
 #define IN_Moving_obstacle_from_left_ro ((uint8_T)5U)
@@ -147,13 +147,13 @@ typedef struct {
   uint32_T time_button_retro;          /* '<Root>/Board1' */
   uint32_T time_button_vel;            /* '<Root>/Board1' */
   uint32_T time_obs_s3;                /* '<Root>/Board1' */
-  MOVING_OBSTACLE_TYPE moving_obstacle;/* '<Root>/Board1' */
   uint16_T distance_threshold;         /* '<Root>/Board1' */
   uint16_T INCLINATION_DECREASE_VEL;   /* '<Root>/Board1' */
+  int8_T change_velocity;              /* '<Root>/Board1' */
   uint8_T retransmitted;               /* '<Root>/Board1' */
   uint8_T receivedPing;                /* '<Root>/Board1' */
   uint8_T MIN_RPM;                     /* '<Root>/Board1' */
-  uint8_T max_vel;                     /* '<Root>/Board1' */
+  uint8_T max_velocity;                /* '<Root>/Board1' */
   uint8_T is_active_c2_Board1;         /* '<Root>/Board1' */
   uint8_T is_c2_Board1;                /* '<Root>/Board1' */
   uint8_T is_active_Board_state;       /* '<Root>/Board1' */
@@ -184,11 +184,13 @@ typedef struct {
   uint8_T is_Obstacle_detection;       /* '<Root>/Board1' */
   uint8_T is_active_Change_max_velocity;/* '<Root>/Board1' */
   uint8_T is_Change_max_velocity;      /* '<Root>/Board1' */
-  uint8_T is_Manager_combo_velocity;   /* '<Root>/Board1' */
   uint8_T is_Single_Board;             /* '<Root>/Board1' */
   uint8_T is_active_Board_decision;    /* '<Root>/Board1' */
   uint8_T is_active_Routine_manager;   /* '<Root>/Board1' */
-  uint8_T is_Routine_manager;          /* '<Root>/Board1' */
+  uint8_T is_active_Max_velocity_handler;/* '<Root>/Board1' */
+  uint8_T is_Max_velocity_handler;     /* '<Root>/Board1' */
+  uint8_T is_active_Compute_routine;   /* '<Root>/Board1' */
+  uint8_T is_Compute_routine;          /* '<Root>/Board1' */
   uint8_T is_Normal_voltage_routine;   /* '<Root>/Board1' */
   uint8_T is_Control_controller_routine;/* '<Root>/Board1' */
   uint8_T is_Emergency_button_routine; /* '<Root>/Board1' */
@@ -211,14 +213,16 @@ typedef struct {
   boolean_T limit_velocity;            /* '<Root>/Board1' */
   boolean_T obs_detection;             /* '<Root>/Board1' */
   boolean_T special_retro_rotating;    /* '<Root>/Board1' */
-  boolean_T prev_button1_retro;        /* '<Root>/Board1' */
-  boolean_T prev_button2_retro;        /* '<Root>/Board1' */
-  boolean_T prev_button1_obs;          /* '<Root>/Board1' */
-  boolean_T prev_button2_obs;          /* '<Root>/Board1' */
+  boolean_T moving_from_left;          /* '<Root>/Board1' */
+  boolean_T moving_from_right;         /* '<Root>/Board1' */
+  boolean_T prev_l_stick_button;       /* '<Root>/Board1' */
   boolean_T prev_button1_vel;          /* '<Root>/Board1' */
+  boolean_T prev_button2_obs;          /* '<Root>/Board1' */
+  boolean_T prev_button1_obs;          /* '<Root>/Board1' */
+  boolean_T prev_button2_retro;        /* '<Root>/Board1' */
+  boolean_T prev_button1_retro;        /* '<Root>/Board1' */
   boolean_T prev_limit_state;          /* '<Root>/Board1' */
   boolean_T prev_r_stick_button;       /* '<Root>/Board1' */
-  boolean_T prev_l_stick_button;       /* '<Root>/Board1' */
 } DW_Board1_T;
 
 /* External inputs (root inport signals with default storage) */
@@ -270,13 +274,13 @@ extern RT_MODEL_Board1_T *const Board1_M;
  * MATLAB hilite_system command to trace the generated code back
  * to the parent model.  For example,
  *
- * hilite_system('Board1_supervision/Board1')    - opens subsystem Board1_supervision/Board1
- * hilite_system('Board1_supervision/Board1/Kp') - opens and selects block Kp
+ * hilite_system('Board1_supervision_Copia/Board1')    - opens subsystem Board1_supervision_Copia/Board1
+ * hilite_system('Board1_supervision_Copia/Board1/Kp') - opens and selects block Kp
  *
  * Here is the system hierarchy for this model
  *
- * '<Root>' : 'Board1_supervision'
- * '<S1>'   : 'Board1_supervision/Board1'
+ * '<Root>' : 'Board1_supervision_Copia'
+ * '<S1>'   : 'Board1_supervision_Copia/Board1'
  */
 #endif                                 /* Board1_h_ */
 

@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board1'.
  *
- * Model version                  : 1.2314
+ * Model version                  : 1.2337
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Fri Jan 30 17:02:21 2026
+ * C/C++ source code generated on : Wed Feb  4 12:38:31 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -145,7 +145,8 @@ typedef struct {
 typedef enum {
   NO_OBSTACLE = 0,                     /* Default value */
   MOVING_FROM_LEFT,
-  MOVING_FROM_RIGHT
+  MOVING_FROM_RIGHT,
+  MOVING_FROM_BOTH
 } MOVING_OBSTACLE_TYPE;
 
 #endif
@@ -158,7 +159,8 @@ typedef struct {
   StateBusB2 stateB2;
   MOVING_OBSTACLE_TYPE mov_obs;
   boolean_T spc_retro;
-  uint8_T max_vel;
+  boolean_T limit_vel;
+  int8_T change_vel;
   boolean_T obs_detection;
 } GSBus;
 
