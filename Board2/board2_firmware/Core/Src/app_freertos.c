@@ -137,6 +137,8 @@ extern I2C_HandleTypeDef hi2c1;
 
 extern UART_HandleTypeDef huart3;
 
+static bool imu_available = false;
+
 boolean_T deadline = 0;
 /* USER CODE END Variables */
 /* Definitions for readSonar */
@@ -200,6 +202,8 @@ void MX_FREERTOS_Init(void) {
 	DWD_Init(&hard_rt_deadline_wd, &htim4, SYSTEM_ALIVE_MASK, deadlineProcedure);
 	(void)DWT_Delay_Init();
 
+	MPU60X0_StatusTypeDef st;
+
 	hcsr04_cfg_t base = {
 	  .htim = &htim2,
 	  .timer_hz = 1000000,
@@ -229,9 +233,21 @@ void MX_FREERTOS_Init(void) {
 	(void)HCSR04_Init(&us_center, &cC);
 	(void)HCSR04_Init(&us_right,  &cR);
 
-	telecontrol_init(&controller, &hi2c1);
+	if(telecontrol_init(&controller, &hi2c1) != CONTROLLER_OK){
+	    Error_Handler();
+	}
 
-	mpu6050_init(&mpu_device, &hi2c1, 0, NULL);
+	st = mpu6050_init(&mpu_device, MPU_HW_CONFIG[MPU_MAIN].i2c, MPU_HW_CONFIG[MPU_MAIN].address, &MPU_HW_CONFIG[MPU_MAIN].cfg);
+
+	if (st == MPU6050_ERR) {
+	    Error_Handler();
+	}
+	else if (st == MPU6050_ERR_COMM) {
+	    imu_available = false;
+	}
+	else {
+	    imu_available = true;
+	}
 
 	if (motor_init(&motor_FA_openLoop, MOTOR_HW_CONFIG[MOTOR_FA].htim, MOTOR_HW_CONFIG[MOTOR_FA].channel, &MOTOR_HW_CONFIG[MOTOR_FA].calib) != MOTOR_OK){
 	    Error_Handler();
@@ -391,6 +407,7 @@ void supervisionTask(void *argument)
 void telemetryLoggerTask(void *argument)
 {
   /* USER CODE BEGIN telemetryLoggerTask */
+    static uint8_t telemetry_tx_failures = 0;
     TickType_t xLastWakeTime = xTaskGetTickCount();
     const TickType_t xFrequency = pdMS_TO_TICKS(TELEMETRY_LOGGER_PERIOD);
 
@@ -443,88 +460,91 @@ void telemetryLoggerTask(void *argument)
         /* ===================== NORMAL MODE ===================== */
         if (supervision_state == Board2_IN_Normal)
         {
-            telemetry_set_backward_mode(
-                &telemetry,
-                special_retro ? BW_SPECIAL : BW_NORMAL
-            );
+        	if (telemetry_set_backward_mode(&telemetry, special_retro ? BW_SPECIAL : BW_NORMAL) != CONTROLLER_OK) {
+        	    Error_Handler();
+        	}
 
-            telemetry_set_battery(
-                &telemetry,
-                calculate_battery_percent(stateB1.battery_voltage)
-            );
+        	if (telemetry_set_battery(&telemetry, calculate_battery_percent(stateB1.battery_voltage)) != CONTROLLER_OK) {
+        	    Error_Handler();
+        	}
 
-            telemetry_set_temperature(
-                &telemetry,
-                saturate_temperature(stateB1.temperature)
-            );
+        	if (telemetry_set_temperature(&telemetry, saturate_temperature(stateB1.temperature)) != CONTROLLER_OK) {
+        	    Error_Handler();
+        	}
 
-            telemetry_set_light_mode(
-                &telemetry,
-                get_light_mode(light_state)
-            );
+        	if (telemetry_set_light_mode(&telemetry, get_light_mode(light_state)) != CONTROLLER_OK) {
+        	    Error_Handler();
+        	}
 
-            telemetry_set_obstacle_avoidance_mode(
-				&telemetry,
-				obs_avoidance ? COMPLETE : MINIMAL
-			);
+        	if (telemetry_set_obstacle_avoidance_mode(&telemetry, obs_avoidance ? COMPLETE : MINIMAL) != CONTROLLER_OK) {
+        	    Error_Handler();
+        	}
 
-            telemetry_set_driving_mode(
-				&telemetry,
-				get_driving_mode(driving_mode)
-			);
 
-            telemetry_set_rpm(
-                &telemetry,
-                stateB1.velocity_FA,
-                stateB1.velocity_FB,
-                stateB1.velocity_BA,
-                stateB1.velocity_BB
-            );
+        	if (telemetry_set_driving_mode(&telemetry, get_driving_mode(driving_mode)) != CONTROLLER_OK) {
+        	    Error_Handler();
+        	}
 
-            telemetry_set_operating_mode(&telemetry, OM_NORMAL);
+        	if (telemetry_set_rpm(&telemetry, stateB1.velocity_FA, stateB1.velocity_FB, stateB1.velocity_BA, stateB1.velocity_BB) != CONTROLLER_OK) {
+        	    Error_Handler();
+        	}
+
+        	if (telemetry_set_operating_mode(&telemetry, OM_NORMAL) != CONTROLLER_OK) {
+        	    Error_Handler();
+        	}
         }
         /* ===================== NON-NORMAL MODES ===================== */
         else
         {
-            telemetry_set_backward_mode(&telemetry, BW_NORMAL);
-            telemetry_set_battery(&telemetry, 0);
-            telemetry_set_temperature(&telemetry, 0);
-            telemetry_set_light_mode(&telemetry, LIGHT_OFF);
-            telemetry_set_obstacle_avoidance_mode(&telemetry, COMPLETE);
-            telemetry_set_driving_mode(&telemetry, DEFAULT);
+        	if (telemetry_set_backward_mode(&telemetry, BW_NORMAL) != CONTROLLER_OK)
+        	    Error_Handler();
 
-            telemetry_set_rpm(&telemetry, 0, 0, 0, 0);
+        	if (telemetry_set_battery(&telemetry, 0) != CONTROLLER_OK)
+        	    Error_Handler();
 
-            telemetry_set_operating_mode(
-                &telemetry,
-                (supervision_state == Board2_IN_Degraded)
-                    ? OM_DEGRADED
-                    : OM_SINGLE_BOARD
-            );
+        	if (telemetry_set_temperature(&telemetry, 0) != CONTROLLER_OK)
+        	    Error_Handler();
+
+        	if (telemetry_set_light_mode(&telemetry, LIGHT_OFF) != CONTROLLER_OK)
+        	    Error_Handler();
+
+        	if (telemetry_set_obstacle_avoidance_mode(&telemetry, COMPLETE) != CONTROLLER_OK)
+        	    Error_Handler();
+
+        	if (telemetry_set_driving_mode(&telemetry, DEFAULT) != CONTROLLER_OK)
+        	    Error_Handler();
+
+        	if (telemetry_set_rpm(&telemetry, 0, 0, 0, 0) != CONTROLLER_OK)
+        	    Error_Handler();
+
+        	if (telemetry_set_operating_mode(&telemetry, (supervision_state == Board2_IN_Degraded) ? OM_DEGRADED : OM_SINGLE_BOARD) != CONTROLLER_OK) {
+        	    Error_Handler();
+        	}
         }
 
         /* ===================== COMMON FIELDS ===================== */
 
-        telemetry_set_sonars(
-            &telemetry,
-            sonar1,
-            sonar2,
-            sonar3
-        );
+        if (telemetry_set_sonars(&telemetry, sonar1, sonar2, sonar3) != CONTROLLER_OK) {
+            Error_Handler();
+        }
 
-        telemetry_set_targets(
-            &telemetry,
-            output.rif_FA,
-            output.rif_FB,
-            output.rif_BA,
-            output.rif_BB);
+        if (telemetry_set_targets(&telemetry, output.rif_FA, output.rif_FB, output.rif_BA, output.rif_BB) != CONTROLLER_OK) {
+            Error_Handler();
+        }
 
-        telemetry_set_max_velocity(&telemetry, max_velocity);
+        if (telemetry_set_max_velocity(&telemetry, max_velocity) != CONTROLLER_OK) {
+            Error_Handler();
+        }
 
         /* ===================== TX ===================== */
-
-        //Qui va fatta una gestione senza ErrorHandler in caso di errore
-        telecontrol_send_telemetry(&controller, &telemetry);
+        ControllerStatus_t st = telecontrol_send_telemetry(&controller, &telemetry);
+        if (st != CONTROLLER_OK) {
+            if (st == CONTROLLER_ERR) {
+                Error_Handler();
+            } else {
+                telemetry_tx_failures++;
+            }
+        }
     }
   /* USER CODE END telemetryLoggerTask */
 }

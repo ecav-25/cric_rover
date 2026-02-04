@@ -56,7 +56,7 @@ ControllerStatus_t telecontrol_send_telemetry(Controller_t *telecontrol, Telemet
     if (status == HAL_OK) {
         return CONTROLLER_OK;
     } else {
-        return CONTROLLER_ERR;
+        return CONTROLLER_ERR_COMM;
     }
 }
 

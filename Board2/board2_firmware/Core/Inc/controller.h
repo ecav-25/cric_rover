@@ -10,7 +10,8 @@
 
 typedef enum {
     CONTROLLER_OK = 0,
-    CONTROLLER_ERR
+    CONTROLLER_ERR,
+	CONTROLLER_ERR_COMM
 } ControllerStatus_t;
 
 /* ===================== CONTROLLER DATA ===================== */
