@@ -107,6 +107,8 @@ mpu6050_t mpu_device;
 imu_vector_t acceleration;
 imu_vector_t gyroyaw;
 
+static bool imu_initialized = false;
+
 Motor_t motor_FA_openLoop;
 Motor_t motor_FB_openLoop;
 Motor_t motor_BA_openLoop;
@@ -137,7 +139,6 @@ extern I2C_HandleTypeDef hi2c1;
 
 extern UART_HandleTypeDef huart3;
 
-static bool imu_available = false;
 
 boolean_T deadline = 0;
 /* USER CODE END Variables */
@@ -202,8 +203,6 @@ void MX_FREERTOS_Init(void) {
 	DWD_Init(&hard_rt_deadline_wd, &htim4, SYSTEM_ALIVE_MASK, deadlineProcedure);
 	(void)DWT_Delay_Init();
 
-	MPU60X0_StatusTypeDef status_mpu;
-
 	hcsr04_cfg_t base = {
 	  .htim = &htim2,
 	  .timer_hz = 1000000,
@@ -235,18 +234,6 @@ void MX_FREERTOS_Init(void) {
 
 	if(telecontrol_init(&controller, &hi2c1) != CONTROLLER_OK){
 	    Error_Handler();
-	}
-
-	status_mpu = mpu6050_init(&mpu_device, MPU_HW_CONFIG[MPU_MAIN].i2c, MPU_HW_CONFIG[MPU_MAIN].address, &MPU_HW_CONFIG[MPU_MAIN].cfg);
-
-	if (status_mpu == MPU6050_ERR) {
-	    Error_Handler();
-	}
-	else if (status_mpu == MPU6050_ERR_COMM) {
-	    imu_available = false;
-	}
-	else {
-	    imu_available = true;
 	}
 
 	if (motor_init(&motor_FA_openLoop, MOTOR_HW_CONFIG[MOTOR_FA].htim, MOTOR_HW_CONFIG[MOTOR_FA].channel, &MOTOR_HW_CONFIG[MOTOR_FA].calib) != MOTOR_OK){
@@ -445,10 +432,10 @@ void telemetryLoggerTask(void *argument)
         output = Board2_Y.output;
 
         supervision_state = Board2_DW.is_Board_state;
-        light_state       = Board2_DW.is_Normal_voltage_lights;
+        light_state       = Board2_DW.is_Normal_lights;
         special_retro     = Board2_DW.special_retro;
         obs_avoidance     = Board2_DW.obs_detection;
-        driving_mode      = Board2_DW.is_Normal_voltage_driving;
+        driving_mode      = Board2_DW.is_Normal_driving;
         max_velocity     = Board2_DW.max_velocity;
 
         if (supervision_state == Board2_IN_Normal) {
@@ -560,10 +547,12 @@ static void supervision_read_inputs(void)
     telecontroller_status = telecontrol_read(&controller);
 
     if(telecontroller_status == CONTROLLER_OK){
-        Board2_U.controllerError = 0;
+        __NOP();
+    	//Board2_U.controllerError = 0;
     }
     else if(telecontroller_status == CONTROLLER_ERR_COMM){
-        Board2_U.controllerError = 1;
+    	__NOP();
+    	//Board2_U.controllerError = 1;
     }
     else{
         Error_Handler();
@@ -579,19 +568,26 @@ static void supervision_read_inputs(void)
     Board2_U.B_l_stick = get_telecontrol_a_btn(&controller);
     Board2_U.controller_battery = get_telecontrol_percentage(&controller);
 
-    mpu_status = mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
 
-    if(mpu_status == MPU6050_OK){
-        Board2_U.gyroError = 0;
-    }
-    else if(mpu_status == MPU6050_ERR_COMM){
-        Board2_U.gyroError = 1;
+    mpu_status = mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
+    if (mpu_status == MPU6050_OK){
+        imu_initialized = true;
+        __NOP();
+        //Board2_U.gyroError = 0;
+        Board2_U.gyroYaw   = gyroyaw.z;
     }
     else{
-        Error_Handler();
+    	__NOP();
+        //Board2_U.gyroError = 1;
+
+        if (!imu_initialized){
+            if (mpu6050_init(&mpu_device, MPU_HW_CONFIG[MPU_MAIN].i2c, MPU_HW_CONFIG[MPU_MAIN].address, &MPU_HW_CONFIG[MPU_MAIN].cfg) == MPU6050_OK){
+                imu_initialized = true;
+            }
+        }
     }
 
-    Board2_U.gyroYaw = gyroyaw.z;
+
     /*
     Board2_U.controller_x = dbg_controller_x;
     Board2_U.controller_y = dbg_controller_y;
@@ -607,6 +603,7 @@ static void supervision_read_inputs(void)
     Board2_U.controller_battery = dbg_controller_battery;
     */
 }
+
 
 void executeSupervision(){
 	do{

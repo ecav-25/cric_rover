@@ -40,7 +40,7 @@ ControllerStatus_t telecontrol_read(Controller_t *telecontrol){
     if (status == HAL_OK) {
         return CONTROLLER_OK;
     } else {
-        return CONTROLLER_ERR;
+        return CONTROLLER_ERR_COMM;
     }
 }
 
