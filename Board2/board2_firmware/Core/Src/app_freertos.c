@@ -558,16 +558,32 @@ static void supervision_read_inputs(void)
         Error_Handler();
     }
 
-    Board2_U.controller_x = get_telecontrol_bx(&controller);
-    Board2_U.controller_y = get_telecontrol_ay(&controller);
-    Board2_U.B1 = get_telecontrol_button_btn1(&controller);
-    Board2_U.B2 = get_telecontrol_button_btn2(&controller);
-    Board2_U.B3 = get_telecontrol_button_btn3(&controller);
-    Board2_U.B4 = get_telecontrol_button_btn4(&controller);
-    Board2_U.B_r_stick = get_telecontrol_b_btn(&controller);
-    Board2_U.B_l_stick = get_telecontrol_a_btn(&controller);
-    Board2_U.controller_battery = get_telecontrol_percentage(&controller);
+    if (get_telecontrol_bx(&controller, &Board2_U.controller_x) != CONTROLLER_OK)
+        Error_Handler();
 
+    if (get_telecontrol_ay(&controller, &Board2_U.controller_y) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_button_btn1(&controller, &Board2_U.B1) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_button_btn2(&controller, &Board2_U.B2) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_button_btn3(&controller, &Board2_U.B3) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_button_btn4(&controller, &Board2_U.B4) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_b_btn(&controller, &Board2_U.B_r_stick) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_a_btn(&controller, &Board2_U.B_l_stick) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_percentage(&controller, &Board2_U.controller_battery) != CONTROLLER_OK)
+        Error_Handler();
 
     mpu_status = mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
     if (mpu_status == MPU6050_OK){
