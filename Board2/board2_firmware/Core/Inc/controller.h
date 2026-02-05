@@ -39,6 +39,7 @@ typedef struct __attribute__((packed)) {
 
 typedef struct {
     I2C_HandleTypeDef* i2c;
+    uint16_t address;
     controller_information_t controller_information;
 } Controller_t;
 
@@ -107,7 +108,7 @@ typedef struct __attribute__((packed)) {
 
 /* ===================== CONTROLLER API ===================== */
 
-ControllerStatus_t telecontrol_init(Controller_t *telecontrol, I2C_HandleTypeDef* i2c);
+ControllerStatus_t telecontrol_init(Controller_t *telecontrol, I2C_HandleTypeDef* i2c, uint16_t address);
 
 ControllerStatus_t telecontrol_read(Controller_t *telecontrol);
 

@@ -63,14 +63,8 @@ typedef StaticTask_t osStaticThreadDef_t;
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-static void app_delay_us(uint32_t us)
-{
-    (void)DWT_Delay_us(us);
-}
 
-typedef enum { S_LEFT = 0, S_CENTER, S_RIGHT } rr_state_t;
-
-static volatile uint16_T g_sonar_distances[3];
+static volatile uint16_T g_sonar_distances[US_COUNT];
 
 static hcsr04_t us_left, us_center, us_right;
 
@@ -131,11 +125,8 @@ boolean_T retransmit_seen_in_cycle = false;
 uint32_t count_retransmit=0;
 
 extern TIM_HandleTypeDef htim1;
-extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim4;
 extern I2C_HandleTypeDef hi2c1;
-
-extern UART_HandleTypeDef huart3;
 
 static bool imu_available = false;
 
@@ -200,40 +191,23 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
 	DWD_Init(&hard_rt_deadline_wd, &htim4, SYSTEM_ALIVE_MASK, deadlineProcedure);
+
 	(void)DWT_Delay_Init();
 
 	MPU60X0_StatusTypeDef status_mpu;
 
-	hcsr04_cfg_t base = {
-	  .htim = &htim2,
-	  .timer_hz = 1000000,
-	  .timeout_ms = 30,
-	  .delay_us = app_delay_us
-	};
+	if(HCSR04_Init(&us_left,   &ULTRASONIC_HW_CONFIG[US_LEFT]) != HCSR04_OK){
+	    Error_Handler();
+	}
+	if(HCSR04_Init(&us_center, &ULTRASONIC_HW_CONFIG[US_CENTER]) != HCSR04_OK){
+	    Error_Handler();
+	}
 
-	/* LEFT:  TIM2_CH1, TRIG PA0 */
-	hcsr04_cfg_t cL = base;
-	cL.channel = TIM_CHANNEL_1;
-	cL.trig_port = TRIG_LEFT_GPIO_Port;
-	cL.trig_pin  = TRIG_LEFT_Pin;
+	if(HCSR04_Init(&us_right,  &ULTRASONIC_HW_CONFIG[US_RIGHT]) != HCSR04_OK){
+	    Error_Handler();
+	}
 
-	/* CENTER: TIM2_CH2, TRIG PA1 */
-	hcsr04_cfg_t cC = base;
-	cC.channel = TIM_CHANNEL_2;
-	cC.trig_port = TRIG_CENTER_GPIO_Port;
-	cC.trig_pin  = TRIG_CENTER_Pin;
-
-	/* RIGHT: TIM2_CH3, TRIG PA2 */
-	hcsr04_cfg_t cR = base;
-	cR.channel = TIM_CHANNEL_3;
-	cR.trig_port = TRIG_RIGHT_GPIO_Port;
-	cR.trig_pin  = TRIG_RIGHT_Pin;
-
-	(void)HCSR04_Init(&us_left,   &cL);
-	(void)HCSR04_Init(&us_center, &cC);
-	(void)HCSR04_Init(&us_right,  &cR);
-
-	if(telecontrol_init(&controller, &hi2c1) != CONTROLLER_OK){
+	if(telecontrol_init(&controller, CONTROLLER_HW_CONFIG[CONTROLLER_MAIN].i2c, CONTROLLER_HW_CONFIG[CONTROLLER_MAIN].address ) != CONTROLLER_OK){
 	    Error_Handler();
 	}
 
@@ -343,9 +317,9 @@ void readSonarTask(void *argument)
 			{
 				taskENTER_CRITICAL();
 
-				Board2_U.sonar1 = g_sonar_distances[S_LEFT];
-				Board2_U.sonar2 = g_sonar_distances[S_CENTER];
-				Board2_U.sonar3 = g_sonar_distances[S_RIGHT];
+				Board2_U.sonar1 = g_sonar_distances[US_LEFT];
+				Board2_U.sonar2 = g_sonar_distances[US_CENTER];
+				Board2_U.sonar3 = g_sonar_distances[US_RIGHT];
 
 				taskEXIT_CRITICAL();
 			}
@@ -560,10 +534,10 @@ static void supervision_read_inputs(void)
     telecontroller_status = telecontrol_read(&controller);
 
     if(telecontroller_status == CONTROLLER_OK){
-        Board2_U.controllerError = 0;
+        //Board2_U.controllerError = 0;
     }
     else if(telecontroller_status == CONTROLLER_ERR_COMM){
-        Board2_U.controllerError = 1;
+        //Board2_U.controllerError = 1;
     }
     else{
         Error_Handler();
@@ -582,10 +556,10 @@ static void supervision_read_inputs(void)
     mpu_status = mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
 
     if(mpu_status == MPU6050_OK){
-        Board2_U.gyroError = 0;
+        //Board2_U.gyroError = 0;
     }
     else if(mpu_status == MPU6050_ERR_COMM){
-        Board2_U.gyroError = 1;
+        //Board2_U.gyroError = 1;
     }
     else{
         Error_Handler();

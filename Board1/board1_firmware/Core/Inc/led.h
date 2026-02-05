@@ -45,7 +45,7 @@ typedef struct led_s led_t;
 typedef GPIO_PinState pin_state_t;
 
 
-int8_t led_init(led_t* led, GPIO_TypeDef* GPIOx[LED_COUNT], uint16_t GPIO_Pin[LED_COUNT], led_state_t init_state, pin_state_t init_pin_state[LED_COUNT], uint8_t toggle_steps);
+int8_t led_init(led_t* led, GPIO_TypeDef* const GPIOx[LED_COUNT], const uint16_t GPIO_Pin[LED_COUNT],const pin_state_t init_pin_state[LED_COUNT], uint8_t toggle_steps);
 
 /*
  * Set an output status for the led.

@@ -154,15 +154,6 @@ DecBus debug_decision;
 boolean_T retransmit_seen_in_cycle = false;
 uint32_t count_retransmit=0;
 
-extern TIM_HandleTypeDef htim3;
-extern TIM_HandleTypeDef htim4;
-extern TIM_HandleTypeDef htim1;
-extern TIM_HandleTypeDef htim5;
-extern TIM_HandleTypeDef htim8;
-extern TIM_HandleTypeDef htim20;
-extern ADC_HandleTypeDef hadc1;
-extern DMA_HandleTypeDef hdma_tim17_ch1;
-
 boolean_T deadline = 0;
 
 real32_T ramp_step;
@@ -170,50 +161,10 @@ real32_T ramp_step;
 led_t ledA;
 led_t ledB;
 
-LED_TYPE led_FA = OFF, led_FB = OFF, rear_sign = OFF;
+LED_TYPE led_FA = OFF, led_FB = OFF;
+REAR_SIGN_TYPE rear_sign = OFF;
 REAR_LED_TYPE rear_led = IDLE;
 
-/* Array di porte GPIO */
-GPIO_TypeDef* ledA_ports[LED_COUNT] = {
-    FA_LED_RED_GPIO_Port,   	// LED_RED
-	FA_LED_WHITE_GPIO_Port    	// LED_WHITE
-};
-
-/* Array di pin GPIO */
-uint16_t ledA_pins[LED_COUNT] = {
-    FA_LED_RED_Pin,   	// LED_RED
-	FA_LED_WHITE_Pin    // LED_WHITE
-};
-
-
-GPIO_TypeDef* ledB_ports[LED_COUNT] = {
-	FB_LED_RED_GPIO_Port,   	// LED_RED
-	FB_LED_WHITE_GPIO_Port    	// LED_WHITE
-};
-
-/* Array di pin GPIO */
-uint16_t ledB_pins[LED_COUNT] = {
-	FB_LED_RED_Pin,   	// LED_RED
-	FB_LED_WHITE_Pin    // LED_WHITE
-};
-
-/* Stato iniziale dei pin */
-pin_state_t led_init_state[LED_COUNT] = {
-    GPIO_PIN_RESET,  // LED_RED spento
-    GPIO_PIN_RESET   // LED_WHITE spento
-};
-
-led_config_t cfg = {
-		  .htim = &htim17,
-		  .hdma = &hdma_tim17_ch1,
-		  .pwm_hi = 135,
-		  .pwm_lo = 55,
-		  .reset_halves = 2,
-		  .scale_b = 0xF0,
-		  .scale_g = 0xB0,
-		  .scale_r = 0xFF,
-		  .tim_channel = TIM_CHANNEL_1
-};
 
 /* USER CODE END Variables */
 /* Definitions for supervision */
@@ -422,9 +373,20 @@ void MX_FREERTOS_Init(void) {
 	}
 	*/
 
-	led_stripe_init(&cfg);
-	led_init(&ledA, ledA_ports, ledA_pins, OFF, led_init_state, 20);
-	led_init(&ledB, ledB_ports, ledB_pins, OFF, led_init_state, 20);
+	if(led_stripe_init(&led_stripes_cfg[LED_STRIPES_MAIN]) != LED_STRIPE_OK){
+		Error_Handler();
+		return;
+	}
+
+	if(led_init(&ledA, HW_LED_CONFIG[LED_A].port, HW_LED_CONFIG[LED_A].pin, HW_LED_CONFIG[LED_A].init_pin_state, HW_LED_CONFIG[LED_A].toggle_steps) != LED_OK){
+		Error_Handler();
+		return;
+	}
+
+	if(led_init(&ledB, HW_LED_CONFIG[LED_B].port, HW_LED_CONFIG[LED_B].pin, HW_LED_CONFIG[LED_B].init_pin_state, HW_LED_CONFIG[LED_B].toggle_steps) != LED_OK){
+		Error_Handler();
+		return;
+	}
 
 	Board1_initialize();
   /* USER CODE END Init */

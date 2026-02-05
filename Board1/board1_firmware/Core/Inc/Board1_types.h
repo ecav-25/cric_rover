@@ -50,7 +50,7 @@ typedef enum {
 typedef enum {
   IDLE = 0,                            /* Default value */
   BACKLIGHTS,
-  BRAKING_LIGHT,
+  BRAKING_LIGHTS,
   BACKWARD_LIGHTS,
   ARROW_LEFT,
   ARROW_RIGHT,

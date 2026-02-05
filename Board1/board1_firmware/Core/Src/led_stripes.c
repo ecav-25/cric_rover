@@ -13,9 +13,11 @@
 #define LED_REAR_LED_START 8
 #define LED_REAR_LED_END 20
 
+#define ARROW_OFF_STEPS  5
+#define ARROW_ON_STEPS   5
 
 typedef struct {
-  led_config_t cfg;
+  led_stripes_config_t cfg;
 
   uint8_t rgb_arr[NUM_BYTES];
   uint8_t wr_buf[WR_BUF_LEN];
@@ -90,7 +92,7 @@ static inline uint8_t scale8(uint8_t x, uint8_t scale) {
 }
 
 
-led_status_t led_stripe_init(led_config_t *cfg){
+led_status_t led_stripe_init(const led_stripes_config_t *cfg){
 
   if (!cfg) return LED_STRIPE_ERR;
 
