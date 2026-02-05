@@ -16,6 +16,9 @@
 #define ARROW_OFF_STEPS  5
 #define ARROW_ON_STEPS   5
 
+
+#define EMERGENCY_PERIOD 20  // number of steps for a full emergency light cycle (on + off)
+
 typedef struct {
   led_stripes_config_t cfg;
 
@@ -55,12 +58,18 @@ static led_status_t rear_led_anim_arrow_left();
 static led_status_t rear_led_anim_arrow_right();
 static led_status_t rear_led_anim_backward();
 static led_status_t rear_led_special_lights();
+static led_status_t rear_led_emercency_lights();
+static led_status_t rear_led_degraded_lights();
+
+
+
+
 static led_status_t rear_sign_off();
 static led_status_t rear_sign_white();
 static led_status_t rear_sign_orange();
 static led_status_t rear_sign_green();
 static led_status_t rear_sign_red();
-
+static led_status_t rear_sign_yellow();
 
 static inline uint16_t lfsr_next(void)
 {
@@ -143,7 +152,7 @@ led_status_t rear_led_step(REAR_LED_TYPE animation){
 				res = LED_STRIPE_OK;
 			}
 			break;
-		case  BRAKING_LIGHT:
+		case  BRAKING_LIGHTS:
 			if(rear_led_anim_stop() == LED_STRIPE_OK){
 				res = LED_STRIPE_OK;
 			}
@@ -170,6 +179,17 @@ led_status_t rear_led_step(REAR_LED_TYPE animation){
 			}
 			break;
 			
+		case  EMERGENCY_LIGHTS:
+			if(rear_led_emercency_lights() == LED_STRIPE_OK){
+				res = LED_STRIPE_OK;
+			}
+			break;
+
+		case DEGRADED_LIGHTS:
+			if(rear_led_degraded_lights() == LED_STRIPE_OK){
+				res = LED_STRIPE_OK;
+			}
+			break;
 		default:
 			rear_led_off();
 			res = LED_STRIPE_ERR;
@@ -219,6 +239,11 @@ led_status_t rear_sign_step(REAR_SIGN_TYPE animation){
 			break;
 		case SIGN_RED:
 			if(rear_sign_red() == LED_STRIPE_OK){
+				res = LED_STRIPE_OK;
+			}
+			break;
+		case SIGN_YELLOW:
+			if(rear_sign_yellow() == LED_STRIPE_OK){
 				res = LED_STRIPE_OK;
 			}
 			break;
@@ -274,6 +299,37 @@ static led_status_t rear_led_special_lights(void)
     return LED_STRIPE_OK;
 }
 
+
+static led_status_t rear_led_emercency_lights(void)
+{
+	res = LED_STRIPE_ERR;
+	if (rear_led.step == 0 && led_set_RGB_range(rear_led.start, rear_led.end, 255, 0, 0) == LED_STRIPE_OK){
+		g_led_bus.dirty = 1;
+		res = LED_STRIPE_OK;
+	}else if (rear_led.step == (EMERGENCY_PERIOD / 2) && led_set_RGB_range(rear_led.start, rear_led.end, 0, 0, 0) == LED_STRIPE_OK){
+		g_led_bus.dirty = 1;
+		res = LED_STRIPE_OK;
+	}else{
+		res = LED_STRIPE_OK;
+	}
+
+
+	rear_led.step = (rear_led.step + 1) % EMERGENCY_PERIOD;
+
+	return res;
+}
+
+static led_status_t rear_led_degraded_lights(void)
+{
+	if (rear_led.step != 0) return LED_STRIPE_OK;
+
+	if (led_set_RGB_range(rear_led.start, rear_led.end, 255, 255, 0) != LED_STRIPE_OK)
+		return LED_STRIPE_ERR;
+
+	g_led_bus.dirty = 1;
+	rear_led.step = 1;
+	return LED_STRIPE_OK;
+}
 
 static led_status_t rear_led_anim_stop(void)
 {
@@ -471,6 +527,18 @@ static led_status_t rear_sign_orange(void)
     g_led_bus.dirty = 1;
     rear_sign.step = 1;
     return LED_STRIPE_OK;
+}
+
+static led_status_t rear_sign_yellow(void)
+{
+	if (rear_sign.step != 0) return LED_STRIPE_OK;
+
+	if (led_set_RGB_range(rear_sign.start, rear_sign.end, 255, 255, 0) != LED_STRIPE_OK)
+		return LED_STRIPE_ERR;
+
+	g_led_bus.dirty = 1;
+	rear_sign.step = 1;
+	return LED_STRIPE_OK;
 }
 
 
