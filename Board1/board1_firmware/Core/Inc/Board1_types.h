@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board1'.
  *
- * Model version                  : 1.2337
+ * Model version                  : 1.2403
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Wed Feb  4 12:38:31 2026
+ * C/C++ source code generated on : Thu Feb  5 17:49:43 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -54,7 +54,9 @@ typedef enum {
   BACKWARD_LIGHTS,
   ARROW_LEFT,
   ARROW_RIGHT,
-  SPECIAL_LIGHTS
+  SPECIAL_LIGHTS,
+  EMERGENCY_LIGHTS,
+  DEGRADED_LIGHTS
 } REAR_LED_TYPE;
 
 #endif
@@ -67,7 +69,8 @@ typedef enum {
   SIGN_WHITE,
   SIGN_GREEN,
   SIGN_ORANGE,
-  SIGN_RED
+  SIGN_RED,
+  SIGN_YELLOW
 } REAR_SIGN_TYPE;
 
 #endif
@@ -112,6 +115,10 @@ typedef struct {
   int16_T velocity_FB;
   int16_T velocity_BA;
   int16_T velocity_BB;
+  boolean_T motorError_FA;
+  boolean_T motorError_FB;
+  boolean_T motorError_BA;
+  boolean_T motorError_BB;
 } StateBusB1;
 
 #endif
@@ -120,8 +127,6 @@ typedef struct {
 #define DEFINED_TYPEDEF_FOR_StateBusB2_
 
 typedef struct {
-  real32_T acceleration_y;
-  real32_T acceleration_x;
   real32_T gyroYaw;
   uint16_T sonar1;
   uint16_T sonar2;
@@ -135,6 +140,8 @@ typedef struct {
   boolean_T r_stick_button;
   boolean_T l_stick_button;
   uint8_T controller_battery;
+  boolean_T controllerError;
+  boolean_T gyroError;
 } StateBusB2;
 
 #endif
@@ -193,6 +200,17 @@ typedef struct {
   StateBusB2 state;
   uint32_T crc;
 } PacketStateB2;
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_WORKING_STATUS_TYPE_
+#define DEFINED_TYPEDEF_FOR_WORKING_STATUS_TYPE_
+
+typedef enum {
+  NORMAL_WORKING = 0,                  /* Default value */
+  CRITICAL_VOLTAGE_WORKING,
+  MOTOR_ERROR_WORKING
+} WORKING_STATUS_TYPE;
 
 #endif
 

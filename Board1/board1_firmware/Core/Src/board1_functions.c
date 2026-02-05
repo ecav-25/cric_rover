@@ -46,14 +46,16 @@ static void Copy_StateBusB1(StateBusB1* dest, const StateBusB1* src) {
     dest->velocity_FB = src->velocity_FB;
     dest->velocity_BA = src->velocity_BA;
     dest->velocity_BB = src->velocity_BB;
+    dest->motorError_FA = src->motorError_FA;
+    dest->motorError_FB = src->motorError_FB;
+    dest->motorError_BA = src->motorError_BA;
+    dest->motorError_BB = src->motorError_BB;
 }
 
 /**
  * @brief Copia sicura campo per campo di StateBusB2.
  */
 static void Copy_StateBusB2(StateBusB2* dest, const StateBusB2* src) {
-    dest->acceleration_y = src->acceleration_y;
-    dest->acceleration_x = src->acceleration_x;
     dest->gyroYaw = src->gyroYaw;
     dest->sonar1 = src->sonar1;
     dest->sonar2 = src->sonar2;
@@ -67,6 +69,8 @@ static void Copy_StateBusB2(StateBusB2* dest, const StateBusB2* src) {
     dest->r_stick_button = src->r_stick_button;
     dest->l_stick_button = src->l_stick_button;
     dest->controller_battery = src->controller_battery;
+    dest->controllerError = src->controllerError;
+    dest->gyroError = src->gyroError;
 }
 
 /**
@@ -77,7 +81,6 @@ static void Copy_GSBus(GSBus* dest, const GSBus* src) {
     Copy_StateBusB2(&dest->stateB2, &src->stateB2);
     dest->mov_obs = src->mov_obs;
     dest->spc_retro = src->spc_retro;
-    //dest->max_vel = src->max_vel;
     dest->limit_vel = src->limit_vel;
     dest->change_vel = src->change_vel;
     dest->obs_detection = src->obs_detection;

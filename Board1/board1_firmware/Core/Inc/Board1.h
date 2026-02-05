@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board1'.
  *
- * Model version                  : 1.2337
+ * Model version                  : 1.2403
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Wed Feb  4 12:38:31 2026
+ * C/C++ source code generated on : Thu Feb  5 17:49:43 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -34,9 +34,12 @@
 #define B_IN_Moving_obstacle_from_right ((uint8_T)1U)
 #define Bo_IN_Change_max_velocity_start ((uint8_T)1U)
 #define Bo_IN_Moving_obstacle_from_left ((uint8_T)1U)
+#define Bo_IN_Turn_moving_right_no_gyro ((uint8_T)2U)
 #define Boa_IN_Critical_voltage_driving ((uint8_T)1U)
 #define Boa_IN_Critical_voltage_routine ((uint8_T)1U)
+#define Boa_IN_Critical_voltage_working ((uint8_T)1U)
 #define Boa_IN_Emergency_button_routine ((uint8_T)2U)
+#define Boa_IN_Turn_moving_left_no_gyro ((uint8_T)2U)
 #define Boar_IN_Connection_restablished ((uint8_T)1U)
 #define Boar_IN_Control_from_controller ((uint8_T)1U)
 #define Boar_IN_Critical_voltage_lights ((uint8_T)1U)
@@ -62,13 +65,21 @@
 #define Board1_IN_Mode_DEFAULT         ((uint8_T)1U)
 #define Board1_IN_Mode_ECO             ((uint8_T)2U)
 #define Board1_IN_Mode_SPORT           ((uint8_T)3U)
+#define Board1_IN_Motor_error_driving  ((uint8_T)2U)
+#define Board1_IN_Motor_error_lights   ((uint8_T)2U)
+#define Board1_IN_Motor_error_relay    ((uint8_T)2U)
+#define Board1_IN_Motor_error_routine  ((uint8_T)2U)
+#define Board1_IN_Motor_error_working  ((uint8_T)2U)
 #define Board1_IN_NO_ACTIVE_CHILD      ((uint8_T)0U)
 #define Board1_IN_No_limitation        ((uint8_T)1U)
 #define Board1_IN_No_movements         ((uint8_T)1U)
 #define Board1_IN_Normal               ((uint8_T)2U)
+#define Board1_IN_Normal_driving       ((uint8_T)3U)
 #define Board1_IN_Normal_k             ((uint8_T)3U)
-#define Board1_IN_Normal_voltage_lights ((uint8_T)2U)
-#define Board1_IN_Normal_voltage_relay ((uint8_T)2U)
+#define Board1_IN_Normal_lights        ((uint8_T)3U)
+#define Board1_IN_Normal_relay         ((uint8_T)3U)
+#define Board1_IN_Normal_routine       ((uint8_T)3U)
+#define Board1_IN_Normal_working       ((uint8_T)3U)
 #define Board1_IN_Not_moving           ((uint8_T)1U)
 #define Board1_IN_Not_moving_routine   ((uint8_T)7U)
 #define Board1_IN_Obstacle_left        ((uint8_T)2U)
@@ -99,17 +110,18 @@
 #define Board1_IN_Transmit_Global_State ((uint8_T)12U)
 #define Board1_IN_Transmit_Local_State ((uint8_T)13U)
 #define Board1_IN_Transmit_ping        ((uint8_T)5U)
-#define Board1_IN_Turn_back            ((uint8_T)2U)
+#define Board1_IN_Turn_back_gyro       ((uint8_T)2U)
+#define Board1_IN_Turn_back_no_gyro    ((uint8_T)3U)
 #define Board1_IN_Turn_left            ((uint8_T)4U)
-#define Board1_IN_Turn_left_b          ((uint8_T)1U)
-#define Board1_IN_Turn_right           ((uint8_T)5U)
-#define Board1_IN_Turn_right_m         ((uint8_T)1U)
+#define Board1_IN_Turn_left_no_gyro    ((uint8_T)5U)
+#define Board1_IN_Turn_moving_left_gyro ((uint8_T)1U)
+#define Board1_IN_Turn_right_gyro      ((uint8_T)6U)
+#define Board1_IN_Turn_right_no_gyro   ((uint8_T)7U)
 #define Board1_IN_Waiting              ((uint8_T)3U)
 #define Board1_IN_Waiting_to_restablish ((uint8_T)6U)
 #define Board1_IN_Waiting_to_start     ((uint8_T)14U)
 #define Board_IN_Critical_voltage_relay ((uint8_T)1U)
-#define Board_IN_Normal_voltage_driving ((uint8_T)2U)
-#define Board_IN_Normal_voltage_routine ((uint8_T)2U)
+#define Board_IN_Turn_moving_right_gyro ((uint8_T)1U)
 #define Board_IN_Waiting_change_max_vel ((uint8_T)1U)
 #define IN_Global_Local_state_transmitt ((uint8_T)3U)
 #define IN_Low_controller_battery_routi ((uint8_T)4U)
@@ -147,6 +159,8 @@ typedef struct {
   uint32_T time_button_retro;          /* '<Root>/Board1' */
   uint32_T time_button_vel;            /* '<Root>/Board1' */
   uint32_T time_obs_s3;                /* '<Root>/Board1' */
+  uint32_T turn_counter;               /* '<Root>/Board1' */
+  WORKING_STATUS_TYPE working_status;  /* '<Root>/Board1' */
   uint16_T distance_threshold;         /* '<Root>/Board1' */
   uint16_T INCLINATION_DECREASE_VEL;   /* '<Root>/Board1' */
   int8_T change_velocity;              /* '<Root>/Board1' */
@@ -186,12 +200,14 @@ typedef struct {
   uint8_T is_Change_max_velocity;      /* '<Root>/Board1' */
   uint8_T is_Single_Board;             /* '<Root>/Board1' */
   uint8_T is_active_Board_decision;    /* '<Root>/Board1' */
+  uint8_T is_active_Working_status_manage;/* '<Root>/Board1' */
+  uint8_T is_Working_status_manager;   /* '<Root>/Board1' */
   uint8_T is_active_Routine_manager;   /* '<Root>/Board1' */
   uint8_T is_active_Max_velocity_handler;/* '<Root>/Board1' */
   uint8_T is_Max_velocity_handler;     /* '<Root>/Board1' */
   uint8_T is_active_Compute_routine;   /* '<Root>/Board1' */
   uint8_T is_Compute_routine;          /* '<Root>/Board1' */
-  uint8_T is_Normal_voltage_routine;   /* '<Root>/Board1' */
+  uint8_T is_Normal_routine;           /* '<Root>/Board1' */
   uint8_T is_Control_controller_routine;/* '<Root>/Board1' */
   uint8_T is_Emergency_button_routine; /* '<Root>/Board1' */
   uint8_T is_Emergency_sonar_routine;  /* '<Root>/Board1' */
@@ -203,10 +219,10 @@ typedef struct {
   uint8_T is_Stop_slow_routine;        /* '<Root>/Board1' */
   uint8_T is_active_Mode_manager;      /* '<Root>/Board1' */
   uint8_T is_Mode_manager;             /* '<Root>/Board1' */
-  uint8_T is_Normal_voltage_driving;   /* '<Root>/Board1' */
+  uint8_T is_Normal_driving;           /* '<Root>/Board1' */
   uint8_T is_active_Lights_manager;    /* '<Root>/Board1' */
   uint8_T is_Lights_manager;           /* '<Root>/Board1' */
-  uint8_T is_Normal_voltage_lights;    /* '<Root>/Board1' */
+  uint8_T is_Normal_lights;            /* '<Root>/Board1' */
   uint8_T is_active_Relay_manager;     /* '<Root>/Board1' */
   uint8_T is_Relay_manager;            /* '<Root>/Board1' */
   boolean_T special_retro;             /* '<Root>/Board1' */
@@ -216,11 +232,11 @@ typedef struct {
   boolean_T moving_from_left;          /* '<Root>/Board1' */
   boolean_T moving_from_right;         /* '<Root>/Board1' */
   boolean_T prev_l_stick_button;       /* '<Root>/Board1' */
-  boolean_T prev_button1_vel;          /* '<Root>/Board1' */
-  boolean_T prev_button2_obs;          /* '<Root>/Board1' */
-  boolean_T prev_button1_obs;          /* '<Root>/Board1' */
-  boolean_T prev_button2_retro;        /* '<Root>/Board1' */
   boolean_T prev_button1_retro;        /* '<Root>/Board1' */
+  boolean_T prev_button2_retro;        /* '<Root>/Board1' */
+  boolean_T prev_button1_obs;          /* '<Root>/Board1' */
+  boolean_T prev_button2_obs;          /* '<Root>/Board1' */
+  boolean_T prev_button1_vel;          /* '<Root>/Board1' */
   boolean_T prev_limit_state;          /* '<Root>/Board1' */
   boolean_T prev_r_stick_button;       /* '<Root>/Board1' */
 } DW_Board1_T;
@@ -233,6 +249,10 @@ typedef struct {
   int16_T velocity_BB;                 /* '<Root>/velocity_BB' */
   int16_T velocity_FA;                 /* '<Root>/velocity_FA' */
   int16_T velocity_FB;                 /* '<Root>/velocity_FB' */
+  boolean_T motorError_FA;             /* '<Root>/motorError_FA' */
+  boolean_T motorError_FB;             /* '<Root>/motorError_FB' */
+  boolean_T motorError_BA;             /* '<Root>/motorError_BA' */
+  boolean_T motorError_BB;             /* '<Root>/motorError_BB' */
 } ExtU_Board1_T;
 
 /* External outputs (root outports fed by signals with default storage) */
