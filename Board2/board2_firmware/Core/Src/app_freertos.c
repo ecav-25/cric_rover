@@ -101,6 +101,8 @@ mpu6050_t mpu_device;
 imu_vector_t acceleration;
 imu_vector_t gyroyaw;
 
+static bool imu_initialized = false;
+
 Motor_t motor_FA_openLoop;
 Motor_t motor_FB_openLoop;
 Motor_t motor_BA_openLoop;
@@ -127,6 +129,8 @@ uint32_t count_retransmit=0;
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim4;
 extern I2C_HandleTypeDef hi2c1;
+
+extern UART_HandleTypeDef huart3;
 
 static bool imu_available = false;
 
@@ -535,9 +539,13 @@ static void supervision_read_inputs(void)
 
     if(telecontroller_status == CONTROLLER_OK){
         //Board2_U.controllerError = 0;
+        __NOP();
+    	//Board2_U.controllerError = 0;
     }
     else if(telecontroller_status == CONTROLLER_ERR_COMM){
         //Board2_U.controllerError = 1;
+    	__NOP();
+    	//Board2_U.controllerError = 1;
     }
     else{
         Error_Handler();
@@ -555,17 +563,26 @@ static void supervision_read_inputs(void)
 
     mpu_status = mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
 
-    if(mpu_status == MPU6050_OK){
+    if (mpu_status == MPU6050_OK){
+        imu_initialized = true;
+        __NOP();
         //Board2_U.gyroError = 0;
-    }
-    else if(mpu_status == MPU6050_ERR_COMM){
+        Board2_U.gyroYaw   = gyroyaw.z;
+    }else if(mpu_status == MPU6050_ERR_COMM){
         //Board2_U.gyroError = 1;
     }
     else{
-        Error_Handler();
+    	__NOP();
+        //Board2_U.gyroError = 1;
+
+        if (!imu_initialized){
+            if (mpu6050_init(&mpu_device, MPU_HW_CONFIG[MPU_MAIN].i2c, MPU_HW_CONFIG[MPU_MAIN].address, &MPU_HW_CONFIG[MPU_MAIN].cfg) == MPU6050_OK){
+                imu_initialized = true;
+            }
+        }
     }
 
-    Board2_U.gyroYaw = gyroyaw.z;
+
     /*
     Board2_U.controller_x = dbg_controller_x;
     Board2_U.controller_y = dbg_controller_y;
