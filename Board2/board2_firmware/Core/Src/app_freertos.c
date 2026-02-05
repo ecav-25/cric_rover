@@ -547,12 +547,10 @@ static void supervision_read_inputs(void)
     telecontroller_status = telecontrol_read(&controller);
 
     if(telecontroller_status == CONTROLLER_OK){
-        __NOP();
-    	//Board2_U.controllerError = 0;
+        Board2_U.controllerError = 0;
     }
     else if(telecontroller_status == CONTROLLER_ERR_COMM){
-    	__NOP();
-    	//Board2_U.controllerError = 1;
+    	Board2_U.controllerError = 1;
     }
     else{
         Error_Handler();
@@ -588,13 +586,11 @@ static void supervision_read_inputs(void)
     mpu_status = mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
     if (mpu_status == MPU6050_OK){
         imu_initialized = true;
-        __NOP();
-        //Board2_U.gyroError = 0;
+        Board2_U.gyroError = 0;
         Board2_U.gyroYaw   = gyroyaw.z;
     }
     else{
-    	__NOP();
-        //Board2_U.gyroError = 1;
+        Board2_U.gyroError = 1;
 
         if (!imu_initialized){
             if (mpu6050_init(&mpu_device, MPU_HW_CONFIG[MPU_MAIN].i2c, MPU_HW_CONFIG[MPU_MAIN].address, &MPU_HW_CONFIG[MPU_MAIN].cfg) == MPU6050_OK){
