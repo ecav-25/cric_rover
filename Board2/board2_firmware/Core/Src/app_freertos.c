@@ -178,7 +178,7 @@ const osThreadAttr_t telemetryLogger_attributes = {
 static void supervision_read_inputs(void);
 void executeSupervision();
 static void supervision_apply_actuation(void);
-void deadlineProcedure();
+void safety_stop_and_halt();
 /* USER CODE END FunctionPrototypes */
 
 void readSonarTask(void *argument);
@@ -194,7 +194,7 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-	DWD_Init(&hard_rt_deadline_wd, &htim4, SYSTEM_ALIVE_MASK, deadlineProcedure);
+	DWD_Init(&hard_rt_deadline_wd, &htim4, SYSTEM_ALIVE_MASK, safety_stop_and_halt);
 
 	(void)DWT_Delay_Init();
 
@@ -729,7 +729,7 @@ static void supervision_apply_actuation(void)
     }
 }
 
-void deadlineProcedure(){
+void safety_stop_and_halt(){
 
 	__disable_irq(); // Disabilitazione di ogni ulteriore Interrupt
 
