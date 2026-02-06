@@ -440,86 +440,85 @@ void telemetryLoggerTask(void *argument)
         if (supervision_state == Board2_IN_Normal)
         {
         	if (telemetry_set_backward_mode(&telemetry, special_retro ? BW_SPECIAL : BW_NORMAL) != CONTROLLER_OK) {
-        	    Error_Handler();
+        		safety_stop_and_halt();
         	}
 
         	if (telemetry_set_battery(&telemetry, calculate_battery_percent(stateB1.battery_voltage)) != CONTROLLER_OK) {
-        	    Error_Handler();
+        		safety_stop_and_halt();
         	}
 
         	if (telemetry_set_temperature(&telemetry, saturate_temperature(stateB1.temperature)) != CONTROLLER_OK) {
-        	    Error_Handler();
+        		safety_stop_and_halt();
         	}
 
         	if (telemetry_set_light_mode(&telemetry, get_light_mode(light_state)) != CONTROLLER_OK) {
-        	    Error_Handler();
+        		safety_stop_and_halt();
         	}
 
         	if (telemetry_set_obstacle_avoidance_mode(&telemetry, obs_avoidance ? COMPLETE : MINIMAL) != CONTROLLER_OK) {
-        	    Error_Handler();
+        		safety_stop_and_halt();
         	}
 
-
         	if (telemetry_set_driving_mode(&telemetry, get_driving_mode(driving_mode)) != CONTROLLER_OK) {
-        	    Error_Handler();
+        		safety_stop_and_halt();
         	}
 
         	if (telemetry_set_rpm(&telemetry, stateB1.velocity_FA, stateB1.velocity_FB, stateB1.velocity_BA, stateB1.velocity_BB) != CONTROLLER_OK) {
-        	    Error_Handler();
+        		safety_stop_and_halt();
         	}
 
         	if (telemetry_set_operating_mode(&telemetry, OM_NORMAL) != CONTROLLER_OK) {
-        	    Error_Handler();
+        		safety_stop_and_halt();
         	}
         }
         /* ===================== NON-NORMAL MODES ===================== */
         else
         {
         	if (telemetry_set_backward_mode(&telemetry, BW_NORMAL) != CONTROLLER_OK)
-        	    Error_Handler();
+        		safety_stop_and_halt();
 
         	if (telemetry_set_battery(&telemetry, 0) != CONTROLLER_OK)
-        	    Error_Handler();
+        		safety_stop_and_halt();
 
         	if (telemetry_set_temperature(&telemetry, 0) != CONTROLLER_OK)
-        	    Error_Handler();
+        		safety_stop_and_halt();
 
         	if (telemetry_set_light_mode(&telemetry, LIGHT_OFF) != CONTROLLER_OK)
-        	    Error_Handler();
+        		safety_stop_and_halt();
 
         	if (telemetry_set_obstacle_avoidance_mode(&telemetry, COMPLETE) != CONTROLLER_OK)
-        	    Error_Handler();
+        		safety_stop_and_halt();
 
         	if (telemetry_set_driving_mode(&telemetry, DEFAULT) != CONTROLLER_OK)
-        	    Error_Handler();
+        		safety_stop_and_halt();
 
         	if (telemetry_set_rpm(&telemetry, 0, 0, 0, 0) != CONTROLLER_OK)
-        	    Error_Handler();
+        		safety_stop_and_halt();
 
         	if (telemetry_set_operating_mode(&telemetry, (supervision_state == Board2_IN_Degraded) ? OM_DEGRADED : OM_SINGLE_BOARD) != CONTROLLER_OK) {
-        	    Error_Handler();
+        		safety_stop_and_halt();
         	}
         }
 
         /* ===================== COMMON FIELDS ===================== */
 
         if (telemetry_set_sonars(&telemetry, sonar1, sonar2, sonar3) != CONTROLLER_OK) {
-            Error_Handler();
+        	safety_stop_and_halt();
         }
 
         if (telemetry_set_targets(&telemetry, output.rif_FA, output.rif_FB, output.rif_BA, output.rif_BB) != CONTROLLER_OK) {
-            Error_Handler();
+        	safety_stop_and_halt();
         }
 
         if (telemetry_set_max_velocity(&telemetry, max_velocity) != CONTROLLER_OK) {
-            Error_Handler();
+        	safety_stop_and_halt();
         }
 
         /* ===================== TX ===================== */
         status_telemetry = telecontrol_send_telemetry(&controller, &telemetry);
         if (status_telemetry != CONTROLLER_OK) {
             if (status_telemetry == CONTROLLER_ERR) {
-                Error_Handler();
+            	safety_stop_and_halt();
             } else {
                 telemetry_tx_failures++;
             }
@@ -544,46 +543,46 @@ static void supervision_read_inputs(void)
 		Board2_U.controllerError = 1;
 	}
 	else{
-		Error_Handler();
+		safety_stop_and_halt();
 	}
 
 	if (get_telecontrol_bx(&controller, &Board2_U.controller_x) != CONTROLLER_OK){
-		Error_Handler();
+		safety_stop_and_halt();
 	}
 
 	if (get_telecontrol_ay(&controller, &Board2_U.controller_y) != CONTROLLER_OK){
-		Error_Handler();
+		safety_stop_and_halt();
 	}
 
 	if (get_telecontrol_button_btn1(&controller, &Board2_U.B1) != CONTROLLER_OK){
-		Error_Handler();
+		safety_stop_and_halt();
 	}
 
 	if (get_telecontrol_button_btn2(&controller, &Board2_U.B2) != CONTROLLER_OK){
-		Error_Handler();
+		safety_stop_and_halt();
 	}
 
 	if (get_telecontrol_button_btn3(&controller, &Board2_U.B3) != CONTROLLER_OK){
-		Error_Handler();
+		safety_stop_and_halt();
 	}
 
 	if (get_telecontrol_button_btn4(&controller, &Board2_U.B4) != CONTROLLER_OK){
-		Error_Handler();
+		safety_stop_and_halt();
 	}
 
 	if (get_telecontrol_b_btn(&controller, &Board2_U.B_r_stick) != CONTROLLER_OK){
-		Error_Handler();
+		safety_stop_and_halt();
 	}
 
 	if (get_telecontrol_a_btn(&controller, &Board2_U.B_l_stick) != CONTROLLER_OK){
-		Error_Handler();
+		safety_stop_and_halt();
 	}
 
 	if (get_telecontrol_percentage(&controller, &Board2_U.controller_battery) != CONTROLLER_OK){
-		Error_Handler();
+		safety_stop_and_halt();
 	}
 
-
+	/*TODO: da prendere solo il valore di z*/
 	mpu_status = mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
 	if (mpu_status == MPU6050_OK){
 		imu_initialized = true;
@@ -710,22 +709,22 @@ static void supervision_apply_actuation(void)
     /* ====== COMANDO MOTORI ====== */
     if (motor_set(&motor_FA_openLoop, duty_FA,
                   (rif_FA_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
-        Error_Handler();
+    	safety_stop_and_halt();
     }
 
     if (motor_set(&motor_FB_openLoop, duty_FB,
                   (rif_FB_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
-        Error_Handler();
+    	safety_stop_and_halt();
     }
 
     if (motor_set(&motor_BA_openLoop, duty_BA,
                   (rif_BA_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
-        Error_Handler();
+    	safety_stop_and_halt();
     }
 
     if (motor_set(&motor_BB_openLoop, duty_BB,
                   (rif_BB_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
-        Error_Handler();
+    	safety_stop_and_halt();
     }
 }
 

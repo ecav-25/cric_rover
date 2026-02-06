@@ -541,16 +541,16 @@
 			vTaskDelayUntil(&xLastWakeTime, xFrequency);
 
 			// ... (codice encoder esistente omesso per brevità) ...
-			if (encoder_readRPM(&encoder_FA) != ENCODER_OK) { Error_Handler(); }
-			if (encoder_readRPM(&encoder_FB) != ENCODER_OK) { Error_Handler(); }
-			if (encoder_readRPM(&encoder_BA) != ENCODER_OK) { Error_Handler(); }
-			if (encoder_readRPM(&encoder_BB) != ENCODER_OK) { Error_Handler(); }
+			if (encoder_readRPM(&encoder_FA) != ENCODER_OK) { safety_stop_and_halt(); }
+			if (encoder_readRPM(&encoder_FB) != ENCODER_OK) { safety_stop_and_halt(); }
+			if (encoder_readRPM(&encoder_BA) != ENCODER_OK) { safety_stop_and_halt(); }
+			if (encoder_readRPM(&encoder_BB) != ENCODER_OK) { safety_stop_and_halt(); }
 
 
 			Temp_Status_t temp_st = temp_get_celsius_once(&temp_sensor, &temperature);
 
 			if (temp_st == TEMP_ERR) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 			else if (temp_st == TEMP_ERR_COMM) {
 				temp_comm_fail_count++;
@@ -564,7 +564,7 @@
 
 			Batt_Status_t batt_st = batt_get_voltage_once(&battery_sensor, &battery_voltage_raw);
 			if (batt_st == BATT_ERR) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 			else if (batt_st == BATT_ERR_COMM) {
 				batt_comm_fail_count++;
@@ -591,19 +591,19 @@
 			velocity_BB = (int16_T) roundf(encoder_BB.velocity);
 
 			if (motor_diag_process(&h_diag_FA) != M_DIAG_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 
 			if (motor_diag_process(&h_diag_FB) != M_DIAG_OK) {
-			Error_Handler();
+				safety_stop_and_halt();
 			}
 
 			if (motor_diag_process(&h_diag_BA) != M_DIAG_OK) {
-			Error_Handler();
+				safety_stop_and_halt();
 			}
 
 			if (motor_diag_process(&h_diag_BB) != M_DIAG_OK) {
-			Error_Handler();
+				safety_stop_and_halt();
 			}
 
 			taskENTER_CRITICAL();
@@ -664,19 +664,19 @@
 			taskEXIT_CRITICAL();
 
 			if (encoder_readRPM(&encoder_FA_pid) != ENCODER_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 
 			if (encoder_readRPM(&encoder_FB_pid) != ENCODER_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 
 			if (encoder_readRPM(&encoder_BA_pid) != ENCODER_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 
 			if (encoder_readRPM(&encoder_BB_pid) != ENCODER_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 
 			switch (rover_mode)
@@ -700,77 +700,77 @@
 			rif_BB_r = ramp(rif_BB_r, rif_BB, ramp_step, braking_mode);
 
 			if (motor_diag_record(&h_diag_FA, rif_FA_r, encoder_FA_pid.velocity) != M_DIAG_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 
 			if (motor_diag_record(&h_diag_FB, rif_FB_r, encoder_FB_pid.velocity) != M_DIAG_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 
 			if (motor_diag_record(&h_diag_BA, rif_BA_r, encoder_BA_pid.velocity) != M_DIAG_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 
 			if (motor_diag_record(&h_diag_BB, rif_BB_r, encoder_BB_pid.velocity) != M_DIAG_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 
 			/*
 			if (PID_compute(&pid_FA, rif_FA_r, encoder_FA_pid.velocity, &control_FA) != PID_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 			out_FA = abs(round(control_FA * MOTOR_MAX_DUTY / U_MAX));
 
 			if (PID_compute(&pid_FB, rif_FB_r, encoder_FB_pid.velocity, &control_FB) != PID_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 			out_FB = abs(round(control_FB * MOTOR_MAX_DUTY / U_MAX));
 
 			if (PID_compute(&pid_BA, rif_BA_r, encoder_BA_pid.velocity, &control_BA) != PID_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 			out_BA = abs(round(control_BA * MOTOR_MAX_DUTY / U_MAX));
 
 			if (PID_compute(&pid_BB, rif_BB_r, encoder_BB_pid.velocity, &control_BB) != PID_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 			out_BB = abs(round(control_BB * MOTOR_MAX_DUTY / U_MAX));
 	*/
 
 			if (PID_Law_compute(&pid_FA, rif_FA_r, encoder_FA_pid.velocity, &control_FA) != PID_LAW_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 			out_FA = abs(round(control_FA * MOTOR_MAX_DUTY / U_MAX));
 
 			if (PID_Law_compute(&pid_FB, rif_FB_r, encoder_FB_pid.velocity, &control_FB) != PID_LAW_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 			out_FB = abs(round(control_FB * MOTOR_MAX_DUTY / U_MAX));
 
 			if (PID_Law_compute(&pid_BA, rif_BA_r, encoder_BA_pid.velocity, &control_BA) != PID_LAW_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 			out_BA = abs(round(control_BA * MOTOR_MAX_DUTY / U_MAX));
 
 			if (PID_Law_compute(&pid_BB, rif_BB_r, encoder_BB_pid.velocity, &control_BB) != PID_LAW_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 			out_BB = abs(round(control_BB * MOTOR_MAX_DUTY / U_MAX));
 
 			if (motor_set(&motor_FA, out_FA, (control_FA > 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 
 			if (motor_set(&motor_FB, out_FB, (control_FB > 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 
 			if (motor_set(&motor_BA, out_BA, (control_BA > 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 
 			if (motor_set(&motor_BB, out_BB, (control_BB > 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
-				Error_Handler();
+				safety_stop_and_halt();
 			}
 
 
