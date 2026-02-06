@@ -10,11 +10,6 @@
 #define LED_ERR		(-1)
 #define LED_OK		(0)
 
-#define RED_STEPS_ON (4)
-#define BLINKING_RED_STEPS (8)
-#define WHITE_STEPS_ON (8)
-#define BLINKING_WHITE_STEPS (16)
-
 typedef LED_TYPE led_state_t;
 
 
@@ -36,6 +31,7 @@ struct led_s
 
 	uint8_t pinState[LED_COUNT];
 	uint8_t toggle_steps;
+	uint8_t first_entry;
 
 };
 
@@ -45,7 +41,7 @@ typedef struct led_s led_t;
 typedef GPIO_PinState pin_state_t;
 
 
-int8_t led_init(led_t* led, GPIO_TypeDef* GPIOx[LED_COUNT], uint16_t GPIO_Pin[LED_COUNT], led_state_t init_state, pin_state_t init_pin_state[LED_COUNT], uint8_t toggle_steps);
+int8_t led_init(led_t* led, GPIO_TypeDef* const GPIOx[LED_COUNT], const uint16_t GPIO_Pin[LED_COUNT],const pin_state_t init_pin_state[LED_COUNT], uint8_t toggle_steps);
 
 /*
  * Set an output status for the led.

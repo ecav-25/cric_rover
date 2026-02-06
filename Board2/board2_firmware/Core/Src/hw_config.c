@@ -1,6 +1,7 @@
 #include "hw_config.h"
 #include "hw_calibration.h"
 #include "tim.h"
+#include "dwt_delay.h"
 
 /* ===================== MOTORS ===================== */
 
@@ -25,4 +26,47 @@ const MPU_HW_Config_t MPU_HW_CONFIG[MPU_COUNT] = {
             .int_enable  = MPU6050_INT_NONE
         }
     }
+};
+
+
+/* ===================== ULTRASONIC SENSORS ===================== */
+
+const hcsr04_cfg_t ULTRASONIC_HW_CONFIG[US_COUNT] = {
+	[US_LEFT] = {
+		.htim        = &htim2,
+		.channel     = TIM_CHANNEL_1,
+		.trig_port   = TRIG_LEFT_GPIO_Port,
+		.trig_pin    = TRIG_LEFT_Pin,
+		.timer_hz    = 1000000,
+		.timeout_ms  = 30,
+		.delay_us    = DWT_Delay_us
+	},
+	[US_CENTER] = {
+		.htim        = &htim2,
+		.channel     = TIM_CHANNEL_2,
+		.trig_port   = TRIG_CENTER_GPIO_Port,
+		.trig_pin    = TRIG_CENTER_Pin,
+		.timer_hz    = 1000000,
+		.timeout_ms  = 30,
+		.delay_us    = DWT_Delay_us
+	},
+	[US_RIGHT] = {
+		.htim        = &htim2,
+		.channel     = TIM_CHANNEL_3,
+		.trig_port   = TRIG_RIGHT_GPIO_Port,
+		.trig_pin    = TRIG_RIGHT_Pin,
+		.timer_hz    = 1000000,
+		.timeout_ms  = 30,
+		.delay_us    = DWT_Delay_us
+	}
+};
+
+
+/* ===================== CONTROLLER ===================== */
+
+const Controller_HW_Config_t CONTROLLER_HW_CONFIG[CONTROLLER_COUNT] = {
+	[CONTROLLER_MAIN] = {
+		.i2c     = &hi2c1,
+		.address = 0x55
+	}
 };

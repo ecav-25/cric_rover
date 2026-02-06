@@ -26,7 +26,7 @@ typedef enum {
 } hcsr04_status_t;
 
 /* Delay in microsecondi fornito dall’app (OS-agnostico). */
-typedef void (*hcsr04_delay_us_f)(uint32_t us);
+typedef uint8_t (*hcsr04_delay_us_f)(uint32_t us);
 
 typedef struct {
     TIM_HandleTypeDef *htim;

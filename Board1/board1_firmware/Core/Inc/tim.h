@@ -29,7 +29,7 @@ extern "C" {
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
-
+extern DMA_HandleTypeDef hdma_tim17_ch1;
 /* USER CODE END Includes */
 
 extern TIM_HandleTypeDef htim1;

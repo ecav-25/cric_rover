@@ -2,12 +2,13 @@
 
 /* ===================== INIT ===================== */
 
-ControllerStatus_t telecontrol_init(Controller_t *telecontrol, I2C_HandleTypeDef* i2c){
+ControllerStatus_t telecontrol_init(Controller_t *telecontrol, I2C_HandleTypeDef* i2c, uint16_t address){
     if (telecontrol == NULL || i2c == NULL) {
         return CONTROLLER_ERR;
     }
 
     telecontrol->i2c = i2c;
+    telecontrol->address = address;
 
     telecontrol->controller_information.alive = 0;
     telecontrol->controller_information.controller_percentage = 0;
@@ -35,7 +36,7 @@ ControllerStatus_t telecontrol_read(Controller_t *telecontrol){
         return CONTROLLER_ERR;
     }
 
-    HAL_StatusTypeDef status = HAL_I2C_Master_Receive(telecontrol->i2c, 0x55 << 1, (uint8_t *)&telecontrol->controller_information, sizeof(controller_information_t), 20u);
+    HAL_StatusTypeDef status = HAL_I2C_Master_Receive(telecontrol->i2c, telecontrol->address << 1, (uint8_t *)&telecontrol->controller_information, sizeof(controller_information_t), 20u);
 
     if (status == HAL_OK) {
         return CONTROLLER_OK;
