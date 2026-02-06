@@ -679,28 +679,10 @@ void pidTask(void *argument)
 	            break;
 	    }
 
-
-	    if (braking_mode == EMERGENCY &&
-	        (rif_FA == 0 && rif_FB == 0 && rif_BA == 0 && rif_BB == 0)) {
-	        rif_FA_r = rif_FA;
-	        rif_FB_r = rif_FB;
-	        rif_BA_r = rif_BA;
-	        rif_BB_r = rif_BB;
-	    }
-	    else if (braking_mode == NORMAL &&
-	        (rif_FA == 0 && rif_FB == 0 && rif_BA == 0 && rif_BB == 0)) {
-	        rif_FA_r = ramp(rif_FA_r, rif_FA, ramp_step * NORMAL_BRK_COEFF);
-	        rif_FB_r = ramp(rif_FB_r, rif_FB, ramp_step * NORMAL_BRK_COEFF);
-	        rif_BA_r = ramp(rif_BA_r, rif_BA, ramp_step * NORMAL_BRK_COEFF);
-	        rif_BB_r = ramp(rif_BB_r, rif_BB, ramp_step * NORMAL_BRK_COEFF);
-	    }
-	    else {
-	        rif_FA_r = ramp(rif_FA_r, rif_FA, ramp_step);
-	        rif_FB_r = ramp(rif_FB_r, rif_FB, ramp_step);
-	        rif_BA_r = ramp(rif_BA_r, rif_BA, ramp_step);
-	        rif_BB_r = ramp(rif_BB_r, rif_BB, ramp_step);
-	    }
-
+	    rif_FA_r = ramp(rif_FA_r, rif_FA, ramp_step, braking_mode);
+	    rif_FB_r = ramp(rif_FB_r, rif_FB, ramp_step, braking_mode);
+	    rif_BA_r = ramp(rif_BA_r, rif_BA, ramp_step, braking_mode);
+	    rif_BB_r = ramp(rif_BB_r, rif_BB, ramp_step, braking_mode);
 
 	    if (motor_diag_record(&h_diag_FA, rif_FA_r, encoder_FA_pid.velocity) != M_DIAG_OK) {
 	        Error_Handler();
