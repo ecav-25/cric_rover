@@ -38,7 +38,7 @@
 #include "deadline_watchdog.h"
 #include "utils.h"
 #include "hw_config.h"
-#include "motor_diagnostic.h"
+#include "utils.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -66,8 +66,6 @@ typedef StaticEventGroup_t osStaticEventGroupDef_t;
 #define RAMP_STEP_SPORT   (RAMP_SLOPE_SPORT_RPM_S   * (PID_PERIOD / 1000.0f))
 #define RAMP_STEP_ECO     (RAMP_SLOPE_ECO_RPM_S     * (PID_PERIOD / 1000.0f))
 
-#define DIAG_DELAY_SHIFT    0
-#define DIAG_MAX_AREA_ERR   15000.0f
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -76,26 +74,6 @@ typedef StaticEventGroup_t osStaticEventGroupDef_t;
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-
-
-MotorDiag_Handle_t h_diag_FA;
-MotorDiag_Handle_t h_diag_FB;
-MotorDiag_Handle_t h_diag_BA;
-MotorDiag_Handle_t h_diag_BB;
-
-
-volatile float    debug_area_FA   = 0.0f;
-volatile uint8_t  motor_status_FA = 1;
-
-volatile float    debug_area_FB   = 0.0f;
-volatile uint8_t  motor_status_FB = 1;
-
-volatile float    debug_area_BA   = 0.0f;
-volatile uint8_t  motor_status_BA = 1;
-
-volatile float    debug_area_BB   = 0.0f;
-volatile uint8_t  motor_status_BB = 1;
-
 Deadline_Watchdog_t hard_rt_deadline_wd;
 
 volatile real32_T debug_temperature;
@@ -132,12 +110,12 @@ uint8_t out_BB = 0;
 uint8_t out_BA = 0;
 uint8_t out_FB = 0;
 uint8_t out_FA = 0;
-
+/*
 PID_t pid_FA;
 PID_t pid_FB;
 PID_t pid_BA;
-PID_t pid_BB;
-/*
+PID_t pid_BB;*/
+
 PID_Law_t pid_FA;
 PID_Law_t pid_FB;
 PID_Law_t pid_BA;
@@ -146,9 +124,9 @@ PID_Law_t pid_BB;
 real32_T a1 = 1;
 real32_T b0_FA = 0.011526, b0_FB = 0.012068, b0_BA = 0.01182, b0_BB = 0.011206;
 real32_T b1_FA = -0.0062, b1_FB = -0.0066, b1_BA = -0.0062, b1_BB = -0.0059;
-*/
 
 /*Variabili per il pid classico*/
+/*
 float kpFA = 0.009319;
 float kiFA = 1.1;
 
@@ -160,6 +138,7 @@ float kiBA = 1.133;
 
 float kpBB = 0.008543;
 float kiBB = 1.065;
+*/
 
 DecBus debug_output;
 volatile uint32_t debug_count_step = 0;
@@ -402,6 +381,7 @@ void MX_FREERTOS_Init(void) {
 		return;
 	}
 
+	/*
 	if (PID_init(&pid_FA, kpFA, kiFA, 0, 5, 0) != PID_OK) {
 		Error_Handler();
 		return;
@@ -422,37 +402,12 @@ void MX_FREERTOS_Init(void) {
 		return;
 	}
 
-	MotorDiag_Config_t diag_cfg = {
-		.delay_shift = DIAG_DELAY_SHIFT,
-		.max_area_limit = DIAG_MAX_AREA_ERR
-	};
-
-
-	if (motor_diag_init(&h_diag_FA, &diag_cfg) != M_DIAG_OK) {
-		Error_Handler();
-		return;
-	}
-
-	if (motor_diag_init(&h_diag_FB, &diag_cfg) != M_DIAG_OK) {
-		Error_Handler();
-		return;
-	}
-
-	if (motor_diag_init(&h_diag_BA, &diag_cfg) != M_DIAG_OK) {
-		Error_Handler();
-		return;
-	}
-
-	if (motor_diag_init(&h_diag_BB, &diag_cfg) != M_DIAG_OK) {
-		Error_Handler();
-		return;
-	}
-
-	/*
+	*/
 	if (PID_Law_init(&pid_FA, a1, b0_FA, b1_FA) != PID_LAW_OK) {
 	    Error_Handler();
 		return;
 	}
+
 
 	if (PID_Law_init(&pid_FB, a1, b0_FB, b1_FB) != PID_LAW_OK) {
 	    Error_Handler();
@@ -468,7 +423,6 @@ void MX_FREERTOS_Init(void) {
 	    Error_Handler();
 	    return;
 	}
-	*/
 
 	led_stripe_init(&cfg);
 	led_init(&ledA, ledA_ports, ledA_pins, OFF, led_init_state, 20);
@@ -593,8 +547,6 @@ void readSensorsTask(void *argument)
 		velocity_BA = (int16_T) roundf(encoder_BA.velocity);
 		velocity_BB = (int16_T) roundf(encoder_BB.velocity);
 
-
-
 		taskENTER_CRITICAL();
 
 		Board1_U.temperature = temperature;
@@ -604,40 +556,7 @@ void readSensorsTask(void *argument)
 		Board1_U.velocity_BA = velocity_BA;
 		Board1_U.velocity_BB = velocity_BB;
 
-		Board1_U.motorError_FA = 0;
-		Board1_U.motorError_FB = 0;
-		Board1_U.motorError_BA = 0;
-		Board1_U.motorError_BB = 0;
-
 		taskEXIT_CRITICAL();
-
-		if (motor_diag_process(&h_diag_FA) != M_DIAG_OK) {
-		    Error_Handler();
-		}
-
-		if (motor_diag_process(&h_diag_FB) != M_DIAG_OK) {
-			Error_Handler();
-		}
-
-		if (motor_diag_process(&h_diag_BA) != M_DIAG_OK) {
-			Error_Handler();
-		}
-
-		if (motor_diag_process(&h_diag_BB) != M_DIAG_OK) {
-			Error_Handler();
-		}
-
-		debug_area_FA = h_diag_FA.last_area_error;
-		motor_status_FA = (h_diag_FA.health_status == MOTOR_HEALTHY);
-
-		debug_area_FB = h_diag_FB.last_area_error;
-		motor_status_FB = (h_diag_FB.health_status == MOTOR_HEALTHY);
-
-		debug_area_BA = h_diag_BA.last_area_error;
-		motor_status_BA = (h_diag_BA.health_status == MOTOR_HEALTHY);
-
-		debug_area_BB = h_diag_BB.last_area_error;
-		motor_status_BB = (h_diag_BB.health_status == MOTOR_HEALTHY);
 
 		DWD_Notify(&hard_rt_deadline_wd, DWD_FLAG_READ_SENSORS);
 	}
@@ -733,25 +652,7 @@ void pidTask(void *argument)
 	        rif_BA_r = ramp(rif_BA_r, rif_BA, ramp_step);
 	        rif_BB_r = ramp(rif_BB_r, rif_BB, ramp_step);
 	    }
-
-
-	    if (motor_diag_record(&h_diag_FA, rif_FA_r, encoder_FA_pid.velocity) != M_DIAG_OK) {
-	        Error_Handler();
-	    }
-
-		if (motor_diag_record(&h_diag_FB, rif_FB_r, encoder_FB_pid.velocity) != M_DIAG_OK) {
-			Error_Handler();
-		}
-
-		if (motor_diag_record(&h_diag_BA, rif_BA_r, encoder_BA_pid.velocity) != M_DIAG_OK) {
-			Error_Handler();
-		}
-
-		if (motor_diag_record(&h_diag_BB, rif_BB_r, encoder_BB_pid.velocity) != M_DIAG_OK) {
-			Error_Handler();
-		}
-
-
+	    /*
 	    if (PID_compute(&pid_FA, rif_FA_r, encoder_FA_pid.velocity, &control_FA) != PID_OK) {
 			Error_Handler();
 		}
@@ -771,8 +672,8 @@ void pidTask(void *argument)
 			Error_Handler();
 		}
 		out_BB = abs(round(control_BB * MOTOR_MAX_DUTY / U_MAX));
+		*/
 
-		/*
 	    if (PID_Law_compute(&pid_FA, rif_FA_r, encoder_FA_pid.velocity, &control_FA) != PID_LAW_OK) {
 	        Error_Handler();
 	    }
@@ -792,7 +693,7 @@ void pidTask(void *argument)
 	        Error_Handler();
 	    }
 	    out_BB = abs(round(control_BB * MOTOR_MAX_DUTY / U_MAX));
-	    */
+
 
 	    if (motor_set(&motor_FA, out_FA, (control_FA > 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
 	        Error_Handler();
@@ -856,8 +757,6 @@ void lightsTask(void *argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-
-
 void executeSupervision(){
 	debug_time = HAL_GetTick();
 
