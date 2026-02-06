@@ -385,7 +385,6 @@ void MX_FREERTOS_Init(void) {
 		return;
 	}
 
-
 	if(temp_init(&temp_sensor,ADC_HW_CONFIG[ADC_TEMP_SENSOR].hadc, &ADC_HW_CONFIG[ADC_TEMP_SENSOR].channel_cfg, TEMP_DEFAULT_TIMEOUT_MS) != TEMP_OK){
 		Error_Handler();
 		return;
@@ -635,10 +634,10 @@ void readSensorsTask(void *argument)
 		Board1_U.velocity_BA = velocity_BA;
 		Board1_U.velocity_BB = velocity_BB;
 
-		Board1_U.motorError_FA = (h_diag_FA.health_status != MOTOR_HEALTHY);
-		Board1_U.motorError_FB = (h_diag_FB.health_status != MOTOR_HEALTHY);
-		Board1_U.motorError_BA = (h_diag_BA.health_status != MOTOR_HEALTHY);
-		Board1_U.motorError_BB = (h_diag_BB.health_status != MOTOR_HEALTHY);
+		Board1_U.motorError_FA = (h_diag_FA.health_status == MOTOR_FAILURE);
+		Board1_U.motorError_FB = (h_diag_FB.health_status == MOTOR_FAILURE);
+		Board1_U.motorError_BA = (h_diag_BA.health_status == MOTOR_FAILURE);
+		Board1_U.motorError_BB = (h_diag_BB.health_status == MOTOR_FAILURE);
 
 		taskEXIT_CRITICAL();
 
@@ -874,7 +873,7 @@ void executeSupervision(){
 				degraded=degraded+1;
 
 		if(Board1_DW.is_Board_state == Board1_IN_Single_Board)
-				debug_decision = Board1_DW.decision;
+			debug_decision = Board1_DW.decision;
 
 		if(Board1_DW.is_Board_state == Board1_IN_Normal && Board1_DW.retransmitted)
 			retransmit_seen_in_cycle = true;
