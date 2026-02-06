@@ -553,27 +553,29 @@ void readSensorsTask(void *argument)
   /* USER CODE BEGIN readSensorsTask */
 	TickType_t xLastWakeTime = xTaskGetTickCount();
 	const TickType_t xFrequency = pdMS_TO_TICKS(SUPERVISION_PERIOD);
-	real32_T battery_voltage, temperature;
+
+	real32_T battery_voltage_raw = 0.0f; // Variabile per la lettura istantanea
+	real32_T temperature;
+
+	// --- VARIABILI PER IL FILTRO BATTERIA ---
+	// Alpha determina quanto "pesa" la nuova lettura.
+	// 0.1 = 10% nuova lettura, 90% storico (Molto filtrato, lento)
+	// 0.5 = 50% nuova lettura, 50% storico (Poco filtrato, veloce)
+	// Valore simile al tuo Arduino: prova tra 0.05f e 0.1f
+	const real32_T batt_alpha = 0.05f;
+
+	// Inizializziamo a un valore negativo per capire se è la prima lettura
+	static real32_T battery_voltage_filtered = -1.0f;
+	// ----------------------------------------
 
 	for(;;){
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
 
-		//debug_read_sensor++;
-		if (encoder_readRPM(&encoder_FA) != ENCODER_OK) {
-		    Error_Handler();
-		}
-
-		if (encoder_readRPM(&encoder_FB) != ENCODER_OK) {
-		    Error_Handler();
-		}
-
-		if (encoder_readRPM(&encoder_BA) != ENCODER_OK) {
-		    Error_Handler();
-		}
-
-		if (encoder_readRPM(&encoder_BB) != ENCODER_OK) {
-		    Error_Handler();
-		}
+		// ... (codice encoder esistente omesso per brevità) ...
+		if (encoder_readRPM(&encoder_FA) != ENCODER_OK) { Error_Handler(); }
+		if (encoder_readRPM(&encoder_FB) != ENCODER_OK) { Error_Handler(); }
+		if (encoder_readRPM(&encoder_BA) != ENCODER_OK) { Error_Handler(); }
+		if (encoder_readRPM(&encoder_BB) != ENCODER_OK) { Error_Handler(); }
 
 
 		if(temp_get_celsius_once(&temp_sensor, &temperature) != TEMP_OK){
@@ -581,65 +583,64 @@ void readSensorsTask(void *argument)
 			__NOP();
 		}
 
-
-		if(batt_get_voltage_once(&battery_sensor, &battery_voltage) != BATT_OK){
+		// Leggi il valore ISTANTANEO (RAW)
+		if(batt_get_voltage_once(&battery_sensor, &battery_voltage_raw) != BATT_OK){
 			//Error_Handler();
 			__NOP();
+		} else {
+			// --- LOGICA DI FILTRAGGIO ---
+			if (battery_voltage_filtered < 0.0f) {
+				// Se è la prima accensione, prendiamo il valore così com'è
+				// per evitare che il filtro parta da 0V e ci metta tempo a salire.
+				battery_voltage_filtered = battery_voltage_raw;
+			} else {
+				// Formula EMA: (Nuovo * alpha) + (Vecchio * (1 - alpha))
+				battery_voltage_filtered = (battery_voltage_raw * batt_alpha) +
+										   (battery_voltage_filtered * (1.0f - batt_alpha));
+			}
+			// ----------------------------------------------------
 		}
 
 		debug_temperature = temperature;
-		debug_battery_voltage = battery_voltage;
+		debug_battery_voltage = battery_voltage_filtered;
 
 		velocity_FA = (int16_T) roundf(encoder_FA.velocity);
 		velocity_FB = (int16_T) roundf(encoder_FB.velocity);
 		velocity_BA = (int16_T) roundf(encoder_BA.velocity);
 		velocity_BB = (int16_T) roundf(encoder_BB.velocity);
 
+		if (motor_diag_process(&h_diag_FA) != M_DIAG_OK) {
+		Error_Handler();
+		}
 
+		if (motor_diag_process(&h_diag_FB) != M_DIAG_OK) {
+		Error_Handler();
+		}
+
+		if (motor_diag_process(&h_diag_BA) != M_DIAG_OK) {
+		Error_Handler();
+		}
+
+		if (motor_diag_process(&h_diag_BB) != M_DIAG_OK) {
+		Error_Handler();
+		}
 
 		taskENTER_CRITICAL();
 
 		Board1_U.temperature = temperature;
-		Board1_U.battery_voltage = battery_voltage;
+		Board1_U.battery_voltage = battery_voltage_filtered;
+
 		Board1_U.velocity_FA = velocity_FA;
 		Board1_U.velocity_FB = velocity_FB;
 		Board1_U.velocity_BA = velocity_BA;
 		Board1_U.velocity_BB = velocity_BB;
 
-		Board1_U.motorError_FA = 0;
-		Board1_U.motorError_FB = 0;
-		Board1_U.motorError_BA = 0;
-		Board1_U.motorError_BB = 0;
+		Board1_U.motorError_FA = (h_diag_FA.health_status != MOTOR_HEALTHY);
+		Board1_U.motorError_FB = (h_diag_FB.health_status != MOTOR_HEALTHY);
+		Board1_U.motorError_BA = (h_diag_BA.health_status != MOTOR_HEALTHY);
+		Board1_U.motorError_BB = (h_diag_BB.health_status != MOTOR_HEALTHY);
 
 		taskEXIT_CRITICAL();
-
-		if (motor_diag_process(&h_diag_FA) != M_DIAG_OK) {
-		    Error_Handler();
-		}
-
-		if (motor_diag_process(&h_diag_FB) != M_DIAG_OK) {
-			Error_Handler();
-		}
-
-		if (motor_diag_process(&h_diag_BA) != M_DIAG_OK) {
-			Error_Handler();
-		}
-
-		if (motor_diag_process(&h_diag_BB) != M_DIAG_OK) {
-			Error_Handler();
-		}
-
-		debug_area_FA = h_diag_FA.last_area_error;
-		motor_status_FA = (h_diag_FA.health_status == MOTOR_HEALTHY);
-
-		debug_area_FB = h_diag_FB.last_area_error;
-		motor_status_FB = (h_diag_FB.health_status == MOTOR_HEALTHY);
-
-		debug_area_BA = h_diag_BA.last_area_error;
-		motor_status_BA = (h_diag_BA.health_status == MOTOR_HEALTHY);
-
-		debug_area_BB = h_diag_BB.last_area_error;
-		motor_status_BB = (h_diag_BB.health_status == MOTOR_HEALTHY);
 
 		DWD_Notify(&hard_rt_deadline_wd, DWD_FLAG_READ_SENSORS);
 	}
