@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board2'.
  *
- * Model version                  : 1.2418
+ * Model version                  : 1.2419
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Thu Feb  5 16:10:25 2026
+ * C/C++ source code generated on : Fri Feb  6 14:06:18 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -2036,8 +2036,8 @@ static void Board2_Update_Rover_Lights(boolean_T white_led_when_stopped)
 /* Function for Chart: '<Root>/Board2' */
 static void Board2_Rover_Lights_Motor_Error(void)
 {
-  Board2_DW.decision.led_A = BLINKING_RED;
-  Board2_DW.decision.led_B = BLINKING_RED;
+  Board2_DW.decision.led_A = BLINKING_RED_SLOW;
+  Board2_DW.decision.led_B = BLINKING_RED_SLOW;
   Board2_DW.decision.rear_led = EMERGENCY_LIGHTS;
   Board2_DW.decision.rear_sign = SIGN_RED;
 }

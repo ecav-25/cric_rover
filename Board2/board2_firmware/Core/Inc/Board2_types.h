@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board2'.
  *
- * Model version                  : 1.2418
+ * Model version                  : 1.2419
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Thu Feb  5 16:10:25 2026
+ * C/C++ source code generated on : Fri Feb  6 14:06:18 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -38,8 +38,9 @@ typedef enum {
   OFF = 0,                             /* Default value */
   WHITE,
   RED,
+  BLINKING_WHITE,
   BLINKING_RED,
-  BLINKING_WHITE
+  BLINKING_RED_SLOW
 } LED_TYPE;
 
 #endif
