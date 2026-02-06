@@ -17,7 +17,7 @@
 #define ARROW_ON_STEPS   5
 
 
-#define EMERGENCY_PERIOD 20  // number of steps for a full emergency light cycle (on + off)
+#define EMERGENCY_PERIOD 16  // number of steps for a full emergency light cycle (on + off)
 
 typedef struct {
   led_stripes_config_t cfg;

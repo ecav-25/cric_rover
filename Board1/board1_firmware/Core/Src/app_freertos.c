@@ -68,6 +68,10 @@ typedef StaticEventGroup_t osStaticEventGroupDef_t;
 
 #define DIAG_DELAY_SHIFT    0
 #define DIAG_MAX_AREA_ERR   15000.0f
+
+
+#define TOGGLE_EMERGENCY 8
+#define TOGGLE_NORMAL 4
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
