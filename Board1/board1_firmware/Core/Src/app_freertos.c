@@ -589,7 +589,7 @@ void readSensorsTask(void *argument)
 		taskENTER_CRITICAL();
 
 		Board1_U.temperature = temperature;
-		Board1_U.battery_voltage = battery_voltage;
+		Board1_U.battery_voltage = battery_voltage_filtered;
 		Board1_U.velocity_FA = velocity_FA;
 		Board1_U.velocity_FB = velocity_FB;
 		Board1_U.velocity_BA = velocity_BA;
@@ -793,8 +793,6 @@ void lightsTask(void *argument)
 	TickType_t xLastWakeTime = xTaskGetTickCount();
 	const TickType_t xFrequency = pdMS_TO_TICKS(LIGHTS_PERIOD);
 
-	static uint8_t toggle_red;
-
 	for(;;)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
@@ -806,13 +804,7 @@ void lightsTask(void *argument)
 		rear_led = Board1_Y.output.rear_led;
 		rear_sign = Board1_Y.output.rear_sign;
 
-		toggle_red = (Board1_DW.is_Working_status_manager == Board1_IN_Motor_error_working) ? 8 : 4;
-
 		taskEXIT_CRITICAL();
-
-
-		led_set_toggle_steps(&ledA, toggle_red);
-		led_set_toggle_steps(&ledB, toggle_red);
 
 		led_step(&ledA, led_FA);
 		led_step(&ledB, led_FB);
