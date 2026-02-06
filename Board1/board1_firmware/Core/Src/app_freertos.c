@@ -132,12 +132,12 @@ uint8_t out_BB = 0;
 uint8_t out_BA = 0;
 uint8_t out_FB = 0;
 uint8_t out_FA = 0;
-
+/*
 PID_t pid_FA;
 PID_t pid_FB;
 PID_t pid_BA;
 PID_t pid_BB;
-/*
+*/
 PID_Law_t pid_FA;
 PID_Law_t pid_FB;
 PID_Law_t pid_BA;
@@ -146,9 +146,10 @@ PID_Law_t pid_BB;
 real32_T a1 = 1;
 real32_T b0_FA = 0.011526, b0_FB = 0.012068, b0_BA = 0.01182, b0_BB = 0.011206;
 real32_T b1_FA = -0.0062, b1_FB = -0.0066, b1_BA = -0.0062, b1_BB = -0.0059;
-*/
+
 
 /*Variabili per il pid classico*/
+/*
 float kpFA = 0.009319;
 float kiFA = 1.1;
 
@@ -160,6 +161,7 @@ float kiBA = 1.133;
 
 float kpBB = 0.008543;
 float kiBB = 1.065;
+*/
 
 DecBus debug_output;
 volatile uint32_t debug_count_step = 0;
@@ -402,26 +404,6 @@ void MX_FREERTOS_Init(void) {
 		return;
 	}
 
-	if (PID_init(&pid_FA, kpFA, kiFA, 0, 5, 0) != PID_OK) {
-		Error_Handler();
-		return;
-	}
-
-	if (PID_init(&pid_FB, kpFB, kiFB, 0, 5, 0) != PID_OK) {
-		Error_Handler();
-		return;
-	}
-
-	if (PID_init(&pid_BA, kpBA, kiBA, 0, 5, 0) != PID_OK) {
-		Error_Handler();
-		return;
-	}
-
-	if (PID_init(&pid_BB, kpBB, kiBB, 0, 5, 0) != PID_OK) {
-		Error_Handler();
-		return;
-	}
-
 	MotorDiag_Config_t diag_cfg = {
 		.delay_shift = DIAG_DELAY_SHIFT,
 		.max_area_limit = DIAG_MAX_AREA_ERR
@@ -449,6 +431,27 @@ void MX_FREERTOS_Init(void) {
 	}
 
 	/*
+	if (PID_init(&pid_FA, kpFA, kiFA, 0, 5, 0) != PID_OK) {
+		Error_Handler();
+		return;
+	}
+
+	if (PID_init(&pid_FB, kpFB, kiFB, 0, 5, 0) != PID_OK) {
+		Error_Handler();
+		return;
+	}
+
+	if (PID_init(&pid_BA, kpBA, kiBA, 0, 5, 0) != PID_OK) {
+		Error_Handler();
+		return;
+	}
+
+	if (PID_init(&pid_BB, kpBB, kiBB, 0, 5, 0) != PID_OK) {
+		Error_Handler();
+		return;
+	}
+	*/
+
 	if (PID_Law_init(&pid_FA, a1, b0_FA, b1_FA) != PID_LAW_OK) {
 	    Error_Handler();
 		return;
@@ -468,7 +471,6 @@ void MX_FREERTOS_Init(void) {
 	    Error_Handler();
 	    return;
 	}
-	*/
 
 	led_stripe_init(&cfg);
 	led_init(&ledA, ledA_ports, ledA_pins, OFF, led_init_state, 20);
@@ -696,7 +698,6 @@ void pidTask(void *argument)
 	        Error_Handler();
 	    }
 
-
 	    switch (rover_mode)
 	    {
 	        case SPORT:
@@ -751,7 +752,7 @@ void pidTask(void *argument)
 			Error_Handler();
 		}
 
-
+/*
 	    if (PID_compute(&pid_FA, rif_FA_r, encoder_FA_pid.velocity, &control_FA) != PID_OK) {
 			Error_Handler();
 		}
@@ -771,8 +772,8 @@ void pidTask(void *argument)
 			Error_Handler();
 		}
 		out_BB = abs(round(control_BB * MOTOR_MAX_DUTY / U_MAX));
+*/
 
-		/*
 	    if (PID_Law_compute(&pid_FA, rif_FA_r, encoder_FA_pid.velocity, &control_FA) != PID_LAW_OK) {
 	        Error_Handler();
 	    }
@@ -792,7 +793,6 @@ void pidTask(void *argument)
 	        Error_Handler();
 	    }
 	    out_BB = abs(round(control_BB * MOTOR_MAX_DUTY / U_MAX));
-	    */
 
 	    if (motor_set(&motor_FA, out_FA, (control_FA > 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
 	        Error_Handler();

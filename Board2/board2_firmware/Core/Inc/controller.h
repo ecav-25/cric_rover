@@ -113,22 +113,88 @@ ControllerStatus_t telecontrol_read(Controller_t *telecontrol);
 
 ControllerStatus_t telecontrol_send_telemetry(Controller_t *telecontrol, Telemetry_t *telemetry);
 
-/* ===================== GETTERS ===================== */
+/* ===================== GETTERS (INLINE) ===================== */
 
-ControllerStatus_t telecontrol_is_alive(Controller_t *telecontrol, uint8_t *alive);
+static inline ControllerStatus_t get_telecontrol_bx(const Controller_t *telecontrol, uint16_t *bx){
+    if ((telecontrol == NULL) || (bx == NULL)) {
+        return CONTROLLER_ERR;
+    }
 
-ControllerStatus_t get_telecontrol_percentage(Controller_t *telecontrol, uint8_t *percentage);
+    *bx = telecontrol->controller_information.controller_data.bx;
+    return CONTROLLER_OK;
+}
 
-ControllerStatus_t get_telecontrol_ay(Controller_t *telecontrol, uint16_t *ay);
-ControllerStatus_t get_telecontrol_a_btn(Controller_t *telecontrol, uint8_t *a_btn);
+static inline ControllerStatus_t get_telecontrol_ay(const Controller_t *telecontrol, uint16_t *ay){
+    if ((telecontrol == NULL) || (ay == NULL)) {
+        return CONTROLLER_ERR;
+    }
 
-ControllerStatus_t get_telecontrol_bx(Controller_t *telecontrol, uint16_t *bx);
-ControllerStatus_t get_telecontrol_b_btn(Controller_t *telecontrol, uint8_t *b_btn);
+    *ay = telecontrol->controller_information.controller_data.ay;
+    return CONTROLLER_OK;
+}
 
-ControllerStatus_t get_telecontrol_button_btn1(Controller_t *telecontrol, uint8_t *btn);
-ControllerStatus_t get_telecontrol_button_btn2(Controller_t *telecontrol, uint8_t *btn);
-ControllerStatus_t get_telecontrol_button_btn3(Controller_t *telecontrol, uint8_t *btn);
-ControllerStatus_t get_telecontrol_button_btn4(Controller_t *telecontrol, uint8_t *btn);
+static inline ControllerStatus_t get_telecontrol_button_btn1(const Controller_t *telecontrol, uint8_t *btn){
+    if ((telecontrol == NULL) || (btn == NULL)) {
+        return CONTROLLER_ERR;
+    }
+
+    *btn = telecontrol->controller_information.controller_data.btn1;
+    return CONTROLLER_OK;
+}
+
+static inline ControllerStatus_t get_telecontrol_button_btn2(const Controller_t *telecontrol, uint8_t *btn){
+    if ((telecontrol == NULL) || (btn == NULL)) {
+        return CONTROLLER_ERR;
+    }
+
+    *btn = telecontrol->controller_information.controller_data.btn2;
+    return CONTROLLER_OK;
+}
+
+static inline ControllerStatus_t get_telecontrol_button_btn3(const Controller_t *telecontrol, uint8_t *btn){
+    if ((telecontrol == NULL) || (btn == NULL)) {
+        return CONTROLLER_ERR;
+    }
+
+    *btn = telecontrol->controller_information.controller_data.btn3;
+    return CONTROLLER_OK;
+}
+
+static inline ControllerStatus_t get_telecontrol_button_btn4(const Controller_t *telecontrol, uint8_t *btn){
+    if ((telecontrol == NULL) || (btn == NULL)) {
+        return CONTROLLER_ERR;
+    }
+
+    *btn = telecontrol->controller_information.controller_data.btn4;
+    return CONTROLLER_OK;
+}
+
+static inline ControllerStatus_t get_telecontrol_b_btn(const Controller_t *telecontrol, uint8_t *b_btn){
+    if ((telecontrol == NULL) || (b_btn == NULL)) {
+        return CONTROLLER_ERR;
+    }
+
+    *b_btn = telecontrol->controller_information.controller_data.b_btn;
+    return CONTROLLER_OK;
+}
+
+static inline ControllerStatus_t get_telecontrol_a_btn(const Controller_t *telecontrol, uint8_t *a_btn){
+    if ((telecontrol == NULL) || (a_btn == NULL)) {
+        return CONTROLLER_ERR;
+    }
+
+    *a_btn = telecontrol->controller_information.controller_data.a_btn;
+    return CONTROLLER_OK;
+}
+
+static inline ControllerStatus_t get_telecontrol_percentage(const Controller_t *telecontrol, uint8_t *percentage){
+    if ((telecontrol == NULL) || (percentage == NULL)) {
+        return CONTROLLER_ERR;
+    }
+
+    *percentage = telecontrol->controller_information.controller_percentage;
+    return CONTROLLER_OK;
+}
 
 /* ===================== TELEMETRY API ===================== */
 
