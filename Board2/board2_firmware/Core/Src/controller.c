@@ -63,54 +63,104 @@ ControllerStatus_t telecontrol_send_telemetry(Controller_t *telecontrol, Telemet
 
 /* ===================== GETTERS ===================== */
 
-uint8_t telecontrol_is_alive(Controller_t *telecontrol)
+ControllerStatus_t telecontrol_is_alive(Controller_t *telecontrol, uint8_t *alive)
 {
-    return telecontrol->controller_information.alive;
+    if (telecontrol == NULL || alive == NULL) {
+        return CONTROLLER_ERR;
+    }
+
+    *alive = telecontrol->controller_information.alive;
+    return CONTROLLER_OK;
 }
 
-uint8_t get_telecontrol_percentage(Controller_t *telecontrol)
+ControllerStatus_t get_telecontrol_percentage(Controller_t *telecontrol, uint8_t *percentage)
 {
-    return telecontrol->controller_information.controller_percentage;
+    if (telecontrol == NULL || percentage == NULL) {
+        return CONTROLLER_ERR;
+    }
+
+    *percentage = telecontrol->controller_information.controller_percentage;
+    return CONTROLLER_OK;
 }
 
-uint16_t get_telecontrol_ay(Controller_t *telecontrol)
+ControllerStatus_t get_telecontrol_ay(Controller_t *telecontrol, uint16_t *ay)
 {
-    return telecontrol->controller_information.controller_data.ay;
+    if (telecontrol == NULL || ay == NULL) {
+        return CONTROLLER_ERR;
+    }
+
+    *ay = telecontrol->controller_information.controller_data.ay;
+    return CONTROLLER_OK;
 }
 
-uint8_t get_telecontrol_a_btn(Controller_t *telecontrol)
+ControllerStatus_t get_telecontrol_a_btn(Controller_t *telecontrol, uint8_t *a_btn)
 {
-    return telecontrol->controller_information.controller_data.a_btn;
+    if (telecontrol == NULL || a_btn == NULL) {
+        return CONTROLLER_ERR;
+    }
+
+    *a_btn = telecontrol->controller_information.controller_data.a_btn;
+    return CONTROLLER_OK;
 }
 
-uint16_t get_telecontrol_bx(Controller_t *telecontrol)
+ControllerStatus_t get_telecontrol_bx(Controller_t *telecontrol, uint16_t *bx)
 {
-    return telecontrol->controller_information.controller_data.bx;
+    if (telecontrol == NULL || bx == NULL) {
+        return CONTROLLER_ERR;
+    }
+
+    *bx = telecontrol->controller_information.controller_data.bx;
+    return CONTROLLER_OK;
 }
 
-uint8_t get_telecontrol_b_btn(Controller_t *telecontrol)
+ControllerStatus_t get_telecontrol_b_btn(Controller_t *telecontrol, uint8_t *b_btn)
 {
-    return telecontrol->controller_information.controller_data.b_btn;
+    if (telecontrol == NULL || b_btn == NULL) {
+        return CONTROLLER_ERR;
+    }
+
+    *b_btn = telecontrol->controller_information.controller_data.b_btn;
+    return CONTROLLER_OK;
 }
 
-uint8_t get_telecontrol_button_btn1(Controller_t *telecontrol)
+ControllerStatus_t get_telecontrol_button_btn1(Controller_t *telecontrol, uint8_t *btn)
 {
-    return telecontrol->controller_information.controller_data.btn1;
+    if (telecontrol == NULL || btn == NULL) {
+        return CONTROLLER_ERR;
+    }
+
+    *btn = telecontrol->controller_information.controller_data.btn1;
+    return CONTROLLER_OK;
 }
 
-uint8_t get_telecontrol_button_btn2(Controller_t *telecontrol)
+ControllerStatus_t get_telecontrol_button_btn2(Controller_t *telecontrol, uint8_t *btn)
 {
-    return telecontrol->controller_information.controller_data.btn2;
+    if (telecontrol == NULL || btn == NULL) {
+        return CONTROLLER_ERR;
+    }
+
+    *btn = telecontrol->controller_information.controller_data.btn2;
+    return CONTROLLER_OK;
 }
 
-uint8_t get_telecontrol_button_btn3(Controller_t *telecontrol)
+ControllerStatus_t get_telecontrol_button_btn3(Controller_t *telecontrol, uint8_t *btn)
 {
-    return telecontrol->controller_information.controller_data.btn3;
+    if (telecontrol == NULL || btn == NULL) {
+        return CONTROLLER_ERR;
+    }
+
+    *btn = telecontrol->controller_information.controller_data.btn3;
+    return CONTROLLER_OK;
 }
 
-uint8_t get_telecontrol_button_btn4(Controller_t *telecontrol)
+ControllerStatus_t get_telecontrol_button_btn4(Controller_t *telecontrol, uint8_t *btn)
 {
-    return telecontrol->controller_information.controller_data.btn4;
+    if (telecontrol == NULL || btn == NULL) {
+        return CONTROLLER_ERR;
+    }
+
+    *btn = telecontrol->controller_information.controller_data.btn4;
+    return CONTROLLER_OK;
 }
 
 /* ===================== TELEMETRY ===================== */

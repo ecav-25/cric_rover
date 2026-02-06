@@ -538,42 +538,51 @@ static void supervision_read_inputs(void)
     telecontroller_status = telecontrol_read(&controller);
 
     if(telecontroller_status == CONTROLLER_OK){
-        //Board2_U.controllerError = 0;
-        __NOP();
-    	//Board2_U.controllerError = 0;
+        Board2_U.controllerError = 0;
     }
     else if(telecontroller_status == CONTROLLER_ERR_COMM){
-        //Board2_U.controllerError = 1;
-    	__NOP();
-    	//Board2_U.controllerError = 1;
+    	Board2_U.controllerError = 1;
     }
     else{
         Error_Handler();
     }
 
-    Board2_U.controller_x = get_telecontrol_bx(&controller);
-    Board2_U.controller_y = get_telecontrol_ay(&controller);
-    Board2_U.B1 = get_telecontrol_button_btn1(&controller);
-    Board2_U.B2 = get_telecontrol_button_btn2(&controller);
-    Board2_U.B3 = get_telecontrol_button_btn3(&controller);
-    Board2_U.B4 = get_telecontrol_button_btn4(&controller);
-    Board2_U.B_r_stick = get_telecontrol_b_btn(&controller);
-    Board2_U.B_l_stick = get_telecontrol_a_btn(&controller);
-    Board2_U.controller_battery = get_telecontrol_percentage(&controller);
+    if (get_telecontrol_bx(&controller, &Board2_U.controller_x) != CONTROLLER_OK)
+        Error_Handler();
 
-    mpu_status = mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
+    if (get_telecontrol_ay(&controller, &Board2_U.controller_y) != CONTROLLER_OK)
+        Error_Handler();
 
+    if (get_telecontrol_button_btn1(&controller, &Board2_U.B1) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_button_btn2(&controller, &Board2_U.B2) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_button_btn3(&controller, &Board2_U.B3) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_button_btn4(&controller, &Board2_U.B4) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_b_btn(&controller, &Board2_U.B_r_stick) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_a_btn(&controller, &Board2_U.B_l_stick) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_percentage(&controller, &Board2_U.controller_battery) != CONTROLLER_OK)
+        Error_Handler();
+
+
+	mpu_status = mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
     if (mpu_status == MPU6050_OK){
         imu_initialized = true;
-        __NOP();
-        //Board2_U.gyroError = 0;
+        Board2_U.gyroError = 0;
         Board2_U.gyroYaw   = gyroyaw.z;
-    }else if(mpu_status == MPU6050_ERR_COMM){
-        //Board2_U.gyroError = 1;
     }
     else{
-    	__NOP();
-        //Board2_U.gyroError = 1;
+        Board2_U.gyroError = 1;
 
         if (!imu_initialized){
             if (mpu6050_init(&mpu_device, MPU_HW_CONFIG[MPU_MAIN].i2c, MPU_HW_CONFIG[MPU_MAIN].address, &MPU_HW_CONFIG[MPU_MAIN].cfg) == MPU6050_OK){

@@ -116,19 +116,20 @@ ControllerStatus_t telecontrol_send_telemetry(Controller_t *telecontrol, Telemet
 
 /* ===================== GETTERS ===================== */
 
-uint8_t  telecontrol_is_alive(Controller_t *telecontrol);
-uint8_t  get_telecontrol_percentage(Controller_t *telecontrol);
+ControllerStatus_t telecontrol_is_alive(Controller_t *telecontrol, uint8_t *alive);
 
-uint16_t get_telecontrol_ay(Controller_t *telecontrol);
-uint8_t  get_telecontrol_a_btn(Controller_t *telecontrol);
+ControllerStatus_t get_telecontrol_percentage(Controller_t *telecontrol, uint8_t *percentage);
 
-uint16_t get_telecontrol_bx(Controller_t *telecontrol);
-uint8_t  get_telecontrol_b_btn(Controller_t *telecontrol);
+ControllerStatus_t get_telecontrol_ay(Controller_t *telecontrol, uint16_t *ay);
+ControllerStatus_t get_telecontrol_a_btn(Controller_t *telecontrol, uint8_t *a_btn);
 
-uint8_t  get_telecontrol_button_btn1(Controller_t *telecontrol);
-uint8_t  get_telecontrol_button_btn2(Controller_t *telecontrol);
-uint8_t  get_telecontrol_button_btn3(Controller_t *telecontrol);
-uint8_t  get_telecontrol_button_btn4(Controller_t *telecontrol);
+ControllerStatus_t get_telecontrol_bx(Controller_t *telecontrol, uint16_t *bx);
+ControllerStatus_t get_telecontrol_b_btn(Controller_t *telecontrol, uint8_t *b_btn);
+
+ControllerStatus_t get_telecontrol_button_btn1(Controller_t *telecontrol, uint8_t *btn);
+ControllerStatus_t get_telecontrol_button_btn2(Controller_t *telecontrol, uint8_t *btn);
+ControllerStatus_t get_telecontrol_button_btn3(Controller_t *telecontrol, uint8_t *btn);
+ControllerStatus_t get_telecontrol_button_btn4(Controller_t *telecontrol, uint8_t *btn);
 
 /* ===================== TELEMETRY API ===================== */
 
