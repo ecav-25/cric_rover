@@ -556,26 +556,8 @@ void readSensorsTask(void *argument)
 		velocity_BA = (int16_T) roundf(encoder_BA.velocity);
 		velocity_BB = (int16_T) roundf(encoder_BB.velocity);
 
-
-
-		taskENTER_CRITICAL();
-
-		Board1_U.temperature = temperature;
-		Board1_U.battery_voltage = battery_voltage;
-		Board1_U.velocity_FA = velocity_FA;
-		Board1_U.velocity_FB = velocity_FB;
-		Board1_U.velocity_BA = velocity_BA;
-		Board1_U.velocity_BB = velocity_BB;
-
-		Board1_U.motorError_FA = 0;
-		Board1_U.motorError_FB = 0;
-		Board1_U.motorError_BA = 0;
-		Board1_U.motorError_BB = 0;
-
-		taskEXIT_CRITICAL();
-
 		if (motor_diag_process(&h_diag_FA) != M_DIAG_OK) {
-		    Error_Handler();
+			Error_Handler();
 		}
 
 		if (motor_diag_process(&h_diag_FB) != M_DIAG_OK) {
@@ -590,17 +572,21 @@ void readSensorsTask(void *argument)
 			Error_Handler();
 		}
 
-		debug_area_FA = h_diag_FA.last_area_error;
-		motor_status_FA = (h_diag_FA.health_status == MOTOR_HEALTHY);
+		taskENTER_CRITICAL();
 
-		debug_area_FB = h_diag_FB.last_area_error;
-		motor_status_FB = (h_diag_FB.health_status == MOTOR_HEALTHY);
+		Board1_U.temperature = temperature;
+		Board1_U.battery_voltage = battery_voltage;
+		Board1_U.velocity_FA = velocity_FA;
+		Board1_U.velocity_FB = velocity_FB;
+		Board1_U.velocity_BA = velocity_BA;
+		Board1_U.velocity_BB = velocity_BB;
 
-		debug_area_BA = h_diag_BA.last_area_error;
-		motor_status_BA = (h_diag_BA.health_status == MOTOR_HEALTHY);
+		Board1_U.motorError_FA = (h_diag_FA.health_status == MOTOR_FAILURE);
+		Board1_U.motorError_FB = (h_diag_FB.health_status == MOTOR_FAILURE);
+		Board1_U.motorError_BA = (h_diag_BA.health_status == MOTOR_FAILURE);
+		Board1_U.motorError_BB = (h_diag_BB.health_status == MOTOR_FAILURE);
 
-		debug_area_BB = h_diag_BB.last_area_error;
-		motor_status_BB = (h_diag_BB.health_status == MOTOR_HEALTHY);
+		taskEXIT_CRITICAL();
 
 		DWD_Notify(&hard_rt_deadline_wd, DWD_FLAG_READ_SENSORS);
 	}
@@ -793,6 +779,8 @@ void lightsTask(void *argument)
 	TickType_t xLastWakeTime = xTaskGetTickCount();
 	const TickType_t xFrequency = pdMS_TO_TICKS(LIGHTS_PERIOD);
 
+	static uint8_t toggle_red;
+
 	for(;;)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
@@ -804,7 +792,13 @@ void lightsTask(void *argument)
 		rear_led = Board1_Y.output.rear_led;
 		rear_sign = Board1_Y.output.rear_sign;
 
+		toggle_red = (Board1_DW.is_Working_status_manager == Board1_IN_Motor_error_working) ? 8 : 4;
+
 		taskEXIT_CRITICAL();
+
+
+		led_set_toggle_steps(&ledA, toggle_red);
+		led_set_toggle_steps(&ledB, toggle_red);
 
 		led_step(&ledA, led_FA);
 		led_step(&ledB, led_FB);

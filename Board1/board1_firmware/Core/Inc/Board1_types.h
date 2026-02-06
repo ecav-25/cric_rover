@@ -38,8 +38,9 @@ typedef enum {
   OFF = 0,                             /* Default value */
   WHITE,
   RED,
+  BLINKING_WHITE,
   BLINKING_RED,
-  BLINKING_WHITE
+  BLINKING_RED_SLOW,
 } LED_TYPE;
 
 #endif
