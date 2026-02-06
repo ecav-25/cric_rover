@@ -1,9 +1,24 @@
 #include "led.h"
 
+
+#define RED_STEPS_ON (4)
+#define BLINKING_RED_STEPS (8)
+
+#define RED_STEPS_SLOW_ON (8)
+#define BLINKING_RED_SLOW_STEPS (16)
+
+#define WHITE_STEPS_ON (8)
+#define BLINKING_WHITE_STEPS (16)
+
+
+
+
+
 static int8_t led_mode_off( led_t* led);
 static int8_t led_mode_white( led_t* led);
 static int8_t led_mode_red( led_t* led);
 static int8_t led_mode_blinking_red(led_t* led);
+static int8_t led_mode_blinking_red_slow(led_t* led);
 static int8_t led_mode_blinking_white(led_t* led);
 
 
@@ -99,7 +114,7 @@ int8_t led_toggle(led_t* led, controlled_led_t controlled_led)
 
 		if(led->step >= led->toggle_steps)
 		{
-			led->step = 0;
+
 			led->pinState[controlled_led] = !led->pinState[controlled_led];
 			HAL_GPIO_WritePin(led->port[controlled_led], led->pin[controlled_led], led->pinState[controlled_led]);
 		}
@@ -162,6 +177,7 @@ int8_t led_step(led_t* led, led_state_t state){
 
 			led->step = 0;
 			led->state = state;
+			led->first_entry = 1;
 	}
 
 
@@ -197,6 +213,11 @@ int8_t led_step(led_t* led, led_state_t state){
 			}
 			break;
 
+		case BLINKING_RED_SLOW:
+			if(led_mode_blinking_red_slow(led) == LED_OK){
+				res = LED_OK;
+			}
+			break;
 		default:
 			led_off(led, LED_WHITE);
 			led_off(led, LED_RED);
@@ -256,50 +277,69 @@ static int8_t led_mode_red( led_t* led){
 	return res;
 }
 
-/*
-static int8_t led_mode_red_and_white( led_t* led){
-	int8_t res = LED_ERR;
-
-	if(led_on(led, LED_RED) == LED_OK && led_on(led, LED_WHITE) == LED_OK){
-		res = LED_OK;
-	}
-
-	return res;
-}*/
-
-
 
 static int8_t led_mode_blinking_red(led_t* led)
 {
-    /* garantisco che il bianco sia spento */
+    /* garantisco esclusività */
     if (led->pinState[LED_WHITE] != GPIO_PIN_RESET)
         led_off(led, LED_WHITE);
 
-    /* step == 0 → primo ingresso nella modalità */
-    if (led->step == 0) {
-        led_on(led, LED_RED);   // FORZATO: parte acceso
+    /* fase ON */
+    if (led->step < RED_STEPS_ON) {
+        if (led->pinState[LED_RED] != GPIO_PIN_SET)
+            led_on(led, LED_RED);
+    }
+    /* fase OFF */
+    else {
+        if (led->pinState[LED_RED] != GPIO_PIN_RESET)
+            led_off(led, LED_RED);
     }
 
-    led->step++;
-    led_toggle(led, LED_RED);
+    /* avanzamento ciclico */
+    led->step = (led->step + 1) % BLINKING_RED_STEPS;
+
+    return LED_OK;
+}
+
+static int8_t led_mode_blinking_red_slow(led_t* led)
+{
+    /* garantisco esclusività */
+    if (led->pinState[LED_WHITE] != GPIO_PIN_RESET)
+        led_off(led, LED_WHITE);
+
+    /* fase ON */
+    if (led->step < RED_STEPS_SLOW_ON) {
+        if (led->pinState[LED_RED] != GPIO_PIN_SET)
+            led_on(led, LED_RED);
+    }
+    /* fase OFF */
+    else {
+        if (led->pinState[LED_RED] != GPIO_PIN_RESET)
+            led_off(led, LED_RED);
+    }
+
+    /* avanzamento ciclico */
+    led->step = (led->step + 1) % BLINKING_RED_SLOW_STEPS;
 
     return LED_OK;
 }
 
 
+
 static int8_t led_mode_blinking_white(led_t* led)
 {
-    /* garantisco che il rosso sia spento */
     if (led->pinState[LED_RED] != GPIO_PIN_RESET)
         led_off(led, LED_RED);
 
-    /* step == 0 → primo ingresso nella modalità */
-    if (led->step == 0) {
-        led_on(led, LED_WHITE);   // FORZATO: parte acceso
+    if (led->step < WHITE_STEPS_ON) {
+        if (led->pinState[LED_WHITE] != GPIO_PIN_SET)
+            led_on(led, LED_WHITE);
+    } else {
+        if (led->pinState[LED_WHITE] != GPIO_PIN_RESET)
+            led_off(led, LED_WHITE);
     }
 
-    led->step++;
-    led_toggle(led, LED_WHITE);
+    led->step = (led->step + 1) % BLINKING_WHITE_STEPS;
 
     return LED_OK;
 }

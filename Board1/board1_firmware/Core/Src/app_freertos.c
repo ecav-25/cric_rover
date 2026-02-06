@@ -68,6 +68,10 @@ typedef StaticEventGroup_t osStaticEventGroupDef_t;
 
 #define DIAG_DELAY_SHIFT    0
 #define DIAG_MAX_AREA_ERR   15000.0f
+
+
+#define TOGGLE_EMERGENCY 8
+#define TOGGLE_NORMAL 4
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -779,8 +783,6 @@ void lightsTask(void *argument)
 	TickType_t xLastWakeTime = xTaskGetTickCount();
 	const TickType_t xFrequency = pdMS_TO_TICKS(LIGHTS_PERIOD);
 
-	static uint8_t toggle_red;
-
 	for(;;)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
@@ -792,13 +794,7 @@ void lightsTask(void *argument)
 		rear_led = Board1_Y.output.rear_led;
 		rear_sign = Board1_Y.output.rear_sign;
 
-		toggle_red = (Board1_DW.is_Working_status_manager == Board1_IN_Motor_error_working) ? 8 : 4;
-
 		taskEXIT_CRITICAL();
-
-
-		led_set_toggle_steps(&ledA, toggle_red);
-		led_set_toggle_steps(&ledB, toggle_red);
 
 		led_step(&ledA, led_FA);
 		led_step(&ledB, led_FB);
