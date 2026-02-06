@@ -176,15 +176,6 @@ DecBus debug_decision;
 boolean_T retransmit_seen_in_cycle = false;
 uint32_t count_retransmit=0;
 
-extern TIM_HandleTypeDef htim3;
-extern TIM_HandleTypeDef htim4;
-extern TIM_HandleTypeDef htim1;
-extern TIM_HandleTypeDef htim5;
-extern TIM_HandleTypeDef htim8;
-extern TIM_HandleTypeDef htim20;
-extern ADC_HandleTypeDef hadc1;
-extern DMA_HandleTypeDef hdma_tim17_ch1;
-
 boolean_T deadline = 0;
 
 real32_T ramp_step;
@@ -192,50 +183,11 @@ real32_T ramp_step;
 led_t ledA;
 led_t ledB;
 
-LED_TYPE led_FA = OFF, led_FB = OFF, rear_sign = OFF;
+LED_TYPE led_FA = OFF, led_FB = OFF;
+REAR_SIGN_TYPE rear_sign = OFF;
 REAR_LED_TYPE rear_led = IDLE;
 
-/* Array di porte GPIO */
-GPIO_TypeDef* ledA_ports[LED_COUNT] = {
-    FA_LED_RED_GPIO_Port,   	// LED_RED
-	FA_LED_WHITE_GPIO_Port    	// LED_WHITE
-};
 
-/* Array di pin GPIO */
-uint16_t ledA_pins[LED_COUNT] = {
-    FA_LED_RED_Pin,   	// LED_RED
-	FA_LED_WHITE_Pin    // LED_WHITE
-};
-
-
-GPIO_TypeDef* ledB_ports[LED_COUNT] = {
-	FB_LED_RED_GPIO_Port,   	// LED_RED
-	FB_LED_WHITE_GPIO_Port    	// LED_WHITE
-};
-
-/* Array di pin GPIO */
-uint16_t ledB_pins[LED_COUNT] = {
-	FB_LED_RED_Pin,   	// LED_RED
-	FB_LED_WHITE_Pin    // LED_WHITE
-};
-
-/* Stato iniziale dei pin */
-pin_state_t led_init_state[LED_COUNT] = {
-    GPIO_PIN_RESET,  // LED_RED spento
-    GPIO_PIN_RESET   // LED_WHITE spento
-};
-
-led_config_t cfg = {
-		  .htim = &htim17,
-		  .hdma = &hdma_tim17_ch1,
-		  .pwm_hi = 135,
-		  .pwm_lo = 55,
-		  .reset_halves = 2,
-		  .scale_b = 0xF0,
-		  .scale_g = 0xB0,
-		  .scale_r = 0xFF,
-		  .tim_channel = TIM_CHANNEL_1
-};
 
 /* USER CODE END Variables */
 /* Definitions for supervision */
@@ -470,9 +422,20 @@ void MX_FREERTOS_Init(void) {
 	}
 	*/
 
-	led_stripe_init(&cfg);
-	led_init(&ledA, ledA_ports, ledA_pins, OFF, led_init_state, 20);
-	led_init(&ledB, ledB_ports, ledB_pins, OFF, led_init_state, 20);
+	if(led_stripe_init(&led_stripes_cfg[LED_STRIPES_MAIN]) != LED_STRIPE_OK){
+		Error_Handler();
+		return;
+	}
+
+	if(led_init(&ledA, HW_LED_CONFIG[LED_A].port, HW_LED_CONFIG[LED_A].pin, HW_LED_CONFIG[LED_A].init_pin_state, HW_LED_CONFIG[LED_A].toggle_steps) != LED_OK){
+		Error_Handler();
+		return;
+	}
+
+	if(led_init(&ledB, HW_LED_CONFIG[LED_B].port, HW_LED_CONFIG[LED_B].pin, HW_LED_CONFIG[LED_B].init_pin_state, HW_LED_CONFIG[LED_B].toggle_steps) != LED_OK){
+		Error_Handler();
+		return;
+	}
 
 	Board1_initialize();
   /* USER CODE END Init */
@@ -608,7 +571,7 @@ void readSensorsTask(void *argument)
 		velocity_BB = (int16_T) roundf(encoder_BB.velocity);
 
 		if (motor_diag_process(&h_diag_FA) != M_DIAG_OK) {
-		Error_Handler();
+			Error_Handler();
 		}
 
 		if (motor_diag_process(&h_diag_FB) != M_DIAG_OK) {
@@ -626,17 +589,16 @@ void readSensorsTask(void *argument)
 		taskENTER_CRITICAL();
 
 		Board1_U.temperature = temperature;
-		Board1_U.battery_voltage = battery_voltage_filtered;
-
+		Board1_U.battery_voltage = battery_voltage;
 		Board1_U.velocity_FA = velocity_FA;
 		Board1_U.velocity_FB = velocity_FB;
 		Board1_U.velocity_BA = velocity_BA;
 		Board1_U.velocity_BB = velocity_BB;
 
-		Board1_U.motorError_FA = (h_diag_FA.health_status != MOTOR_HEALTHY);
-		Board1_U.motorError_FB = (h_diag_FB.health_status != MOTOR_HEALTHY);
-		Board1_U.motorError_BA = (h_diag_BA.health_status != MOTOR_HEALTHY);
-		Board1_U.motorError_BB = (h_diag_BB.health_status != MOTOR_HEALTHY);
+		Board1_U.motorError_FA = (h_diag_FA.health_status == MOTOR_FAILURE);
+		Board1_U.motorError_FB = (h_diag_FB.health_status == MOTOR_FAILURE);
+		Board1_U.motorError_BA = (h_diag_BA.health_status == MOTOR_FAILURE);
+		Board1_U.motorError_BB = (h_diag_BB.health_status == MOTOR_FAILURE);
 
 		taskEXIT_CRITICAL();
 
@@ -831,6 +793,8 @@ void lightsTask(void *argument)
 	TickType_t xLastWakeTime = xTaskGetTickCount();
 	const TickType_t xFrequency = pdMS_TO_TICKS(LIGHTS_PERIOD);
 
+	static uint8_t toggle_red;
+
 	for(;;)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
@@ -842,7 +806,13 @@ void lightsTask(void *argument)
 		rear_led = Board1_Y.output.rear_led;
 		rear_sign = Board1_Y.output.rear_sign;
 
+		toggle_red = (Board1_DW.is_Working_status_manager == Board1_IN_Motor_error_working) ? 8 : 4;
+
 		taskEXIT_CRITICAL();
+
+
+		led_set_toggle_steps(&ledA, toggle_red);
+		led_set_toggle_steps(&ledB, toggle_red);
 
 		led_step(&ledA, led_FA);
 		led_step(&ledB, led_FB);

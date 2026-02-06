@@ -3,8 +3,6 @@
 
 
 #define NUM_PIXELS (21)
-#define ARROW_OFF_STEPS  5
-#define ARROW_ON_STEPS   5
 
 #include "stm32g474xx.h"
 #include "tim.h"
@@ -35,10 +33,10 @@ typedef struct {
   /* numero di mezze-trasmissioni di reset (come nel tuo codice: 2) */
   uint8_t reset_halves;
 
-} led_config_t;
+} led_stripes_config_t;
 
 
-led_status_t led_stripe_init(led_config_t *cfg);
+led_status_t led_stripe_init(const led_stripes_config_t *cfg);
 led_status_t rear_led_step(REAR_LED_TYPE animation);
 led_status_t rear_sign_step(REAR_SIGN_TYPE animation);
 led_status_t led_set_RGB(uint8_t index, uint8_t r, uint8_t g, uint8_t b);

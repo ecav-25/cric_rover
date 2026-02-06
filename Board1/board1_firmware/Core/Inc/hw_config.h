@@ -3,6 +3,8 @@
 
 #include "motor.h"
 #include "encoder.h"
+#include "led_stripes.h"
+#include "led.h"
 
 
 /* ===================== MOTORS ===================== */
@@ -55,5 +57,34 @@ typedef struct {
 } ADC_HW_Config_t;
 
 extern const ADC_HW_Config_t ADC_HW_CONFIG[ADC_COUNT];
+
+
+/* ===================== LEDS ===================== */
+
+typedef enum {
+	LED_A = 0,
+	LED_B,
+	LED_COUNT_HW
+} HW_Led_Id_t;
+
+
+typedef struct {
+
+	GPIO_TypeDef* port[LED_COUNT];
+	uint16_t pin[LED_COUNT];
+	pin_state_t init_pin_state[LED_COUNT];
+	uint8_t toggle_steps;
+} HW_Led_Config_t;
+
+extern const HW_Led_Config_t HW_LED_CONFIG[LED_COUNT_HW];
+
+
+typedef enum{
+	LED_STRIPES_MAIN = 0,
+	LED_STRIPES_COUNT
+}LED_Stripes_Id_t;
+
+
+extern const led_stripes_config_t led_stripes_cfg[LED_STRIPES_COUNT];
 
 #endif /* INC_HW_CONFIG_H_ */

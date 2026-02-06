@@ -63,14 +63,8 @@ typedef StaticTask_t osStaticThreadDef_t;
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-static void app_delay_us(uint32_t us)
-{
-    (void)DWT_Delay_us(us);
-}
 
-typedef enum { S_LEFT = 0, S_CENTER, S_RIGHT } rr_state_t;
-
-static volatile uint16_T g_sonar_distances[3];
+static volatile uint16_T g_sonar_distances[US_COUNT];
 
 static hcsr04_t us_left, us_center, us_right;
 
@@ -133,12 +127,12 @@ boolean_T retransmit_seen_in_cycle = false;
 uint32_t count_retransmit=0;
 
 extern TIM_HandleTypeDef htim1;
-extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim4;
 extern I2C_HandleTypeDef hi2c1;
 
 extern UART_HandleTypeDef huart3;
 
+static bool imu_available = false;
 
 boolean_T deadline = 0;
 /* USER CODE END Variables */
@@ -201,39 +195,36 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
 	DWD_Init(&hard_rt_deadline_wd, &htim4, SYSTEM_ALIVE_MASK, deadlineProcedure);
+
 	(void)DWT_Delay_Init();
 
-	hcsr04_cfg_t base = {
-	  .htim = &htim2,
-	  .timer_hz = 1000000,
-	  .timeout_ms = 30,
-	  .delay_us = app_delay_us
-	};
+	MPU60X0_StatusTypeDef status_mpu;
 
-	/* LEFT:  TIM2_CH1, TRIG PA0 */
-	hcsr04_cfg_t cL = base;
-	cL.channel = TIM_CHANNEL_1;
-	cL.trig_port = TRIG_LEFT_GPIO_Port;
-	cL.trig_pin  = TRIG_LEFT_Pin;
-
-	/* CENTER: TIM2_CH2, TRIG PA1 */
-	hcsr04_cfg_t cC = base;
-	cC.channel = TIM_CHANNEL_2;
-	cC.trig_port = TRIG_CENTER_GPIO_Port;
-	cC.trig_pin  = TRIG_CENTER_Pin;
-
-	/* RIGHT: TIM2_CH3, TRIG PA2 */
-	hcsr04_cfg_t cR = base;
-	cR.channel = TIM_CHANNEL_3;
-	cR.trig_port = TRIG_RIGHT_GPIO_Port;
-	cR.trig_pin  = TRIG_RIGHT_Pin;
-
-	(void)HCSR04_Init(&us_left,   &cL);
-	(void)HCSR04_Init(&us_center, &cC);
-	(void)HCSR04_Init(&us_right,  &cR);
-
-	if(telecontrol_init(&controller, &hi2c1) != CONTROLLER_OK){
+	if(HCSR04_Init(&us_left,   &ULTRASONIC_HW_CONFIG[US_LEFT]) != HCSR04_OK){
 	    Error_Handler();
+	}
+	if(HCSR04_Init(&us_center, &ULTRASONIC_HW_CONFIG[US_CENTER]) != HCSR04_OK){
+	    Error_Handler();
+	}
+
+	if(HCSR04_Init(&us_right,  &ULTRASONIC_HW_CONFIG[US_RIGHT]) != HCSR04_OK){
+	    Error_Handler();
+	}
+
+	if(telecontrol_init(&controller, CONTROLLER_HW_CONFIG[CONTROLLER_MAIN].i2c, CONTROLLER_HW_CONFIG[CONTROLLER_MAIN].address ) != CONTROLLER_OK){
+	    Error_Handler();
+	}
+
+	status_mpu = mpu6050_init(&mpu_device, MPU_HW_CONFIG[MPU_MAIN].i2c, MPU_HW_CONFIG[MPU_MAIN].address, &MPU_HW_CONFIG[MPU_MAIN].cfg);
+
+	if (status_mpu == MPU6050_ERR) {
+	    Error_Handler();
+	}
+	else if (status_mpu == MPU6050_ERR_COMM) {
+	    imu_available = false;
+	}
+	else {
+	    imu_available = true;
 	}
 
 	if (motor_init(&motor_FA_openLoop, MOTOR_HW_CONFIG[MOTOR_FA].htim, MOTOR_HW_CONFIG[MOTOR_FA].channel, &MOTOR_HW_CONFIG[MOTOR_FA].calib) != MOTOR_OK){
@@ -330,9 +321,9 @@ void readSonarTask(void *argument)
 			{
 				taskENTER_CRITICAL();
 
-				Board2_U.sonar1 = g_sonar_distances[S_LEFT];
-				Board2_U.sonar2 = g_sonar_distances[S_CENTER];
-				Board2_U.sonar3 = g_sonar_distances[S_RIGHT];
+				Board2_U.sonar1 = g_sonar_distances[US_LEFT];
+				Board2_U.sonar2 = g_sonar_distances[US_CENTER];
+				Board2_U.sonar3 = g_sonar_distances[US_RIGHT];
 
 				taskEXIT_CRITICAL();
 			}
@@ -432,10 +423,10 @@ void telemetryLoggerTask(void *argument)
         output = Board2_Y.output;
 
         supervision_state = Board2_DW.is_Board_state;
-        light_state       = Board2_DW.is_Normal_lights;
+        light_state       = Board2_DW.is_Normal_voltage_lights;
         special_retro     = Board2_DW.special_retro;
         obs_avoidance     = Board2_DW.obs_detection;
-        driving_mode      = Board2_DW.is_Normal_driving;
+        driving_mode      = Board2_DW.is_Normal_voltage_driving;
         max_velocity     = Board2_DW.max_velocity;
 
         if (supervision_state == Board2_IN_Normal) {
@@ -583,7 +574,8 @@ static void supervision_read_inputs(void)
     if (get_telecontrol_percentage(&controller, &Board2_U.controller_battery) != CONTROLLER_OK)
         Error_Handler();
 
-    mpu_status = mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
+
+	mpu_status = mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
     if (mpu_status == MPU6050_OK){
         imu_initialized = true;
         Board2_U.gyroError = 0;
@@ -615,7 +607,6 @@ static void supervision_read_inputs(void)
     Board2_U.controller_battery = dbg_controller_battery;
     */
 }
-
 
 void executeSupervision(){
 	do{

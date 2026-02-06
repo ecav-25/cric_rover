@@ -10,7 +10,7 @@ static int8_t led_mode_blinking_white(led_t* led);
 
 
 
-int8_t led_init(led_t* led, GPIO_TypeDef* GPIOx[LED_COUNT], uint16_t GPIO_Pin[LED_COUNT], led_state_t init_state,pin_state_t init_pin_state[LED_COUNT], uint8_t toggle_steps)
+int8_t led_init(led_t* led, GPIO_TypeDef* const GPIOx[LED_COUNT], const uint16_t GPIO_Pin[LED_COUNT],const pin_state_t init_pin_state[LED_COUNT], uint8_t toggle_steps)
 {
 
 	int8_t res = LED_ERR;
@@ -18,7 +18,7 @@ int8_t led_init(led_t* led, GPIO_TypeDef* GPIOx[LED_COUNT], uint16_t GPIO_Pin[LE
 	if(led)
 	{
 
-		led->state = init_state;
+		led->state = OFF;
 		led->step = 0;
 		led->toggle_steps = toggle_steps;
 
@@ -269,48 +269,41 @@ static int8_t led_mode_red_and_white( led_t* led){
 
 
 
-static int8_t led_mode_blinking_red( led_t* led){
-	int8_t res = LED_ERR;
+static int8_t led_mode_blinking_red(led_t* led)
+{
+    /* garantisco che il bianco sia spento */
+    if (led->pinState[LED_WHITE] != GPIO_PIN_RESET)
+        led_off(led, LED_WHITE);
 
-	if(led->pinState[LED_WHITE] != GPIO_PIN_RESET)
-		res = led_off(led, LED_WHITE);
+    /* step == 0 → primo ingresso nella modalità */
+    if (led->step == 0) {
+        led_on(led, LED_RED);   // FORZATO: parte acceso
+    }
 
+    led->step++;
+    led_toggle(led, LED_RED);
 
-	if(led->step == 0 && led->pinState[LED_RED] != GPIO_PIN_SET){
-		res = led_on(led,LED_RED);
-	}
-
-
-	if(led->step == RED_STEPS_ON && led->pinState[LED_RED] != GPIO_PIN_RESET){
-		res = led_off(led,LED_RED);
-	}
-
-	led->step = (led->step + 1) % BLINKING_RED_STEPS;
-
-	return res;
+    return LED_OK;
 }
 
 
-static int8_t led_mode_blinking_white( led_t* led){
-	int8_t res = LED_ERR;
+static int8_t led_mode_blinking_white(led_t* led)
+{
+    /* garantisco che il rosso sia spento */
+    if (led->pinState[LED_RED] != GPIO_PIN_RESET)
+        led_off(led, LED_RED);
 
-	if(led->pinState[LED_RED] != GPIO_PIN_RESET)
-		res = led_off(led, LED_RED);
+    /* step == 0 → primo ingresso nella modalità */
+    if (led->step == 0) {
+        led_on(led, LED_WHITE);   // FORZATO: parte acceso
+    }
 
+    led->step++;
+    led_toggle(led, LED_WHITE);
 
-	if(led->step == 0 && led->pinState[LED_WHITE] != GPIO_PIN_SET){
-		res = led_on(led,LED_WHITE);
-	}
-
-
-	if(led->step == WHITE_STEPS_ON && led->pinState[LED_WHITE] != GPIO_PIN_RESET){
-		res = led_off(led,LED_WHITE);
-	}
-
-	led->step = (led->step + 1) % BLINKING_WHITE_STEPS;
-
-	return res;
+    return LED_OK;
 }
+
 
 
 
