@@ -166,6 +166,7 @@ REAR_SIGN_TYPE rear_sign = OFF;
 REAR_LED_TYPE rear_led = IDLE;
 
 
+
 /* USER CODE END Variables */
 /* Definitions for supervision */
 osThreadId_t supervisionHandle;

@@ -302,7 +302,7 @@ static led_status_t rear_led_special_lights(void)
 
 static led_status_t rear_led_emercency_lights(void)
 {
-	res = LED_STRIPE_ERR;
+	led_status_t res = LED_STRIPE_ERR;
 	if (rear_led.step == 0 && led_set_RGB_range(rear_led.start, rear_led.end, 255, 0, 0) == LED_STRIPE_OK){
 		g_led_bus.dirty = 1;
 		res = LED_STRIPE_OK;

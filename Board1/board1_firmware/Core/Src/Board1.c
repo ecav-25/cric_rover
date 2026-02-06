@@ -1734,7 +1734,7 @@ static void Board1_Update_Rover_Lights(boolean_T white_led_when_stopped)
   } else if (Board1_DW.decision.brk_mode != NONE) {
     Board1_DW.decision.led_A = WHITE;
     Board1_DW.decision.led_B = WHITE;
-    Board1_DW.decision.rear_led = BRAKING_LIGHT;
+    Board1_DW.decision.rear_led = BRAKING_LIGHTS;
   } else if (((Board1_DW.decision.rif_FA + Board1_DW.decision.rif_BA) / 2.0F <
               0.0F) && ((Board1_DW.decision.rif_FB + Board1_DW.decision.rif_BB) /
                         2.0F > 1.0F)) {
