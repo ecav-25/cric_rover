@@ -518,6 +518,7 @@ void readSensorsTask(void *argument)
 {
   /* USER CODE BEGIN readSensorsTask */
 	static uint8_t temp_comm_fault = 0;
+	static uint8_t batt_comm_fault = 0;
 	TickType_t xLastWakeTime = xTaskGetTickCount();
 	const TickType_t xFrequency = pdMS_TO_TICKS(SUPERVISION_PERIOD);
 
@@ -557,22 +558,21 @@ void readSensorsTask(void *argument)
 		    temp_comm_fault = 0;
 		}
 
-		// Leggi il valore ISTANTANEO (RAW)
-		if(batt_get_voltage_once(&battery_sensor, &battery_voltage_raw) != BATT_OK){
-			//Error_Handler();
-			__NOP();
-		} else {
-			// --- LOGICA DI FILTRAGGIO ---
-			if (battery_voltage_filtered < 0.0f) {
-				// Se è la prima accensione, prendiamo il valore così com'è
-				// per evitare che il filtro parta da 0V e ci metta tempo a salire.
-				battery_voltage_filtered = battery_voltage_raw;
-			} else {
-				// Formula EMA: (Nuovo * alpha) + (Vecchio * (1 - alpha))
-				battery_voltage_filtered = (battery_voltage_raw * batt_alpha) +
-										   (battery_voltage_filtered * (1.0f - batt_alpha));
-			}
-			// ----------------------------------------------------
+		Batt_Status_t batt_st = batt_get_voltage_once(&battery_sensor, &battery_voltage_raw);
+		if (batt_st == BATT_ERR) {
+		    Error_Handler();
+		}
+		else if (batt_st == BATT_ERR_COMM) {
+		    batt_comm_fault = 1;
+		}
+		else {
+		    batt_comm_fault = 0;
+
+		    if (battery_voltage_filtered < 0.0f) {
+		        battery_voltage_filtered = battery_voltage_raw;
+		    } else {
+		        battery_voltage_filtered = (battery_voltage_raw * batt_alpha) + (battery_voltage_filtered * (1.0f - batt_alpha));
+		    }
 		}
 
 		debug_temperature = temperature;

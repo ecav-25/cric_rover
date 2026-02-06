@@ -12,7 +12,8 @@ extern "C" {
 
 typedef enum {
     BATT_OK  = 0,
-    BATT_ERR = -1
+    BATT_ERR,
+	BATT_ERR_COMM
 } Batt_Status_t;
 
 /* ================== ADC / BATTERY CONSTANTS ================== */
