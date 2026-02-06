@@ -517,6 +517,7 @@ void supervisionTask(void *argument)
 void readSensorsTask(void *argument)
 {
   /* USER CODE BEGIN readSensorsTask */
+	static uint8_t temp_comm_fault = 0;
 	TickType_t xLastWakeTime = xTaskGetTickCount();
 	const TickType_t xFrequency = pdMS_TO_TICKS(SUPERVISION_PERIOD);
 
@@ -544,9 +545,16 @@ void readSensorsTask(void *argument)
 		if (encoder_readRPM(&encoder_BB) != ENCODER_OK) { Error_Handler(); }
 
 
-		if(temp_get_celsius_once(&temp_sensor, &temperature) != TEMP_OK){
-			//Error_Handler();
-			__NOP();
+		Temp_Status_t temp_st = temp_get_celsius_once(&temp_sensor, &temperature);
+
+		if (temp_st == TEMP_ERR) {
+		    Error_Handler();
+		}
+		else if (temp_st == TEMP_ERR_COMM) {
+		    temp_comm_fault = 1;
+		}
+		else {
+		    temp_comm_fault = 0;
 		}
 
 		// Leggi il valore ISTANTANEO (RAW)

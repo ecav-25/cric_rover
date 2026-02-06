@@ -14,7 +14,8 @@ extern "C" {
 
 typedef enum {
 	TEMP_OK = 0,
-	TEMP_ERR = -1
+	TEMP_ERR,
+	TEMP_ERR_COMM
 } Temp_Status_t;
 
 /* ================== SENSOR CONSTANTS ================== */
