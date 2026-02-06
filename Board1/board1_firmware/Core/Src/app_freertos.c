@@ -604,6 +604,11 @@ void readSensorsTask(void *argument)
 		Board1_U.velocity_BA = velocity_BA;
 		Board1_U.velocity_BB = velocity_BB;
 
+		Board1_U.motorError_FA = 0;
+		Board1_U.motorError_FB = 0;
+		Board1_U.motorError_BA = 0;
+		Board1_U.motorError_BB = 0;
+
 		taskEXIT_CRITICAL();
 
 		if (motor_diag_process(&h_diag_FA) != M_DIAG_OK) {

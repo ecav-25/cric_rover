@@ -141,7 +141,7 @@ led_status_t rear_led_step(REAR_LED_TYPE animation){
 				res = LED_STRIPE_OK;
 			}
 			break;
-		case  BRAKING_LIGHT:
+		case  BRAKING_LIGHTS:
 			if(rear_led_anim_stop() == LED_STRIPE_OK){
 				res = LED_STRIPE_OK;
 			}

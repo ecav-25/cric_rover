@@ -107,6 +107,8 @@ mpu6050_t mpu_device;
 imu_vector_t acceleration;
 imu_vector_t gyroyaw;
 
+static bool imu_initialized = false;
+
 Motor_t motor_FA_openLoop;
 Motor_t motor_FB_openLoop;
 Motor_t motor_BA_openLoop;
@@ -136,6 +138,7 @@ extern TIM_HandleTypeDef htim4;
 extern I2C_HandleTypeDef hi2c1;
 
 extern UART_HandleTypeDef huart3;
+
 
 boolean_T deadline = 0;
 /* USER CODE END Variables */
@@ -229,9 +232,9 @@ void MX_FREERTOS_Init(void) {
 	(void)HCSR04_Init(&us_center, &cC);
 	(void)HCSR04_Init(&us_right,  &cR);
 
-	telecontrol_init(&controller, &hi2c1);
-
-	mpu6050_init(&mpu_device, &hi2c1, 0, NULL);
+	if(telecontrol_init(&controller, &hi2c1) != CONTROLLER_OK){
+	    Error_Handler();
+	}
 
 	if (motor_init(&motor_FA_openLoop, MOTOR_HW_CONFIG[MOTOR_FA].htim, MOTOR_HW_CONFIG[MOTOR_FA].channel, &MOTOR_HW_CONFIG[MOTOR_FA].calib) != MOTOR_OK){
 	    Error_Handler();
@@ -391,6 +394,8 @@ void supervisionTask(void *argument)
 void telemetryLoggerTask(void *argument)
 {
   /* USER CODE BEGIN telemetryLoggerTask */
+    static uint8_t telemetry_tx_failures = 0;
+    static ControllerStatus_t status_telemetry;
     TickType_t xLastWakeTime = xTaskGetTickCount();
     const TickType_t xFrequency = pdMS_TO_TICKS(TELEMETRY_LOGGER_PERIOD);
 
@@ -427,10 +432,10 @@ void telemetryLoggerTask(void *argument)
         output = Board2_Y.output;
 
         supervision_state = Board2_DW.is_Board_state;
-        light_state       = Board2_DW.is_Normal_voltage_lights;
+        light_state       = Board2_DW.is_Normal_lights;
         special_retro     = Board2_DW.special_retro;
         obs_avoidance     = Board2_DW.obs_detection;
-        driving_mode      = Board2_DW.is_Normal_voltage_driving;
+        driving_mode      = Board2_DW.is_Normal_driving;
         max_velocity     = Board2_DW.max_velocity;
 
         if (supervision_state == Board2_IN_Normal) {
@@ -443,88 +448,91 @@ void telemetryLoggerTask(void *argument)
         /* ===================== NORMAL MODE ===================== */
         if (supervision_state == Board2_IN_Normal)
         {
-            telemetry_set_backward_mode(
-                &telemetry,
-                special_retro ? BW_SPECIAL : BW_NORMAL
-            );
+        	if (telemetry_set_backward_mode(&telemetry, special_retro ? BW_SPECIAL : BW_NORMAL) != CONTROLLER_OK) {
+        	    Error_Handler();
+        	}
 
-            telemetry_set_battery(
-                &telemetry,
-                calculate_battery_percent(stateB1.battery_voltage)
-            );
+        	if (telemetry_set_battery(&telemetry, calculate_battery_percent(stateB1.battery_voltage)) != CONTROLLER_OK) {
+        	    Error_Handler();
+        	}
 
-            telemetry_set_temperature(
-                &telemetry,
-                saturate_temperature(stateB1.temperature)
-            );
+        	if (telemetry_set_temperature(&telemetry, saturate_temperature(stateB1.temperature)) != CONTROLLER_OK) {
+        	    Error_Handler();
+        	}
 
-            telemetry_set_light_mode(
-                &telemetry,
-                get_light_mode(light_state)
-            );
+        	if (telemetry_set_light_mode(&telemetry, get_light_mode(light_state)) != CONTROLLER_OK) {
+        	    Error_Handler();
+        	}
 
-            telemetry_set_obstacle_avoidance_mode(
-				&telemetry,
-				obs_avoidance ? COMPLETE : MINIMAL
-			);
+        	if (telemetry_set_obstacle_avoidance_mode(&telemetry, obs_avoidance ? COMPLETE : MINIMAL) != CONTROLLER_OK) {
+        	    Error_Handler();
+        	}
 
-            telemetry_set_driving_mode(
-				&telemetry,
-				get_driving_mode(driving_mode)
-			);
 
-            telemetry_set_rpm(
-                &telemetry,
-                stateB1.velocity_FA,
-                stateB1.velocity_FB,
-                stateB1.velocity_BA,
-                stateB1.velocity_BB
-            );
+        	if (telemetry_set_driving_mode(&telemetry, get_driving_mode(driving_mode)) != CONTROLLER_OK) {
+        	    Error_Handler();
+        	}
 
-            telemetry_set_operating_mode(&telemetry, OM_NORMAL);
+        	if (telemetry_set_rpm(&telemetry, stateB1.velocity_FA, stateB1.velocity_FB, stateB1.velocity_BA, stateB1.velocity_BB) != CONTROLLER_OK) {
+        	    Error_Handler();
+        	}
+
+        	if (telemetry_set_operating_mode(&telemetry, OM_NORMAL) != CONTROLLER_OK) {
+        	    Error_Handler();
+        	}
         }
         /* ===================== NON-NORMAL MODES ===================== */
         else
         {
-            telemetry_set_backward_mode(&telemetry, BW_NORMAL);
-            telemetry_set_battery(&telemetry, 0);
-            telemetry_set_temperature(&telemetry, 0);
-            telemetry_set_light_mode(&telemetry, LIGHT_OFF);
-            telemetry_set_obstacle_avoidance_mode(&telemetry, COMPLETE);
-            telemetry_set_driving_mode(&telemetry, DEFAULT);
+        	if (telemetry_set_backward_mode(&telemetry, BW_NORMAL) != CONTROLLER_OK)
+        	    Error_Handler();
 
-            telemetry_set_rpm(&telemetry, 0, 0, 0, 0);
+        	if (telemetry_set_battery(&telemetry, 0) != CONTROLLER_OK)
+        	    Error_Handler();
 
-            telemetry_set_operating_mode(
-                &telemetry,
-                (supervision_state == Board2_IN_Degraded)
-                    ? OM_DEGRADED
-                    : OM_SINGLE_BOARD
-            );
+        	if (telemetry_set_temperature(&telemetry, 0) != CONTROLLER_OK)
+        	    Error_Handler();
+
+        	if (telemetry_set_light_mode(&telemetry, LIGHT_OFF) != CONTROLLER_OK)
+        	    Error_Handler();
+
+        	if (telemetry_set_obstacle_avoidance_mode(&telemetry, COMPLETE) != CONTROLLER_OK)
+        	    Error_Handler();
+
+        	if (telemetry_set_driving_mode(&telemetry, DEFAULT) != CONTROLLER_OK)
+        	    Error_Handler();
+
+        	if (telemetry_set_rpm(&telemetry, 0, 0, 0, 0) != CONTROLLER_OK)
+        	    Error_Handler();
+
+        	if (telemetry_set_operating_mode(&telemetry, (supervision_state == Board2_IN_Degraded) ? OM_DEGRADED : OM_SINGLE_BOARD) != CONTROLLER_OK) {
+        	    Error_Handler();
+        	}
         }
 
         /* ===================== COMMON FIELDS ===================== */
 
-        telemetry_set_sonars(
-            &telemetry,
-            sonar1,
-            sonar2,
-            sonar3
-        );
+        if (telemetry_set_sonars(&telemetry, sonar1, sonar2, sonar3) != CONTROLLER_OK) {
+            Error_Handler();
+        }
 
-        telemetry_set_targets(
-            &telemetry,
-            output.rif_FA,
-            output.rif_FB,
-            output.rif_BA,
-            output.rif_BB);
+        if (telemetry_set_targets(&telemetry, output.rif_FA, output.rif_FB, output.rif_BA, output.rif_BB) != CONTROLLER_OK) {
+            Error_Handler();
+        }
 
-        telemetry_set_max_velocity(&telemetry, max_velocity);
+        if (telemetry_set_max_velocity(&telemetry, max_velocity) != CONTROLLER_OK) {
+            Error_Handler();
+        }
 
         /* ===================== TX ===================== */
-
-        //Qui va fatta una gestione senza ErrorHandler in caso di errore
-        telecontrol_send_telemetry(&controller, &telemetry);
+        status_telemetry = telecontrol_send_telemetry(&controller, &telemetry);
+        if (status_telemetry != CONTROLLER_OK) {
+            if (status_telemetry == CONTROLLER_ERR) {
+                Error_Handler();
+            } else {
+                telemetry_tx_failures++;
+            }
+        }
     }
   /* USER CODE END telemetryLoggerTask */
 }
@@ -533,42 +541,81 @@ void telemetryLoggerTask(void *argument)
 /* USER CODE BEGIN Application */
 static void supervision_read_inputs(void)
 {
-    // Lettura hardware
-    //Qui va fatta una gestione senza ErrorHandler in caso di errore
+    static ControllerStatus_t telecontroller_status;
+    static MPU60X0_StatusTypeDef mpu_status;
 
-	telecontrol_read(&controller);
-    mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
-    mpu6050_get_accel_value(&mpu_device, &acceleration);
+    telecontroller_status = telecontrol_read(&controller);
 
-    Board2_U.controller_x = get_telecontrol_bx(&controller);
-    Board2_U.controller_y = get_telecontrol_ay(&controller);
-    Board2_U.B1 = get_telecontrol_button_btn1(&controller);
-    Board2_U.B2 = get_telecontrol_button_btn2(&controller);
-    Board2_U.B3 = get_telecontrol_button_btn3(&controller);
-    Board2_U.B4 = get_telecontrol_button_btn4(&controller);
-    Board2_U.B_r_stick = get_telecontrol_b_btn(&controller);
-    Board2_U.B_l_stick = get_telecontrol_a_btn(&controller);
-    Board2_U.controller_battery = get_telecontrol_percentage(&controller);
+    if(telecontroller_status == CONTROLLER_OK){
+        Board2_U.controllerError = 0;
+    }
+    else if(telecontroller_status == CONTROLLER_ERR_COMM){
+    	Board2_U.controllerError = 1;
+    }
+    else{
+        Error_Handler();
+    }
+
+    if (get_telecontrol_bx(&controller, &Board2_U.controller_x) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_ay(&controller, &Board2_U.controller_y) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_button_btn1(&controller, &Board2_U.B1) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_button_btn2(&controller, &Board2_U.B2) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_button_btn3(&controller, &Board2_U.B3) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_button_btn4(&controller, &Board2_U.B4) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_b_btn(&controller, &Board2_U.B_r_stick) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_a_btn(&controller, &Board2_U.B_l_stick) != CONTROLLER_OK)
+        Error_Handler();
+
+    if (get_telecontrol_percentage(&controller, &Board2_U.controller_battery) != CONTROLLER_OK)
+        Error_Handler();
+
+    mpu_status = mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
+    if (mpu_status == MPU6050_OK){
+        imu_initialized = true;
+        Board2_U.gyroError = 0;
+        Board2_U.gyroYaw   = gyroyaw.z;
+    }
+    else{
+        Board2_U.gyroError = 1;
+
+        if (!imu_initialized){
+            if (mpu6050_init(&mpu_device, MPU_HW_CONFIG[MPU_MAIN].i2c, MPU_HW_CONFIG[MPU_MAIN].address, &MPU_HW_CONFIG[MPU_MAIN].cfg) == MPU6050_OK){
+                imu_initialized = true;
+            }
+        }
+    }
+
 
     /*
     Board2_U.controller_x = dbg_controller_x;
-	Board2_U.controller_y = dbg_controller_y;
+    Board2_U.controller_y = dbg_controller_y;
 
-	Board2_U.B1 = dbg_B1;
-	Board2_U.B2 = dbg_B2;
-	Board2_U.B3 = dbg_B3;
-	Board2_U.B4 = dbg_B4;
+    Board2_U.B1 = dbg_B1;
+    Board2_U.B2 = dbg_B2;
+    Board2_U.B3 = dbg_B3;
+    Board2_U.B4 = dbg_B4;
 
-	Board2_U.B_r_stick = dbg_B_r_stick;
-	Board2_U.B_l_stick = dbg_B_l_stick;
+    Board2_U.B_r_stick = dbg_B_r_stick;
+    Board2_U.B_l_stick = dbg_B_l_stick;
 
-	Board2_U.controller_battery = dbg_controller_battery;
-	*/
-
-    Board2_U.acceleration_x = acceleration.x;
-    Board2_U.acceleration_y = acceleration.y;
-    Board2_U.gyroYaw = gyroyaw.z;
+    Board2_U.controller_battery = dbg_controller_battery;
+    */
 }
+
 
 void executeSupervision(){
 	do{

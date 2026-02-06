@@ -2,9 +2,12 @@
 #define INC_MPU_CONSTANTS_H_
 
 /* Return codes */
-typedef int8_t MPU60X0_StatusTypeDef;
-#define MPU6050_OK   (0)
-#define MPU6050_ERR  (-1)
+typedef enum {
+    MPU6050_OK = 0,
+    MPU6050_ERR,
+    MPU6050_ERR_COMM
+} MPU60X0_StatusTypeDef;
+
 
 #define MPU60X0_ADDRESS				  	(0x68 << 1)
 #define PWR_MGMT_1_DEFAULT_STATUS     	64U

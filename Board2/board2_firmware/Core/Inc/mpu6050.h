@@ -54,7 +54,7 @@ typedef struct {
 /* -------------------- API di base -------------------- */
 
 /* Inizializza il dispositivo (reset, wake-up, applica config corrente) */
-MPU60X0_StatusTypeDef mpu6050_init(mpu6050_t* dev, I2C_HandleTypeDef* i2c, uint16_t address, mpu6050_config_t* mpu_cfg);
+MPU60X0_StatusTypeDef mpu6050_init(mpu6050_t* dev, I2C_HandleTypeDef* i2c, uint16_t address, const mpu6050_config_t* mpu_cfg);
 
 /* Legge WHO_AM_I (dovrebbe valere 0x68) */
 MPU60X0_StatusTypeDef mpu6050_who_am_i(mpu6050_t* dev, uint8_t* id);
