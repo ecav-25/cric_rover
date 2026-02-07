@@ -44,6 +44,9 @@ ControllerStatus_t telecontrol_init(Controller_t *telecontrol, I2C_HandleTypeDef
     telecontrol->controller_information.controller_data.btn3 = 0;
     telecontrol->controller_information.controller_data.btn4 = 0;
 
+    telecontrol->crc_error_count = 0;
+    telecontrol->last_valid_information = telecontrol->controller_information;
+
     return CONTROLLER_OK;
 }
 
@@ -81,7 +84,7 @@ ControllerStatus_t telecontrol_read(Controller_t *telecontrol){
 	);
 
 	if (crc != telecontrol->controller_information.crc_value) {
-		return CONTROLLER_ERR_COMM;
+		return CONTROLLER_ERR_CRC;
 	}
 
 	return CONTROLLER_OK;
