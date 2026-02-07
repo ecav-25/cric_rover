@@ -6,8 +6,7 @@
 
 /* -------------------- Low-level helpers (static) -------------------- */
 
-static MPU60X0_StatusTypeDef mpu6050_write_reg(mpu6050_t* dev, uint8_t reg, uint8_t val)
-{
+static MPU60X0_StatusTypeDef mpu6050_write_reg(mpu6050_t* dev, uint8_t reg, uint8_t val){
     if (HAL_I2C_Mem_Write(dev->i2c, dev->address, reg, I2C_MEMADD_SIZE_8BIT, &val, 1, MPU6050_I2C_TIMEOUT_MS) != HAL_OK)
     {
         return MPU6050_ERR_COMM;
@@ -15,8 +14,7 @@ static MPU60X0_StatusTypeDef mpu6050_write_reg(mpu6050_t* dev, uint8_t reg, uint
     return MPU6050_OK;
 }
 
-static MPU60X0_StatusTypeDef mpu6050_read_reg(mpu6050_t* dev, uint8_t reg, uint8_t* val)
-{
+static MPU60X0_StatusTypeDef mpu6050_read_reg(mpu6050_t* dev, uint8_t reg, uint8_t* val){
     if (HAL_I2C_Mem_Read(dev->i2c, dev->address, reg, I2C_MEMADD_SIZE_8BIT, val, 1, MPU6050_I2C_TIMEOUT_MS) != HAL_OK)
     {
         return MPU6050_ERR_COMM;
@@ -24,8 +22,7 @@ static MPU60X0_StatusTypeDef mpu6050_read_reg(mpu6050_t* dev, uint8_t reg, uint8
     return MPU6050_OK;
 }
 
-static MPU60X0_StatusTypeDef mpu6050_read_bytes(mpu6050_t* dev, uint8_t reg, uint8_t* buf, uint16_t len)
-{
+static MPU60X0_StatusTypeDef mpu6050_read_bytes(mpu6050_t* dev, uint8_t reg, uint8_t* buf, uint16_t len){
     if (HAL_I2C_Mem_Read(dev->i2c, dev->address, reg, I2C_MEMADD_SIZE_8BIT, buf, len, MPU6050_I2C_TIMEOUT_MS) != HAL_OK)
     {
         return MPU6050_ERR_COMM;
@@ -35,8 +32,7 @@ static MPU60X0_StatusTypeDef mpu6050_read_bytes(mpu6050_t* dev, uint8_t reg, uin
 
 /* -------------------- Sensibilità (g, °/s) -------------------- */
 
-static float mpu6050_accel_sensitivity(mpu6050_accel_fs_t range)
-{
+static float mpu6050_accel_sensitivity(mpu6050_accel_fs_t range){
     switch (range) {
         case MPU6050_ACCEL_FS_2G:  return 16384.0f;
         case MPU6050_ACCEL_FS_4G:  return 8192.0f;
@@ -46,8 +42,7 @@ static float mpu6050_accel_sensitivity(mpu6050_accel_fs_t range)
     }
 }
 
-static float mpu6050_gyro_sensitivity(mpu6050_gyro_fs_t range)
-{
+static float mpu6050_gyro_sensitivity(mpu6050_gyro_fs_t range){
     switch (range) {
         case MPU6050_GYRO_FS_250DPS:  return 131.0f;
         case MPU6050_GYRO_FS_500DPS:  return 65.5f;
@@ -59,8 +54,7 @@ static float mpu6050_gyro_sensitivity(mpu6050_gyro_fs_t range)
 
 /* -------------------- Helper configurazione (static) -------------------- */
 
-static MPU60X0_StatusTypeDef mpu6050_reset(mpu6050_t* dev)
-{
+static MPU60X0_StatusTypeDef mpu6050_reset(mpu6050_t* dev){
     if (mpu6050_write_reg(dev, PWR_MGMT_1, DEVICE_RESET) != MPU6050_OK)
         return MPU6050_ERR_COMM;
 
@@ -68,17 +62,15 @@ static MPU60X0_StatusTypeDef mpu6050_reset(mpu6050_t* dev)
     return MPU6050_OK;
 }
 
-static MPU60X0_StatusTypeDef mpu6050_wake(mpu6050_t* dev)
-{
+static MPU60X0_StatusTypeDef mpu6050_wake(mpu6050_t* dev){
     if (mpu6050_write_reg(dev, PWR_MGMT_1, PWR_MGMT_WAKE) != MPU6050_OK)
         return MPU6050_ERR_COMM;
 
-    HAL_Delay(10);
+    //HAL_Delay(10);
     return MPU6050_OK;
 }
 
-static MPU60X0_StatusTypeDef mpu6050_set_accel_range_lowlevel(mpu6050_t* dev, mpu6050_accel_fs_t range)
-{
+static MPU60X0_StatusTypeDef mpu6050_set_accel_range_lowlevel(mpu6050_t* dev, mpu6050_accel_fs_t range){
     uint8_t reg = 0u;
 
     if (mpu6050_read_reg(dev, ACCEL_CONFIG, &reg) != MPU6050_OK)
@@ -93,8 +85,7 @@ static MPU60X0_StatusTypeDef mpu6050_set_accel_range_lowlevel(mpu6050_t* dev, mp
     return MPU6050_OK;
 }
 
-static MPU60X0_StatusTypeDef mpu6050_set_gyro_range_lowlevel(mpu6050_t* dev, mpu6050_gyro_fs_t range)
-{
+static MPU60X0_StatusTypeDef mpu6050_set_gyro_range_lowlevel(mpu6050_t* dev, mpu6050_gyro_fs_t range){
     uint8_t reg = 0u;
 
     if (mpu6050_read_reg(dev, GYRO_CONFIG, &reg) != MPU6050_OK)
@@ -161,6 +152,20 @@ MPU60X0_StatusTypeDef mpu6050_init(mpu6050_t* dev, I2C_HandleTypeDef* i2c, uint1
     return MPU6050_OK;
 }
 
+MPU60X0_StatusTypeDef mpu6050_recovery_init(mpu6050_t* dev){
+    if (dev == NULL)
+        return MPU6050_ERR;
+
+    MPU60X0_StatusTypeDef st;
+
+    st = mpu6050_signal_path_reset(dev);
+    if (st != MPU6050_OK)
+        return st;
+
+    return mpu6050_apply_config(dev, &dev->mpu6050_cfg);
+}
+
+
 
 MPU60X0_StatusTypeDef mpu6050_who_am_i(mpu6050_t* dev, uint8_t* id)
 {
@@ -220,8 +225,14 @@ MPU60X0_StatusTypeDef mpu6050_get_gyro_value(mpu6050_t* dev, imu_vector_t* out)
 
 /* -------------------- API di configurazione -------------------- */
 
-MPU60X0_StatusTypeDef mpu6050_set_dlpf(mpu6050_t* dev, uint8_t dlpf_cfg)
-{
+MPU60X0_StatusTypeDef mpu6050_signal_path_reset(mpu6050_t* dev){
+    if (dev == NULL)
+        return MPU6050_ERR;
+
+    return mpu6050_write_reg(dev, SIGNAL_PATH_RESET, GYRO_RESET | ACCEL_RESET | TEMP_RESET);
+}
+
+MPU60X0_StatusTypeDef mpu6050_set_dlpf(mpu6050_t* dev, uint8_t dlpf_cfg){
     if (dev == NULL)
         return MPU6050_ERR;
 
@@ -241,8 +252,7 @@ MPU60X0_StatusTypeDef mpu6050_set_dlpf(mpu6050_t* dev, uint8_t dlpf_cfg)
     return MPU6050_OK;
 }
 
-MPU60X0_StatusTypeDef mpu6050_get_dlpf(mpu6050_t* dev, uint8_t* dlpf_cfg)
-{
+MPU60X0_StatusTypeDef mpu6050_get_dlpf(mpu6050_t* dev, uint8_t* dlpf_cfg){
     if (dev == NULL || dlpf_cfg == NULL)
         return MPU6050_ERR;
 
@@ -250,8 +260,7 @@ MPU60X0_StatusTypeDef mpu6050_get_dlpf(mpu6050_t* dev, uint8_t* dlpf_cfg)
     return MPU6050_OK;
 }
 
-MPU60X0_StatusTypeDef mpu6050_set_sample_div(mpu6050_t* dev, uint8_t smplrt_div)
-{
+MPU60X0_StatusTypeDef mpu6050_set_sample_div(mpu6050_t* dev, uint8_t smplrt_div){
     if (dev == NULL)
         return MPU6050_ERR;
 
@@ -262,8 +271,7 @@ MPU60X0_StatusTypeDef mpu6050_set_sample_div(mpu6050_t* dev, uint8_t smplrt_div)
     return MPU6050_OK;
 }
 
-MPU60X0_StatusTypeDef mpu6050_get_sample_div(mpu6050_t* dev, uint8_t* smplrt_div)
-{
+MPU60X0_StatusTypeDef mpu6050_get_sample_div(mpu6050_t* dev, uint8_t* smplrt_div){
     if (dev == NULL || smplrt_div == NULL)
         return MPU6050_ERR;
 
@@ -271,8 +279,7 @@ MPU60X0_StatusTypeDef mpu6050_get_sample_div(mpu6050_t* dev, uint8_t* smplrt_div
     return MPU6050_OK;
 }
 
-MPU60X0_StatusTypeDef mpu6050_set_accel_fs(mpu6050_t* dev, mpu6050_accel_fs_t fs)
-{
+MPU60X0_StatusTypeDef mpu6050_set_accel_fs(mpu6050_t* dev, mpu6050_accel_fs_t fs){
     if (dev == NULL)
         return MPU6050_ERR;
 
@@ -286,8 +293,7 @@ MPU60X0_StatusTypeDef mpu6050_set_accel_fs(mpu6050_t* dev, mpu6050_accel_fs_t fs
     return MPU6050_OK;
 }
 
-MPU60X0_StatusTypeDef mpu6050_get_accel_fs(mpu6050_t* dev, mpu6050_accel_fs_t* fs)
-{
+MPU60X0_StatusTypeDef mpu6050_get_accel_fs(mpu6050_t* dev, mpu6050_accel_fs_t* fs){
     if (dev == NULL || fs == NULL)
         return MPU6050_ERR;
 
@@ -295,8 +301,7 @@ MPU60X0_StatusTypeDef mpu6050_get_accel_fs(mpu6050_t* dev, mpu6050_accel_fs_t* f
     return MPU6050_OK;
 }
 
-MPU60X0_StatusTypeDef mpu6050_set_gyro_fs(mpu6050_t* dev, mpu6050_gyro_fs_t fs)
-{
+MPU60X0_StatusTypeDef mpu6050_set_gyro_fs(mpu6050_t* dev, mpu6050_gyro_fs_t fs){
     if (dev == NULL)
         return MPU6050_ERR;
     if (fs > MPU6050_GYRO_FS_2000DPS)
@@ -309,8 +314,7 @@ MPU60X0_StatusTypeDef mpu6050_set_gyro_fs(mpu6050_t* dev, mpu6050_gyro_fs_t fs)
     return MPU6050_OK;
 }
 
-MPU60X0_StatusTypeDef mpu6050_get_gyro_fs(mpu6050_t* dev, mpu6050_gyro_fs_t* fs)
-{
+MPU60X0_StatusTypeDef mpu6050_get_gyro_fs(mpu6050_t* dev, mpu6050_gyro_fs_t* fs){
     if (dev == NULL || fs == NULL)
         return MPU6050_ERR;
 
@@ -318,8 +322,7 @@ MPU60X0_StatusTypeDef mpu6050_get_gyro_fs(mpu6050_t* dev, mpu6050_gyro_fs_t* fs)
     return MPU6050_OK;
 }
 
-MPU60X0_StatusTypeDef mpu6050_set_interrupt_mask(mpu6050_t* dev, uint8_t int_mask)
-{
+MPU60X0_StatusTypeDef mpu6050_set_interrupt_mask(mpu6050_t* dev, uint8_t int_mask){
     if (dev == NULL)
         return MPU6050_ERR;
 
@@ -330,8 +333,7 @@ MPU60X0_StatusTypeDef mpu6050_set_interrupt_mask(mpu6050_t* dev, uint8_t int_mas
     return MPU6050_OK;
 }
 
-MPU60X0_StatusTypeDef mpu6050_get_interrupt_mask(mpu6050_t* dev, uint8_t* int_mask)
-{
+MPU60X0_StatusTypeDef mpu6050_get_interrupt_mask(mpu6050_t* dev, uint8_t* int_mask){
     if (dev == NULL || int_mask == NULL)
         return MPU6050_ERR;
 

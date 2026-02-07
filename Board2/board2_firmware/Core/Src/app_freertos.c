@@ -533,6 +533,7 @@ static void supervision_read_inputs(void)
 {
 	static ControllerStatus_t telecontroller_status;
 	static MPU60X0_StatusTypeDef mpu_status;
+	static uint8_t imu_recovery_attempted = 0;
 
 	telecontroller_status = telecontrol_read(&controller);
 
@@ -584,19 +585,19 @@ static void supervision_read_inputs(void)
 
 	/*TODO: da prendere solo il valore di z*/
 	mpu_status = mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
-	if (mpu_status == MPU6050_OK){
-		imu_initialized = true;
-		Board2_U.gyroError = 0;
-		Board2_U.gyroYaw   = gyroyaw.z;
-	}
-	else{
-		Board2_U.gyroError = 1;
 
-		if (!imu_initialized){
-			if (mpu6050_init(&mpu_device, MPU_HW_CONFIG[MPU_MAIN].i2c, MPU_HW_CONFIG[MPU_MAIN].address, &MPU_HW_CONFIG[MPU_MAIN].cfg) == MPU6050_OK){
-				imu_initialized = true;
-			}
-		}
+	if (mpu_status == MPU6050_OK) {
+	    imu_initialized = true;
+	    Board2_U.gyroError = 0;
+	    Board2_U.gyroYaw = gyroyaw.z;
+	    imu_recovery_attempted = 0;
+	} else {
+	    Board2_U.gyroError = 1;
+
+	    if (!imu_recovery_attempted) {
+	    	mpu6050_recovery_init(&mpu_device);
+	        imu_recovery_attempted = 1;
+	    }
 	}
 
 
