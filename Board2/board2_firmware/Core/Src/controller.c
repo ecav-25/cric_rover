@@ -1,5 +1,19 @@
 #include "controller.h"
 
+static inline uint8_t crc8_le(uint8_t crc, const uint8_t *data, uint16_t len){
+    while (len--) {
+        crc ^= *data++;
+        for (uint8_t i = 0; i < 8; i++) {
+            if (crc & 0x01) {
+                crc = (crc >> 1) ^ 0x8C; // reflected 0x31
+            } else {
+                crc >>= 1;
+            }
+        }
+    }
+    return crc;
+}
+
 /* ===================== INIT ===================== */
 
 ControllerStatus_t telecontrol_init(Controller_t *telecontrol, I2C_HandleTypeDef* i2c, uint16_t address){
@@ -12,6 +26,7 @@ ControllerStatus_t telecontrol_init(Controller_t *telecontrol, I2C_HandleTypeDef
 
     telecontrol->controller_information.alive = 0;
     telecontrol->controller_information.controller_percentage = 0;
+    telecontrol->controller_information.crc_value = 0;
 
     telecontrol->controller_information.controller_data.a_btn = 0;
     telecontrol->controller_information.controller_data.ax = CONTROLLERZERO;
@@ -38,11 +53,35 @@ ControllerStatus_t telecontrol_read(Controller_t *telecontrol){
 
     HAL_StatusTypeDef status = HAL_I2C_Master_Receive(telecontrol->i2c, telecontrol->address << 1, (uint8_t *)&telecontrol->controller_information, sizeof(controller_information_t), 20u);
 
-    if (status == HAL_OK) {
-        return CONTROLLER_OK;
-    } else {
-        return CONTROLLER_ERR_COMM;
-    }
+    if (status != HAL_OK) {
+		return CONTROLLER_ERR_COMM;
+	}
+
+    uint8_t crc = 0;
+
+	crc = crc8_le(
+		crc,
+		(uint8_t *)&telecontrol->controller_information.controller_data,
+		sizeof(controller_data_t)
+	);
+
+	crc = crc8_le(
+		crc,
+		&telecontrol->controller_information.controller_percentage,
+		sizeof(uint8_t)
+	);
+
+	crc = crc8_le(
+		crc,
+		&telecontrol->controller_information.alive,
+		sizeof(uint8_t)
+	);
+
+	if (crc != telecontrol->controller_information.crc_value) {
+		return CONTROLLER_ERR_COMM;
+	}
+
+	return CONTROLLER_OK;
 }
 
 /* ===================== TELEMETRY TX ===================== */
