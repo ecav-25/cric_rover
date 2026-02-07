@@ -1,17 +1,20 @@
 #include "controller.h"
 
 static inline uint8_t crc8_le(uint8_t crc, const uint8_t *data, uint16_t len){
-    while (len--) {
-        crc ^= *data++;
-        for (uint8_t i = 0; i < 8; i++) {
-            if (crc & 0x01) {
-                crc = (crc >> 1) ^ 0x8C; // reflected 0x31
-            } else {
-                crc >>= 1;
+        crc = ~crc;
+
+        while (len--) {
+            crc ^= *data++;
+            for (uint8_t i = 0; i < 8; i++) {
+                if (crc & 0x01) {
+                    crc = (crc >> 1) ^ 0xE0;
+                } else {
+                    crc >>= 1;
+                }
             }
         }
-    }
-    return crc;
+
+        return ~crc;
 }
 
 /* ===================== INIT ===================== */
