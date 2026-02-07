@@ -56,6 +56,8 @@ typedef struct {
 /* Inizializza il dispositivo (reset, wake-up, applica config corrente) */
 MPU60X0_StatusTypeDef mpu6050_init(mpu6050_t* dev, I2C_HandleTypeDef* i2c, uint16_t address, const mpu6050_config_t* mpu_cfg);
 
+MPU60X0_StatusTypeDef mpu6050_recovery_init(mpu6050_t* dev);
+
 /* Legge WHO_AM_I (dovrebbe valere 0x68) */
 MPU60X0_StatusTypeDef mpu6050_who_am_i(mpu6050_t* dev, uint8_t* id);
 
@@ -67,6 +69,7 @@ MPU60X0_StatusTypeDef mpu6050_get_gyro_value(mpu6050_t* dev, imu_vector_t* out);
 
 /* -------------------- API di configurazione -------------------- */
 
+MPU60X0_StatusTypeDef mpu6050_signal_path_reset(mpu6050_t* dev);
 /* DLPF_CFG (CONFIG[2:0]) */
 MPU60X0_StatusTypeDef mpu6050_set_dlpf(mpu6050_t* dev, uint8_t dlpf_cfg);
 MPU60X0_StatusTypeDef mpu6050_get_dlpf(mpu6050_t* dev, uint8_t* dlpf_cfg);

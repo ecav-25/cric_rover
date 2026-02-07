@@ -13,6 +13,10 @@ typedef enum {
 #define PWR_MGMT_1_DEFAULT_STATUS     	64U
 #define MPU6050_DEFAULT_DLPF_CFG       	3U
 #define DEFAULT_SMPLRT_DIV				19U
+#define GYRO_RESET   (1U << 2)   /* bit 2 */
+#define ACCEL_RESET  (1U << 1)   /* bit 1 */
+#define TEMP_RESET   (1U << 0)   /* bit 0 */
+
 
 /*
  * Command constants
