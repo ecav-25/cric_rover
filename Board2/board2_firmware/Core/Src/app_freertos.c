@@ -537,14 +537,35 @@ static void supervision_read_inputs(void)
 
 	telecontroller_status = telecontrol_read(&controller);
 
-	if(telecontroller_status == CONTROLLER_OK){
-		Board2_U.controllerError = 0;
-	}
-	else if(telecontroller_status == CONTROLLER_ERR_COMM){
-		Board2_U.controllerError = 1;
-	}
-	else{
-		Error_Handler();
+	switch (telecontroller_status){
+	    case CONTROLLER_OK:
+	        controller.crc_error_count = 0;
+	        controller.last_valid_information = controller.controller_information;
+	        Board2_U.controllerError = 0;
+	        break;
+
+	    case CONTROLLER_ERR_CRC:
+	    	controller.crc_error_count++;
+	        controller.controller_information = controller.last_valid_information;
+
+	        Board2_U.controllerError = 1;
+
+	        if (controller.crc_error_count >= CONTROLLER_MAX_CRC_ERRORS) {
+	        	Board2_U.controllerError = 1;
+	        }
+	        break;
+
+	    case CONTROLLER_ERR_COMM:
+	        Board2_U.controllerError = 1;
+	        break;
+
+	    case CONTROLLER_ERR:
+	    	Error_Handler();
+	    	break;
+
+	    default:
+	        Error_Handler();
+	        break;
 	}
 
 	if (get_telecontrol_bx(&controller, &Board2_U.controller_x) != CONTROLLER_OK){
