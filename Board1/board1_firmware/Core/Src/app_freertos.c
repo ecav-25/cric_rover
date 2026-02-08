@@ -67,11 +67,7 @@ typedef StaticEventGroup_t osStaticEventGroupDef_t;
 #define RAMP_STEP_ECO     (RAMP_SLOPE_ECO_RPM_S     * (PID_PERIOD / 1000.0f))
 
 #define DIAG_DELAY_SHIFT    0
-#define DIAG_MAX_AREA_ERR   15000.0f
-
-
-#define TOGGLE_EMERGENCY 8
-#define TOGGLE_NORMAL 4
+#define DIAG_MAX_AREA_ERR   3650.0f
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -137,11 +133,13 @@ uint8_t out_BA = 0;
 uint8_t out_FB = 0;
 uint8_t out_FA = 0;
 
+/*
 PID_t pid_FA;
 PID_t pid_FB;
 PID_t pid_BA;
 PID_t pid_BB;
-/*
+*/
+
 PID_Law_t pid_FA;
 PID_Law_t pid_FB;
 PID_Law_t pid_BA;
@@ -150,9 +148,9 @@ PID_Law_t pid_BB;
 real32_T a1 = 1;
 real32_T b0_FA = 0.011526, b0_FB = 0.012068, b0_BA = 0.01182, b0_BB = 0.011206;
 real32_T b1_FA = -0.0062, b1_FB = -0.0066, b1_BA = -0.0062, b1_BB = -0.0059;
-*/
 
-/*Variabili per il pid classico*/
+
+/*
 float kpFA = 0.009319;
 float kiFA = 1.1;
 
@@ -164,6 +162,7 @@ float kiBA = 1.133;
 
 float kpBB = 0.008543;
 float kiBB = 1.065;
+*/
 
 DecBus debug_output;
 volatile uint32_t debug_count_step = 0;
@@ -358,6 +357,7 @@ void MX_FREERTOS_Init(void) {
 		return;
 	}
 
+	/*
 	if (PID_init(&pid_FA, kpFA, kiFA, 0, 5, 0) != PID_OK) {
 		Error_Handler();
 		return;
@@ -377,6 +377,7 @@ void MX_FREERTOS_Init(void) {
 		Error_Handler();
 		return;
 	}
+	*/
 
 	MotorDiag_Config_t diag_cfg = {
 		.delay_shift = DIAG_DELAY_SHIFT,
@@ -404,7 +405,7 @@ void MX_FREERTOS_Init(void) {
 		return;
 	}
 
-	/*
+
 	if (PID_Law_init(&pid_FA, a1, b0_FA, b1_FA) != PID_LAW_OK) {
 	    Error_Handler();
 		return;
@@ -424,7 +425,7 @@ void MX_FREERTOS_Init(void) {
 	    Error_Handler();
 	    return;
 	}
-	*/
+
 
 	if(led_stripe_init(&led_stripes_cfg[LED_STRIPES_MAIN]) != LED_STRIPE_OK){
 		Error_Handler();
@@ -523,11 +524,7 @@ void readSensorsTask(void *argument)
 	real32_T temperature;
 
 	// --- VARIABILI PER IL FILTRO BATTERIA ---
-	// Alpha determina quanto "pesa" la nuova lettura.
-	// 0.1 = 10% nuova lettura, 90% storico (Molto filtrato, lento)
-	// 0.5 = 50% nuova lettura, 50% storico (Poco filtrato, veloce)
-	// Valore simile al tuo Arduino: prova tra 0.05f e 0.1f
-	const real32_T batt_alpha = 0.05f;
+	const real32_T batt_alpha = 0.001f;
 
 	// Inizializziamo a un valore negativo per capire se è la prima lettura
 	static real32_T battery_voltage_filtered = -1.0f;
@@ -536,7 +533,6 @@ void readSensorsTask(void *argument)
 	for(;;){
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
 
-		// ... (codice encoder esistente omesso per brevità) ...
 		if (encoder_readRPM(&encoder_FA) != ENCODER_OK) { Error_Handler(); }
 		if (encoder_readRPM(&encoder_FB) != ENCODER_OK) { Error_Handler(); }
 		if (encoder_readRPM(&encoder_BA) != ENCODER_OK) { Error_Handler(); }
@@ -718,7 +714,7 @@ void pidTask(void *argument)
 			Error_Handler();
 		}
 
-
+		/*
 	    if (PID_compute(&pid_FA, rif_FA_r, encoder_FA_pid.velocity, &control_FA) != PID_OK) {
 			Error_Handler();
 		}
@@ -738,8 +734,8 @@ void pidTask(void *argument)
 			Error_Handler();
 		}
 		out_BB = abs(round(control_BB * MOTOR_MAX_DUTY / U_MAX));
+		*/
 
-		/*
 	    if (PID_Law_compute(&pid_FA, rif_FA_r, encoder_FA_pid.velocity, &control_FA) != PID_LAW_OK) {
 	        Error_Handler();
 	    }
@@ -759,7 +755,7 @@ void pidTask(void *argument)
 	        Error_Handler();
 	    }
 	    out_BB = abs(round(control_BB * MOTOR_MAX_DUTY / U_MAX));
-	    */
+
 
 	    if (motor_set(&motor_FA, out_FA, (control_FA > 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
 	        Error_Handler();

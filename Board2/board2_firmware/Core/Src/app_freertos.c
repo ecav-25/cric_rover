@@ -583,7 +583,6 @@ static void supervision_read_inputs(void)
 		Error_Handler();
 	}
 
-
 	mpu_status = mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
 	if (mpu_status == MPU6050_OK){
 		imu_initialized = true;
@@ -601,7 +600,7 @@ static void supervision_read_inputs(void)
 	}
 
 
-    /*
+	/*
     Board2_U.controller_x = dbg_controller_x;
     Board2_U.controller_y = dbg_controller_y;
 
@@ -615,6 +614,7 @@ static void supervision_read_inputs(void)
 
     Board2_U.controller_battery = dbg_controller_battery;
     */
+
 }
 
 void executeSupervision(){
