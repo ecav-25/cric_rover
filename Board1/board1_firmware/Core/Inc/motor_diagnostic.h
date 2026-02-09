@@ -10,7 +10,7 @@
 
 /* --- CONFIGURAZIONE DIMENSIONE BUFFER --- */
 #ifndef M_DIAG_BUF_LEN
-#define M_DIAG_BUF_LEN      200
+#define M_DIAG_BUF_LEN      48
 #endif
 
 /* -------------------- Return status -------------------- */

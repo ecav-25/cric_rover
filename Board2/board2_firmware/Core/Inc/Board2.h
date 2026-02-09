@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board2'.
  *
- * Model version                  : 1.2419
+ * Model version                  : 1.2491
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Fri Feb  6 14:06:18 2026
+ * C/C++ source code generated on : Sat Feb  7 16:45:06 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -32,7 +32,6 @@
 /* --- Stateflow States --- */
 #define B_IN_Control_controller_routine ((uint8_T)1U)
 #define B_IN_Moving_obstacle_from_right ((uint8_T)1U)
-#define Bo_IN_Change_max_velocity_start ((uint8_T)1U)
 #define Bo_IN_Moving_obstacle_from_left ((uint8_T)1U)
 #define Bo_IN_Turn_moving_right_no_gyro ((uint8_T)2U)
 #define Boa_IN_Critical_voltage_driving ((uint8_T)1U)
@@ -45,15 +44,17 @@
 #define Boar_IN_Critical_voltage_lights ((uint8_T)1U)
 #define Boar_IN_Emergency_sonar_routine ((uint8_T)3U)
 #define Boar_IN_Local_state_transmitted ((uint8_T)4U)
+#define Board2_IN_Button1_pressed_combo ((uint8_T)1U)
+#define Board2_IN_Button2_pressed_combo ((uint8_T)2U)
 #define Board2_IN_Control_battery_stop ((uint8_T)1U)
 #define Board2_IN_Decision_transmitted ((uint8_T)1U)
 #define Board2_IN_Degraded             ((uint8_T)1U)
 #define Board2_IN_Emergency_button     ((uint8_T)1U)
 #define Board2_IN_Emergency_sonar      ((uint8_T)1U)
-#define Board2_IN_First_button         ((uint8_T)1U)
-#define Board2_IN_First_button_d       ((uint8_T)2U)
 #define Board2_IN_Global_state_received ((uint8_T)3U)
 #define Board2_IN_High_temperature     ((uint8_T)1U)
+#define Board2_IN_Init_relay           ((uint8_T)2U)
+#define Board2_IN_Init_routine         ((uint8_T)2U)
 #define Board2_IN_Lights_AUTO          ((uint8_T)1U)
 #define Board2_IN_Lights_OFF           ((uint8_T)2U)
 #define Board2_IN_Lights_ON            ((uint8_T)3U)
@@ -66,8 +67,8 @@
 #define Board2_IN_Mode_SPORT           ((uint8_T)3U)
 #define Board2_IN_Motor_error_driving  ((uint8_T)2U)
 #define Board2_IN_Motor_error_lights   ((uint8_T)2U)
-#define Board2_IN_Motor_error_relay    ((uint8_T)2U)
-#define Board2_IN_Motor_error_routine  ((uint8_T)2U)
+#define Board2_IN_Motor_error_relay    ((uint8_T)3U)
+#define Board2_IN_Motor_error_routine  ((uint8_T)3U)
 #define Board2_IN_Motor_error_working  ((uint8_T)2U)
 #define Board2_IN_NO_ACTIVE_CHILD      ((uint8_T)0U)
 #define Board2_IN_No_limitation        ((uint8_T)1U)
@@ -76,11 +77,12 @@
 #define Board2_IN_Normal_d             ((uint8_T)3U)
 #define Board2_IN_Normal_driving       ((uint8_T)3U)
 #define Board2_IN_Normal_lights        ((uint8_T)3U)
-#define Board2_IN_Normal_relay         ((uint8_T)3U)
-#define Board2_IN_Normal_routine       ((uint8_T)3U)
+#define Board2_IN_Normal_relay         ((uint8_T)4U)
+#define Board2_IN_Normal_routine       ((uint8_T)4U)
 #define Board2_IN_Normal_working       ((uint8_T)3U)
 #define Board2_IN_Not_moving           ((uint8_T)1U)
 #define Board2_IN_Not_moving_routine   ((uint8_T)7U)
+#define Board2_IN_Obs_detection_change ((uint8_T)5U)
 #define Board2_IN_Obstacle_left        ((uint8_T)2U)
 #define Board2_IN_Obstacle_right       ((uint8_T)2U)
 #define Board2_IN_Other_board_failure  ((uint8_T)1U)
@@ -89,14 +91,17 @@
 #define Board2_IN_Receive_global_state ((uint8_T)6U)
 #define Board2_IN_Receive_ping         ((uint8_T)3U)
 #define Board2_IN_Receive_state        ((uint8_T)7U)
+#define Board2_IN_Relay_Stop           ((uint8_T)1U)
+#define Board2_IN_Relay_operating      ((uint8_T)2U)
 #define Board2_IN_Restablish           ((uint8_T)1U)
 #define Board2_IN_Restarting           ((uint8_T)2U)
+#define Board2_IN_Routine_Stop         ((uint8_T)1U)
+#define Board2_IN_Routine_operating    ((uint8_T)2U)
 #define Board2_IN_Same_decision        ((uint8_T)8U)
 #define Board2_IN_Select_routine       ((uint8_T)8U)
 #define Board2_IN_Single_Board         ((uint8_T)3U)
-#define Board2_IN_Special_retro_change ((uint8_T)2U)
+#define Board2_IN_Special_retro_change ((uint8_T)6U)
 #define Board2_IN_Special_retro_routine ((uint8_T)9U)
-#define Board2_IN_Special_retro_start  ((uint8_T)3U)
 #define Board2_IN_State_received       ((uint8_T)9U)
 #define Board2_IN_Stop_back_rotation   ((uint8_T)1U)
 #define Board2_IN_Stop_left_rotation   ((uint8_T)2U)
@@ -116,6 +121,7 @@
 #define Board2_IN_Turn_right_gyro      ((uint8_T)6U)
 #define Board2_IN_Turn_right_no_gyro   ((uint8_T)7U)
 #define Board2_IN_Waiting              ((uint8_T)3U)
+#define Board2_IN_Waiting_combo        ((uint8_T)7U)
 #define Board2_IN_Waiting_comunication ((uint8_T)13U)
 #define Board_IN_Critical_voltage_relay ((uint8_T)1U)
 #define Board_IN_Starting_to_restablish ((uint8_T)4U)
@@ -153,12 +159,12 @@ typedef struct {
   int32_T sfEvent;                     /* '<Root>/Board2' */
   uint32_T time_temp;                  /* '<Root>/Board2' */
   uint32_T time_obs_s1;                /* '<Root>/Board2' */
-  uint32_T time_button_retro;          /* '<Root>/Board2' */
   uint32_T time_comm;                  /* '<Root>/Board2' */
   uint32_T time_obs_s3;                /* '<Root>/Board2' */
-  uint32_T time_button_obs;            /* '<Root>/Board2' */
-  uint32_T time_button_vel;            /* '<Root>/Board2' */
   uint32_T turn_counter;               /* '<Root>/Board2' */
+  uint32_T init_counter_relay;         /* '<Root>/Board2' */
+  uint32_T init_counter_routine;       /* '<Root>/Board2' */
+  uint32_T time_button;                /* '<Root>/Board2' */
   WORKING_STATUS_TYPE working_status;  /* '<Root>/Board2' */
   uint16_T distance_threshold;         /* '<Root>/Board2' */
   int8_T change_velocity;              /* '<Root>/Board2' */
@@ -189,12 +195,7 @@ typedef struct {
   uint8_T is_active_Temperature_manager;/* '<Root>/Board2' */
   uint8_T is_Temperature_manager;      /* '<Root>/Board2' */
   uint8_T is_active_Combo;             /* '<Root>/Board2' */
-  uint8_T is_active_Special_retro;     /* '<Root>/Board2' */
-  uint8_T is_Special_retro;            /* '<Root>/Board2' */
-  uint8_T is_active_Obstacle_detection;/* '<Root>/Board2' */
-  uint8_T is_Obstacle_detection;       /* '<Root>/Board2' */
-  uint8_T is_active_Change_max_velocity;/* '<Root>/Board2' */
-  uint8_T is_Change_max_velocity;      /* '<Root>/Board2' */
+  uint8_T is_Combo;                    /* '<Root>/Board2' */
   uint8_T is_Single_Board;             /* '<Root>/Board2' */
   uint8_T is_active_Board_decision;    /* '<Root>/Board2' */
   uint8_T is_active_Working_status_manage;/* '<Root>/Board2' */
@@ -204,6 +205,7 @@ typedef struct {
   uint8_T is_Max_velocity_handler;     /* '<Root>/Board2' */
   uint8_T is_active_Compute_routine;   /* '<Root>/Board2' */
   uint8_T is_Compute_routine;          /* '<Root>/Board2' */
+  uint8_T is_Routine_operating;        /* '<Root>/Board2' */
   uint8_T is_Normal_routine;           /* '<Root>/Board2' */
   uint8_T is_Control_controller_routine;/* '<Root>/Board2' */
   uint8_T is_Emergency_button_routine; /* '<Root>/Board2' */
@@ -222,17 +224,15 @@ typedef struct {
   uint8_T is_Normal_lights;            /* '<Root>/Board2' */
   uint8_T is_active_Relay_manager;     /* '<Root>/Board2' */
   uint8_T is_Relay_manager;            /* '<Root>/Board2' */
+  uint8_T is_Relay_operating;          /* '<Root>/Board2' */
   boolean_T special_retro;             /* '<Root>/Board2' */
   boolean_T limit_velocity;            /* '<Root>/Board2' */
   boolean_T obs_detection;             /* '<Root>/Board2' */
   boolean_T special_retro_rotating;    /* '<Root>/Board2' */
   boolean_T moving_from_left;          /* '<Root>/Board2' */
   boolean_T moving_from_right;         /* '<Root>/Board2' */
-  boolean_T prev_button1_retro;        /* '<Root>/Board2' */
-  boolean_T prev_button2_retro;        /* '<Root>/Board2' */
-  boolean_T prev_button1_obs;          /* '<Root>/Board2' */
-  boolean_T prev_button2_obs;          /* '<Root>/Board2' */
-  boolean_T prev_button1_vel;          /* '<Root>/Board2' */
+  boolean_T prev_button1;              /* '<Root>/Board2' */
+  boolean_T prev_button2;              /* '<Root>/Board2' */
   boolean_T prev_limit_state;          /* '<Root>/Board2' */
   boolean_T prev_r_stick_button;       /* '<Root>/Board2' */
   boolean_T prev_l_stick_button;       /* '<Root>/Board2' */
