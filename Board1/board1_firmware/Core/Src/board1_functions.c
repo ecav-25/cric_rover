@@ -11,6 +11,7 @@
 #include "main.h"
 #include "string.h"
 #include "cmsis_os.h"
+#include "pid_law.h"
 
 /* ========================================================================== */
 /* 							   EXTERNAL HANDLES                               */
@@ -19,6 +20,11 @@
 extern UART_HandleTypeDef huart3; /**< Handle UART per la comunicazione Inter-Board */
 extern CRC_HandleTypeDef hcrc;    /**< Handle unità di calcolo CRC hardware */
 extern TIM_HandleTypeDef htim2;   /**< Handle Timer per il cronometraggio (us/ms) */
+
+extern PID_Law_t pid_FA; /**< Istanza PID Motore Front-A */
+extern PID_Law_t pid_FB; /**< Istanza PID Motore Front-B */
+extern PID_Law_t pid_BA; /**< Istanza PID Motore Back-A */
+extern PID_Law_t pid_BB; /**< Istanza PID Motore Back-B */
 
 /* ========================================================================== */
 /* 							   GLOBAL VARIABLES                               */
@@ -101,6 +107,7 @@ static void Copy_DecBus(DecBus* dest, const DecBus* src) {
     dest->rear_sign = src->rear_sign;
     dest->mode = src->mode;
     dest->relay = src->relay;
+    dest->mux = src->mux;
 }
 
 /* ========================================================================== */
@@ -320,6 +327,20 @@ boolean_T IO_Read_MasterTalk(void)
     return (HAL_GPIO_ReadPin(MTALK_GPIO_Port, MTALK_Pin)
             == GPIO_PIN_SET);
 }
+
+/* ========================================================================== */
+/* 							   PID                                            */
+/* ========================================================================== */
+
+void PID_Reset(void)
+{
+	/*Reset dello stato interno di tutti i regolatori PID.*/
+	PID_Law_reset(&pid_FA);
+	PID_Law_reset(&pid_FB);
+	PID_Law_reset(&pid_BA);
+	PID_Law_reset(&pid_BB);
+}
+
 
 /* ========================================================================== */
 /* 							   TIMING & OS                                    */

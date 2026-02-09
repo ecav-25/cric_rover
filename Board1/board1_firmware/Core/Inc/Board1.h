@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board1'.
  *
- * Model version                  : 1.2425
+ * Model version                  : 1.2472
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Sat Feb  7 16:40:44 2026
+ * C/C++ source code generated on : Mon Feb  9 18:11:06 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -50,12 +50,11 @@
 #define Board1_IN_Decision_received    ((uint8_T)1U)
 #define Board1_IN_Decision_transmitted ((uint8_T)2U)
 #define Board1_IN_Degraded             ((uint8_T)1U)
+#define Board1_IN_Degraded_mux         ((uint8_T)1U)
 #define Board1_IN_Emergency_button     ((uint8_T)1U)
 #define Board1_IN_Emergency_sonar      ((uint8_T)1U)
 #define Board1_IN_Global_state_received ((uint8_T)4U)
 #define Board1_IN_High_temperature     ((uint8_T)1U)
-#define Board1_IN_Init_relay           ((uint8_T)2U)
-#define Board1_IN_Init_routine         ((uint8_T)2U)
 #define Board1_IN_Lights_AUTO          ((uint8_T)1U)
 #define Board1_IN_Lights_OFF           ((uint8_T)2U)
 #define Board1_IN_Lights_ON            ((uint8_T)3U)
@@ -68,8 +67,8 @@
 #define Board1_IN_Mode_SPORT           ((uint8_T)3U)
 #define Board1_IN_Motor_error_driving  ((uint8_T)2U)
 #define Board1_IN_Motor_error_lights   ((uint8_T)2U)
-#define Board1_IN_Motor_error_relay    ((uint8_T)3U)
-#define Board1_IN_Motor_error_routine  ((uint8_T)3U)
+#define Board1_IN_Motor_error_relay    ((uint8_T)2U)
+#define Board1_IN_Motor_error_routine  ((uint8_T)2U)
 #define Board1_IN_Motor_error_working  ((uint8_T)2U)
 #define Board1_IN_NO_ACTIVE_CHILD      ((uint8_T)0U)
 #define Board1_IN_No_limitation        ((uint8_T)1U)
@@ -78,8 +77,9 @@
 #define Board1_IN_Normal_driving       ((uint8_T)3U)
 #define Board1_IN_Normal_k             ((uint8_T)3U)
 #define Board1_IN_Normal_lights        ((uint8_T)3U)
-#define Board1_IN_Normal_relay         ((uint8_T)4U)
-#define Board1_IN_Normal_routine       ((uint8_T)4U)
+#define Board1_IN_Normal_mux           ((uint8_T)2U)
+#define Board1_IN_Normal_relay         ((uint8_T)3U)
+#define Board1_IN_Normal_routine       ((uint8_T)3U)
 #define Board1_IN_Normal_working       ((uint8_T)3U)
 #define Board1_IN_Not_moving           ((uint8_T)1U)
 #define Board1_IN_Not_moving_routine   ((uint8_T)7U)
@@ -94,12 +94,9 @@
 #define Board1_IN_Receive_state        ((uint8_T)8U)
 #define Board1_IN_Received_Ping        ((uint8_T)4U)
 #define Board1_IN_Received_state       ((uint8_T)9U)
-#define Board1_IN_Relay_Stop           ((uint8_T)1U)
-#define Board1_IN_Relay_operating      ((uint8_T)2U)
 #define Board1_IN_Restablish           ((uint8_T)1U)
 #define Board1_IN_Restarting           ((uint8_T)2U)
-#define Board1_IN_Routine_Stop         ((uint8_T)1U)
-#define Board1_IN_Routine_operating    ((uint8_T)2U)
+#define Board1_IN_Routine_state_normal ((uint8_T)1U)
 #define Board1_IN_Same_decision        ((uint8_T)10U)
 #define Board1_IN_Select_routine       ((uint8_T)8U)
 #define Board1_IN_Single_Board         ((uint8_T)3U)
@@ -162,9 +159,6 @@ typedef struct {
   uint32_T time_temp;                  /* '<Root>/Board1' */
   uint32_T time_comm;                  /* '<Root>/Board1' */
   uint32_T time_obs_s3;                /* '<Root>/Board1' */
-  uint32_T turn_counter;               /* '<Root>/Board1' */
-  uint32_T init_counter_relay;         /* '<Root>/Board1' */
-  uint32_T init_counter_routine;       /* '<Root>/Board1' */
   uint32_T time_button;                /* '<Root>/Board1' */
   WORKING_STATUS_TYPE working_status;  /* '<Root>/Board1' */
   uint16_T distance_threshold;         /* '<Root>/Board1' */
@@ -173,6 +167,7 @@ typedef struct {
   uint8_T receivedPing;                /* '<Root>/Board1' */
   uint8_T MIN_RPM;                     /* '<Root>/Board1' */
   uint8_T max_velocity;                /* '<Root>/Board1' */
+  uint8_T turn_counter;                /* '<Root>/Board1' */
   uint8_T is_active_c2_Board1;         /* '<Root>/Board1' */
   uint8_T is_c2_Board1;                /* '<Root>/Board1' */
   uint8_T is_active_Board_state;       /* '<Root>/Board1' */
@@ -202,12 +197,16 @@ typedef struct {
   uint8_T is_active_Board_decision;    /* '<Root>/Board1' */
   uint8_T is_active_Working_status_manage;/* '<Root>/Board1' */
   uint8_T is_Working_status_manager;   /* '<Root>/Board1' */
+  uint8_T is_active_Relay_manager;     /* '<Root>/Board1' */
+  uint8_T is_Relay_manager;            /* '<Root>/Board1' */
+  uint8_T is_active_Mux_manager;       /* '<Root>/Board1' */
+  uint8_T is_Mux_manager;              /* '<Root>/Board1' */
   uint8_T is_active_Routine_manager;   /* '<Root>/Board1' */
   uint8_T is_active_Max_velocity_handler;/* '<Root>/Board1' */
   uint8_T is_Max_velocity_handler;     /* '<Root>/Board1' */
   uint8_T is_active_Compute_routine;   /* '<Root>/Board1' */
   uint8_T is_Compute_routine;          /* '<Root>/Board1' */
-  uint8_T is_Routine_operating;        /* '<Root>/Board1' */
+  uint8_T is_Routine_state_normal;     /* '<Root>/Board1' */
   uint8_T is_Normal_routine;           /* '<Root>/Board1' */
   uint8_T is_Control_controller_routine;/* '<Root>/Board1' */
   uint8_T is_Emergency_button_routine; /* '<Root>/Board1' */
@@ -224,20 +223,18 @@ typedef struct {
   uint8_T is_active_Lights_manager;    /* '<Root>/Board1' */
   uint8_T is_Lights_manager;           /* '<Root>/Board1' */
   uint8_T is_Normal_lights;            /* '<Root>/Board1' */
-  uint8_T is_active_Relay_manager;     /* '<Root>/Board1' */
-  uint8_T is_Relay_manager;            /* '<Root>/Board1' */
-  uint8_T is_Relay_operating;          /* '<Root>/Board1' */
   boolean_T special_retro;             /* '<Root>/Board1' */
   boolean_T limit_velocity;            /* '<Root>/Board1' */
   boolean_T obs_detection;             /* '<Root>/Board1' */
   boolean_T special_retro_rotating;    /* '<Root>/Board1' */
   boolean_T moving_from_left;          /* '<Root>/Board1' */
   boolean_T moving_from_right;         /* '<Root>/Board1' */
+  boolean_T open_loop;                 /* '<Root>/Board1' */
   boolean_T prev_button1;              /* '<Root>/Board1' */
   boolean_T prev_button2;              /* '<Root>/Board1' */
   boolean_T prev_limit_state;          /* '<Root>/Board1' */
-  boolean_T prev_r_stick_button;       /* '<Root>/Board1' */
   boolean_T prev_l_stick_button;       /* '<Root>/Board1' */
+  boolean_T prev_r_stick_button;       /* '<Root>/Board1' */
 } DW_Board1_T;
 
 /* External inputs (root inport signals with default storage) */

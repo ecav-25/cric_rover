@@ -67,7 +67,7 @@
 	#define RAMP_STEP_ECO     (RAMP_SLOPE_ECO_RPM_S     * (PID_PERIOD / 1000.0f))
 
 	#define DIAG_DELAY_SHIFT    0
-	#define DIAG_MAX_AREA_ERR   15000.0f
+	#define DIAG_MAX_AREA_ERR   5000.0f
 
 
 	#define TOGGLE_EMERGENCY 8

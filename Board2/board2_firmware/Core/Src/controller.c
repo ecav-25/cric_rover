@@ -75,11 +75,6 @@ ControllerStatus_t telemetry_init(Telemetry_t *telemetry)
     telemetry->rpm_rl = 0;
     telemetry->rpm_rr = 0;
 
-    telemetry->target_fl = 0;
-    telemetry->target_fr = 0;
-    telemetry->target_rl = 0;
-    telemetry->target_rr = 0;
-
     telemetry->battery_percent = 0;
     telemetry->temperature = 0;
 
@@ -90,6 +85,10 @@ ControllerStatus_t telemetry_init(Telemetry_t *telemetry)
     telemetry->backward_mode = BW_NORMAL;
     telemetry->operating_mode = OM_NORMAL;
     telemetry->light_mode = LIGHT_OFF;
+    telemetry->driving_mode = DEFAULT;
+    telemetry->obstacle_mode = COMPLETE;
+    telemetry->gyro_status = GYRO_STATUS_READY;
+    telemetry->traction_status = T_HEALTHY;
 
     return CONTROLLER_OK;
 }
@@ -170,19 +169,6 @@ ControllerStatus_t telemetry_set_rpm(Telemetry_t *telemetry, int16_t fl, int16_t
     return CONTROLLER_OK;
 }
 
-ControllerStatus_t telemetry_set_targets(Telemetry_t *telemetry, int16_t fl, int16_t fr, int16_t rl, int16_t rr){
-    if (telemetry == NULL) {
-        return CONTROLLER_ERR;
-    }
-
-    telemetry->target_fl = fl;
-    telemetry->target_fr = fr;
-    telemetry->target_rl = rl;
-    telemetry->target_rr = rr;
-
-    return CONTROLLER_OK;
-}
-
 ControllerStatus_t telemetry_set_max_velocity(Telemetry_t *telemetry, uint8_t max_vel){
 	if (telemetry == NULL) {
 		return CONTROLLER_ERR;
@@ -203,4 +189,24 @@ ControllerStatus_t telemetry_set_sonars(Telemetry_t *telemetry, uint16_t left, u
     telemetry->sonar_r = right;
 
     return CONTROLLER_OK;
+}
+
+ControllerStatus_t telemetry_set_gyro_status(Telemetry_t *telemetry, GyroAvailability gyro_status){
+	if (telemetry == NULL) {
+		return CONTROLLER_ERR;
+	}
+
+	telemetry->gyro_status = gyro_status;
+
+	return CONTROLLER_OK;
+}
+
+ControllerStatus_t telemetry_set_traction_health(Telemetry_t *telemetry, Traction_Health traction_status){
+	if (telemetry == NULL) {
+		return CONTROLLER_ERR;
+	}
+
+	telemetry->traction_status = traction_status;
+
+	return CONTROLLER_OK;
 }

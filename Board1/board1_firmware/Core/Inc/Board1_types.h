@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board1'.
  *
- * Model version                  : 1.2425
+ * Model version                  : 1.2472
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Sat Feb  7 16:40:44 2026
+ * C/C++ source code generated on : Mon Feb  9 18:11:06 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -102,6 +102,7 @@ typedef struct {
   REAR_SIGN_TYPE rear_sign;
   ROVER_MODE mode;
   boolean_T relay;
+  boolean_T mux;
 } DecBus;
 
 #endif

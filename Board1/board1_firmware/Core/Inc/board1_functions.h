@@ -165,6 +165,16 @@ void IO_Reset_SlaveTalk(void);
 boolean_T IO_Read_MasterTalk(void);
 
 /* ========================================================================== */
+/* 							   PID                                            */
+/* ========================================================================== */
+
+/**
+ * @brief Resetta lo stato interno dei controllori PID.
+ * @details Azzera l'errore integrale e le memorie di stato per tutte le istanze PID.
+ */
+void PID_Reset(void);
+
+/* ========================================================================== */
 /* 							   TIMING & OS                                    */
 /* ========================================================================== */
 

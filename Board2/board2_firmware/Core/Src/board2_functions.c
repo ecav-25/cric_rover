@@ -100,6 +100,7 @@ static void Copy_DecBus(DecBus* dest, const DecBus* src) {
     dest->rear_sign = src->rear_sign;
     dest->mode = src->mode;
     dest->relay = src->relay;
+    dest->mux = src->mux;
 }
 
 /* ========================================================================== */
@@ -302,18 +303,6 @@ boolean_T IO_Read_SlaveTalk(void)
 {
     /* Input: Legge lo stato dello Slave */
     return (HAL_GPIO_ReadPin(STALK_GPIO_Port, STALK_Pin) == GPIO_PIN_SET);
-}
-
-void IO_Disable_MUX(void)
-{
-    /* Motori controllati dallo slave */
-    HAL_GPIO_WritePin(SELECT_GPIO_Port, SELECT_Pin, GPIO_PIN_RESET);
-}
-
-void IO_Enable_MUX(void)
-{
-    /* Motori controllati dal master */
-    HAL_GPIO_WritePin(SELECT_GPIO_Port, SELECT_Pin, GPIO_PIN_SET);
 }
 
 /* ========================================================================== */
