@@ -509,11 +509,11 @@ void telemetryLoggerTask(void *argument)
 
         
         if	(telemetry_set_gyro_status(&telemetry, gyro_status ? GYRO_STATUS_DEGRADED : GYRO_STATUS_READY) != CONTROLLER_OK) {
-			Error_Handler();
+        	safety_stop_and_halt();
 		}
 
         if (telemetry_set_traction_health(&telemetry, traction_status ? T_UNHEALTHY : T_HEALTHY) != CONTROLLER_OK) {
-			Error_Handler();
+        	safety_stop_and_halt();
 		}
 
         if (telemetry_set_max_velocity(&telemetry, max_velocity) != CONTROLLER_OK) {
@@ -543,14 +543,36 @@ static void supervision_read_inputs(void)
 
 	telecontroller_status = telecontrol_read(&controller);
 
-	if(telecontroller_status == CONTROLLER_OK){
-		Board2_U.controllerError = 0;
-	}
-	else if(telecontroller_status == CONTROLLER_ERR_COMM){
-		Board2_U.controllerError = 1;
-	}
-	else{
-		safety_stop_and_halt();
+	
+	switch (telecontroller_status){
+	    case CONTROLLER_OK:
+	        controller.crc_error_count = 0;
+	        controller.last_valid_information = controller.controller_information;
+	        Board2_U.controllerError = 0;
+	        break;
+
+	    case CONTROLLER_ERR_CRC:
+	    	controller.crc_error_count++;
+	        controller.controller_information = controller.last_valid_information;
+
+	        Board2_U.controllerError = 1;
+
+	        if (controller.crc_error_count >= CONTROLLER_MAX_CRC_ERRORS) {
+	        	Board2_U.controllerError = 1;
+	        }
+	        break;
+
+	    case CONTROLLER_ERR_COMM:
+	        Board2_U.controllerError = 1;
+	        break;
+
+	    case CONTROLLER_ERR:
+	    	safety_stop_and_halt();
+	    	break;
+
+	    default:
+	    	safety_stop_and_halt();
+	        break;
 	}
 
 	if (get_telecontrol_bx(&controller, &Board2_U.controller_x) != CONTROLLER_OK){

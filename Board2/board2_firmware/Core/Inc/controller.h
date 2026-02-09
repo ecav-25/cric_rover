@@ -5,13 +5,16 @@
 #include <stdint.h>
 
 #define CONTROLLERZERO (255)
+#define CONTROLLER_MAX_CRC_ERRORS   3u
+
 
 /* ===================== STATUS ===================== */
 
 typedef enum {
     CONTROLLER_OK = 0,
     CONTROLLER_ERR,
-	CONTROLLER_ERR_COMM
+	CONTROLLER_ERR_COMM,
+    CONTROLLER_ERR_CRC
 } ControllerStatus_t;
 
 /* ===================== CONTROLLER DATA ===================== */
@@ -35,12 +38,15 @@ typedef struct __attribute__((packed)) {
     uint8_t alive;
     uint8_t controller_percentage;
     controller_data_t controller_data;
+    uint8_t crc_value;
 } controller_information_t;
 
 typedef struct {
     I2C_HandleTypeDef* i2c;
     uint16_t address;
     controller_information_t controller_information;
+    controller_information_t last_valid_information;
+	uint8_t crc_error_count;
 } Controller_t;
 
 /* ===================== TELEMETRY ===================== */
