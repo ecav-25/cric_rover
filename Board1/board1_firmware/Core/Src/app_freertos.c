@@ -67,7 +67,7 @@ typedef StaticEventGroup_t osStaticEventGroupDef_t;
 #define RAMP_STEP_ECO     (RAMP_SLOPE_ECO_RPM_S     * (PID_PERIOD / 1000.0f))
 
 #define DIAG_DELAY_SHIFT    0
-#define DIAG_MAX_AREA_ERR   3650.0f
+#define DIAG_MAX_AREA_ERR   5000.0f
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -528,6 +528,8 @@ void readSensorsTask(void *argument)
 
 	// Inizializziamo a un valore negativo per capire se è la prima lettura
 	static real32_T battery_voltage_filtered = -1.0f;
+
+	//boolean_T init_condition = 0;
 	// ----------------------------------------
 
 	for(;;){
@@ -595,10 +597,13 @@ void readSensorsTask(void *argument)
 		Board1_U.velocity_BA = velocity_BA;
 		Board1_U.velocity_BB = velocity_BB;
 
-		Board1_U.motorError_FA = (h_diag_FA.health_status == MOTOR_FAILURE);
-		Board1_U.motorError_FB = (h_diag_FB.health_status == MOTOR_FAILURE);
-		Board1_U.motorError_BA = (h_diag_BA.health_status == MOTOR_FAILURE);
-		Board1_U.motorError_BB = (h_diag_BB.health_status == MOTOR_FAILURE);
+		//init_condition = !(Board1_DW.is_Routine_operating == Board1_IN_Init_routine &&
+		//		Board1_DW.is_Relay_operating == Board1_IN_Init_routine);
+
+		Board1_U.motorError_FA = (h_diag_FA.health_status == MOTOR_FAILURE);// && init_condition);
+		Board1_U.motorError_FB = (h_diag_FB.health_status == MOTOR_FAILURE);// && init_condition);
+		Board1_U.motorError_BA = (h_diag_BA.health_status == MOTOR_FAILURE);// && init_condition);
+		Board1_U.motorError_BB = (h_diag_BB.health_status == MOTOR_FAILURE);// && init_condition);
 
 		taskEXIT_CRITICAL();
 

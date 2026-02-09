@@ -78,6 +78,18 @@ enum {
     MINIMAL
 };
 
+typedef uint8_t GyroAvailability;
+enum {
+	GYRO_STATUS_DEGRADED = 0,
+    GYRO_STATUS_READY
+};
+
+typedef uint8_t Traction_Health;
+enum {
+	T_UNHEALTHY = 0,
+    T_HEALTHY
+};
+
 
 typedef struct __attribute__((packed)) {
 	uint16_t sonar_l;
@@ -89,11 +101,6 @@ typedef struct __attribute__((packed)) {
     int16_t rpm_rl;
     int16_t rpm_rr;
 
-    int16_t target_fl;
-    int16_t target_fr;
-    int16_t target_rl;
-    int16_t target_rr;
-
     uint8_t max_velocity;
 
     uint8_t battery_percent;
@@ -104,6 +111,8 @@ typedef struct __attribute__((packed)) {
     LightOperatingMode light_mode;
     DrivingMode driving_mode;
     ObstacleAvoidanceMode obstacle_mode;
+    GyroAvailability gyro_status;
+    Traction_Health traction_status;
 } Telemetry_t;
 
 /* ===================== CONTROLLER API ===================== */
@@ -151,10 +160,12 @@ ControllerStatus_t telemetry_set_temperature(Telemetry_t *telemetry, int8_t temp
 
 ControllerStatus_t telemetry_set_rpm(Telemetry_t *telemetry, int16_t fl, int16_t fr,int16_t rl, int16_t rr);
 
-ControllerStatus_t telemetry_set_targets(Telemetry_t *telemetry, int16_t fl, int16_t fr,int16_t rl, int16_t rr);
-
 ControllerStatus_t telemetry_set_max_velocity(Telemetry_t *telemetry, uint8_t max_vel);
 
 ControllerStatus_t telemetry_set_sonars(Telemetry_t *telemetry, uint16_t left, uint16_t center, uint16_t right);
+
+ControllerStatus_t telemetry_set_gyro_status(Telemetry_t *telemetry, GyroAvailability gyro_status);
+
+ControllerStatus_t telemetry_set_traction_health(Telemetry_t *telemetry, Traction_Health traction_status);
 
 #endif /* INC_CONTROLLER_H_ */

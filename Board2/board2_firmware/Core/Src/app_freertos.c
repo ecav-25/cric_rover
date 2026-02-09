@@ -393,7 +393,6 @@ void telemetryLoggerTask(void *argument)
     Telemetry_t telemetry;
 
     StateBusB1 stateB1;
-    DecBus output;
 
     uint16_T sonar1, sonar2, sonar3;
 
@@ -404,6 +403,8 @@ void telemetryLoggerTask(void *argument)
     uint8_t max_velocity;
     boolean_T special_retro;
     boolean_T obs_avoidance;
+    boolean_T gyro_status;
+    boolean_T traction_status;
 
     if (telemetry_init(&telemetry) != CONTROLLER_OK) {
         Error_Handler();
@@ -419,15 +420,15 @@ void telemetryLoggerTask(void *argument)
         sonar1 = Board2_U.sonar1;
         sonar2 = Board2_U.sonar2;
         sonar3 = Board2_U.sonar3;
-
-        output = Board2_Y.output;
+        gyro_status = Board2_U.gyroError;
 
         supervision_state = Board2_DW.is_Board_state;
         light_state       = Board2_DW.is_Normal_lights;
         special_retro     = Board2_DW.special_retro;
         obs_avoidance     = Board2_DW.obs_detection;
         driving_mode      = Board2_DW.is_Normal_driving;
-        max_velocity     = Board2_DW.max_velocity;
+        max_velocity      = Board2_DW.max_velocity;
+        traction_status   = (Board2_DW.working_status == MOTOR_ERROR_WORKING || Board2_DW.panic_lockdown);
 
         if (supervision_state == Board2_IN_Normal) {
             stateB1 = Board2_DW.global_state.stateB1;
@@ -507,9 +508,13 @@ void telemetryLoggerTask(void *argument)
             Error_Handler();
         }
 
-        if (telemetry_set_targets(&telemetry, output.rif_FA, output.rif_FB, output.rif_BA, output.rif_BB) != CONTROLLER_OK) {
-            Error_Handler();
-        }
+        if	(telemetry_set_gyro_status(&telemetry, gyro_status ? GYRO_STATUS_DEGRADED : GYRO_STATUS_READY) != CONTROLLER_OK) {
+			Error_Handler();
+		}
+
+        if (telemetry_set_traction_health(&telemetry, traction_status ? T_UNHEALTHY : T_HEALTHY) != CONTROLLER_OK) {
+			Error_Handler();
+		}
 
         if (telemetry_set_max_velocity(&telemetry, max_velocity) != CONTROLLER_OK) {
             Error_Handler();
@@ -662,6 +667,10 @@ static void supervision_apply_actuation(void)
     // Gestione Relè
     HAL_GPIO_WritePin(RELAY_GPIO_Port, RELAY_Pin,
                       Board2_Y.output.relay ? GPIO_PIN_SET : GPIO_PIN_RESET);
+
+    // Gestione Mux
+	HAL_GPIO_WritePin(SELECT_GPIO_Port, SELECT_Pin,
+					  Board2_Y.output.mux ? GPIO_PIN_SET : GPIO_PIN_RESET);
 
     // Lettura output modello
     rif_FA = Board2_Y.output.rif_FA;
