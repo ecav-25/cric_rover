@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board1'.
  *
- * Model version                  : 1.2472
+ * Model version                  : 1.2490
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Mon Feb  9 18:11:06 2026
+ * C/C++ source code generated on : Tue Feb 10 12:36:38 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -35,6 +35,7 @@
 #define Board1_DECISION_SEND_TIMEOUT   (2900U)
 #define Board1_HIGH_TEMPERATURE        (60.0F)
 #define Board1_IMM_DISTANCE            ((uint16_T)70U)
+#define Board1_INIT_COUNTER            ((uint8_T)35U)
 #define Board1_LIMITED_RPM             ((uint8_T)80U)
 #define Board1_LOW_CONTROLLER_BATTERY  ((uint8_T)5U)
 #define Board1_LOW_VOLTAGE             (9.83F)
@@ -53,8 +54,10 @@
 #define Board1_TEMP_TIMEOUT            (15000U)
 #define Board1_TURN_ANGLE              (45.0F)
 #define Board1_TURN_BACK_ANGLE         (180.0F)
+#define Board1_TURN_BACK_LIMIT_COUNT   ((uint8_T)50U)
 #define Board1_TURN_BACK_RPM           (40.0F)
 #define Board1_TURN_COUNT              ((uint8_T)20U)
+#define Board1_TURN_LIMIT_COUNT        ((uint8_T)30U)
 #define Board1_TURN_RATIO              (0.35F)
 #define Board1_TURN_RPM                (20.0F)
 #define Board1_TURN_THRESHOLD          (5.0F)
@@ -1004,6 +1007,7 @@ static void Board1_Emergency_sonar_routine(void)
       if (b) {
         if (Board1_DW.global_state.stateB2.sonar3 > Board1_DW.distance_threshold)
         {
+          Board1_DW.turn_counter = 0U;
           if (!Board1_DW.global_state.stateB2.gyroError) {
             Board1_DW.angle = 0.0F;
             Board1_DW.prevYaw = 0.0F;
@@ -1011,13 +1015,13 @@ static void Board1_Emergency_sonar_routine(void)
             Board1_Turn_Right();
             Board1_DW.decision.brk_mode = NONE;
           } else {
-            Board1_DW.turn_counter = 0U;
             Board1_DW.is_Emergency_sonar_routine = Board1_IN_Turn_right_no_gyro;
             Board1_Turn_Right();
             Board1_DW.decision.brk_mode = NONE;
           }
         } else if (Board1_DW.global_state.stateB2.sonar1 >
                    Board1_DW.distance_threshold) {
+          Board1_DW.turn_counter = 0U;
           if (!Board1_DW.global_state.stateB2.gyroError) {
             Board1_DW.angle = 0.0F;
             Board1_DW.prevYaw = 0.0F;
@@ -1025,7 +1029,6 @@ static void Board1_Emergency_sonar_routine(void)
             Board1_Turn_Left();
             Board1_DW.decision.brk_mode = NONE;
           } else {
-            Board1_DW.turn_counter = 0U;
             Board1_DW.is_Emergency_sonar_routine = Board1_IN_Turn_left_no_gyro;
             Board1_Turn_Left();
             Board1_DW.decision.brk_mode = NONE;
@@ -1050,9 +1053,17 @@ static void Board1_Emergency_sonar_routine(void)
      case Board1_IN_Turn_left:
       if (Board1_DW.sfEvent == Board1_event_STEP) {
         Board1_Update_Angle(Board1_DW.global_state.stateB2.gyroYaw);
-        if (fabsf(Board1_DW.angle) >= Board1_TURN_ANGLE) {
+        tmp = Board1_DW.turn_counter + 1U;
+        if (Board1_DW.turn_counter + 1U > 255U) {
+          tmp = 255U;
+        }
+
+        Board1_DW.turn_counter = (uint8_T)tmp;
+        if ((fabsf(Board1_DW.angle) >= Board1_TURN_ANGLE) ||
+            (Board1_DW.turn_counter >= Board1_TURN_LIMIT_COUNT)) {
           Board1_DW.angle = 0.0F;
           Board1_DW.prevYaw = 0.0F;
+          Board1_DW.turn_counter = 0U;
           Board1_DW.is_Emergency_sonar_routine = Board1_IN_Stop_left_rotation;
           Board1_Stop_Motors();
           Board1_DW.decision.brk_mode = NONE;
@@ -1088,9 +1099,17 @@ static void Board1_Emergency_sonar_routine(void)
      case Board1_IN_Turn_right_gyro:
       if (Board1_DW.sfEvent == Board1_event_STEP) {
         Board1_Update_Angle(Board1_DW.global_state.stateB2.gyroYaw);
-        if (fabsf(Board1_DW.angle) >= Board1_TURN_ANGLE) {
+        tmp = Board1_DW.turn_counter + 1U;
+        if (Board1_DW.turn_counter + 1U > 255U) {
+          tmp = 255U;
+        }
+
+        Board1_DW.turn_counter = (uint8_T)tmp;
+        if ((fabsf(Board1_DW.angle) >= Board1_TURN_ANGLE) ||
+            (Board1_DW.turn_counter >= Board1_TURN_LIMIT_COUNT)) {
           Board1_DW.angle = 0.0F;
           Board1_DW.prevYaw = 0.0F;
+          Board1_DW.turn_counter = 0U;
           Board1_DW.is_Emergency_sonar_routine = Board1_IN_Stop_right_rotation;
           Board1_Stop_Motors();
           Board1_DW.decision.brk_mode = NONE;
@@ -1238,9 +1257,17 @@ static void Moving_obstacle_from_right_rout(void)
          case Board_IN_Turn_moving_right_gyro:
           if (Board1_DW.sfEvent == Board1_event_STEP) {
             Board1_Update_Angle(Board1_DW.global_state.stateB2.gyroYaw);
-            if (fabsf(Board1_DW.angle) >= Board1_TURN_ANGLE) {
+            tmp = Board1_DW.turn_counter + 1U;
+            if (Board1_DW.turn_counter + 1U > 255U) {
+              tmp = 255U;
+            }
+
+            Board1_DW.turn_counter = (uint8_T)tmp;
+            if ((fabsf(Board1_DW.angle) >= Board1_TURN_ANGLE) ||
+                (Board1_DW.turn_counter >= Board1_TURN_LIMIT_COUNT)) {
               Board1_DW.angle = 0.0F;
               Board1_DW.prevYaw = 0.0F;
+              Board1_DW.turn_counter = 0U;
               Board1_DW.is_Moving_obstacle_from_right_r =
                 Board1_IN_NO_ACTIVE_CHILD;
               Board1_DW.is_Normal_routine = Board1_IN_Select_routine;
@@ -1475,6 +1502,7 @@ static void Board1_Turn_Back(void)
 /* Function for Chart: '<Root>/Board1' */
 static void enter_internal_Moving_obstacle_(void)
 {
+  Board1_DW.turn_counter = 0U;
   if (!Board1_DW.global_state.stateB2.gyroError) {
     Board1_DW.angle = 0.0F;
     Board1_DW.prevYaw = 0.0F;
@@ -1482,7 +1510,6 @@ static void enter_internal_Moving_obstacle_(void)
     Board1_Process_Evasive_Commands(false, Board1_DW.open_loop);
     Board1_DW.decision.brk_mode = NONE;
   } else {
-    Board1_DW.turn_counter = 0U;
     Board1_DW.is_Moving_obstacle_from_left_ro = Boa_IN_Turn_moving_left_no_gyro;
     Board1_Process_Evasive_Commands(false, Board1_DW.open_loop);
     Board1_DW.decision.brk_mode = NONE;
@@ -1492,6 +1519,7 @@ static void enter_internal_Moving_obstacle_(void)
 /* Function for Chart: '<Root>/Board1' */
 static void enter_internal_Moving_obstacl_f(void)
 {
+  Board1_DW.turn_counter = 0U;
   if (!Board1_DW.global_state.stateB2.gyroError) {
     Board1_DW.angle = 0.0F;
     Board1_DW.prevYaw = 0.0F;
@@ -1499,7 +1527,6 @@ static void enter_internal_Moving_obstacl_f(void)
     Board1_Process_Evasive_Commands(true, Board1_DW.open_loop);
     Board1_DW.decision.brk_mode = NONE;
   } else {
-    Board1_DW.turn_counter = 0U;
     Board1_DW.is_Moving_obstacle_from_right_r = Bo_IN_Turn_moving_right_no_gyro;
     Board1_Process_Evasive_Commands(true, Board1_DW.open_loop);
     Board1_DW.decision.brk_mode = NONE;
@@ -1553,6 +1580,7 @@ static void Board1_Select_routine(void)
               if (b) {
                 Board1_DW.is_Normal_routine = Board1_IN_Special_retro_routine;
                 Board1_DW.special_retro_rotating = true;
+                Board1_DW.turn_counter = 0U;
                 if (!Board1_DW.global_state.stateB2.gyroError) {
                   Board1_DW.angle = 0.0F;
                   Board1_DW.prevYaw = 0.0F;
@@ -1560,7 +1588,6 @@ static void Board1_Select_routine(void)
                   Board1_Turn_Back();
                   Board1_DW.decision.brk_mode = NONE;
                 } else {
-                  Board1_DW.turn_counter = 0U;
                   Board1_DW.is_Special_retro_routine =
                     Board1_IN_Turn_back_no_gyro;
                   Board1_Turn_Back();
@@ -1627,9 +1654,17 @@ static void Board1_Special_retro_routine(void)
        case Board1_IN_Turn_back_gyro:
         if (Board1_DW.sfEvent == Board1_event_STEP) {
           Board1_Update_Angle(Board1_DW.global_state.stateB2.gyroYaw);
-          if (fabsf(Board1_DW.angle) >= Board1_TURN_BACK_ANGLE) {
+          tmp = Board1_DW.turn_counter + 1U;
+          if (Board1_DW.turn_counter + 1U > 255U) {
+            tmp = 255U;
+          }
+
+          Board1_DW.turn_counter = (uint8_T)tmp;
+          if ((fabsf(Board1_DW.angle) >= Board1_TURN_BACK_ANGLE) ||
+              (Board1_DW.turn_counter >= Board1_TURN_BACK_LIMIT_COUNT)) {
             Board1_DW.angle = 0.0F;
             Board1_DW.prevYaw = 0.0F;
+            Board1_DW.turn_counter = 0U;
             Board1_DW.is_Special_retro_routine = Board1_IN_Stop_back_rotation;
             Board1_Stop_Motors();
             Board1_DW.decision.brk_mode = NONE;
@@ -1823,9 +1858,18 @@ static void Board1_Compute_routine(void)
                       if (Board1_DW.sfEvent == Board1_event_STEP) {
                         Board1_Update_Angle
                           (Board1_DW.global_state.stateB2.gyroYaw);
-                        if (fabsf(Board1_DW.angle) >= Board1_TURN_ANGLE) {
+                        tmp = Board1_DW.turn_counter + 1U;
+                        if (Board1_DW.turn_counter + 1U > 255U) {
+                          tmp = 255U;
+                        }
+
+                        Board1_DW.turn_counter = (uint8_T)tmp;
+                        if ((fabsf(Board1_DW.angle) >= Board1_TURN_ANGLE) ||
+                            (Board1_DW.turn_counter >= Board1_TURN_LIMIT_COUNT))
+                        {
                           Board1_DW.angle = 0.0F;
                           Board1_DW.prevYaw = 0.0F;
+                          Board1_DW.turn_counter = 0U;
                           Board1_DW.is_Moving_obstacle_from_left_ro =
                             Board1_IN_NO_ACTIVE_CHILD;
                           Board1_DW.is_Normal_routine = Board1_IN_Select_routine;
@@ -2187,6 +2231,7 @@ static void Board1_Lights_manager(void)
 /* Function for Chart: '<Root>/Board1' */
 static void Board1_Board_decision(void)
 {
+  uint32_T tmp;
   boolean_T b;
   if (Board1_DW.is_active_Working_status_manage != 0) {
     switch (Board1_DW.is_Working_status_manager) {
@@ -2195,6 +2240,36 @@ static void Board1_Board_decision(void)
       if (b) {
         Board1_DW.is_Working_status_manager = Board1_IN_Normal_working;
         Board1_DW.working_status = NORMAL_WORKING;
+      }
+      break;
+
+     case Board1_IN_Init_working:
+      if (Board1_DW.sfEvent == Board1_event_STEP) {
+        tmp = Board1_DW.init_count + 1U;
+        if (Board1_DW.init_count + 1U > 255U) {
+          tmp = 255U;
+        }
+
+        Board1_DW.init_count = (uint8_T)tmp;
+        if (Board1_DW.init_count >= Board1_INIT_COUNTER) {
+          b = Board1_Motor_Error();
+          if (b) {
+            Board1_DW.is_Working_status_manager = Board1_IN_Motor_error_working;
+            Board1_DW.working_status = MOTOR_ERROR_WORKING;
+          } else {
+            b = Board1_Critical_Voltage();
+            if (b) {
+              Board1_DW.is_Working_status_manager =
+                Boa_IN_Critical_voltage_working;
+              Board1_DW.working_status = CRITICAL_VOLTAGE_WORKING;
+            } else {
+              Board1_DW.is_Working_status_manager = Board1_IN_Normal_working;
+              Board1_DW.working_status = NORMAL_WORKING;
+            }
+          }
+        } else {
+          Board1_DW.is_Working_status_manager = Board1_IN_Init_working;
+        }
       }
       break;
 
@@ -3260,8 +3335,8 @@ void Board1_step(void)
     Board1_enter_internal_Normal();
     Board1_DW.is_active_Board_decision = 1U;
     Board1_DW.is_active_Working_status_manage = 1U;
-    Board1_DW.is_Working_status_manager = Board1_IN_Normal_working;
-    Board1_DW.working_status = NORMAL_WORKING;
+    Board1_DW.init_count = 0U;
+    Board1_DW.is_Working_status_manager = Board1_IN_Init_working;
     Board1_DW.is_active_Relay_manager = 1U;
     Board1_DW.is_Relay_manager = Board1_IN_Normal_relay;
     Board1_DW.decision.relay = true;

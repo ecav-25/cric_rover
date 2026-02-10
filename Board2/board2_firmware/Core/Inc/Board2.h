@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board2'.
  *
- * Model version                  : 1.2523
+ * Model version                  : 1.2532
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Mon Feb  9 18:16:22 2026
+ * C/C++ source code generated on : Tue Feb 10 12:44:45 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -54,6 +54,7 @@
 #define Board2_IN_Emergency_sonar      ((uint8_T)1U)
 #define Board2_IN_Global_state_received ((uint8_T)3U)
 #define Board2_IN_High_temperature     ((uint8_T)1U)
+#define Board2_IN_Init_working         ((uint8_T)2U)
 #define Board2_IN_Lights_AUTO          ((uint8_T)1U)
 #define Board2_IN_Lights_OFF           ((uint8_T)2U)
 #define Board2_IN_Lights_ON            ((uint8_T)3U)
@@ -68,7 +69,7 @@
 #define Board2_IN_Motor_error_lights   ((uint8_T)2U)
 #define Board2_IN_Motor_error_relay    ((uint8_T)2U)
 #define Board2_IN_Motor_error_routine  ((uint8_T)2U)
-#define Board2_IN_Motor_error_working  ((uint8_T)2U)
+#define Board2_IN_Motor_error_working  ((uint8_T)3U)
 #define Board2_IN_NO_ACTIVE_CHILD      ((uint8_T)0U)
 #define Board2_IN_No_limitation        ((uint8_T)1U)
 #define Board2_IN_No_movements         ((uint8_T)1U)
@@ -79,7 +80,7 @@
 #define Board2_IN_Normal_mux           ((uint8_T)2U)
 #define Board2_IN_Normal_relay         ((uint8_T)3U)
 #define Board2_IN_Normal_routine       ((uint8_T)3U)
-#define Board2_IN_Normal_working       ((uint8_T)3U)
+#define Board2_IN_Normal_working       ((uint8_T)4U)
 #define Board2_IN_Not_moving           ((uint8_T)1U)
 #define Board2_IN_Not_moving_routine   ((uint8_T)7U)
 #define Board2_IN_Obs_detection_change ((uint8_T)5U)
@@ -166,6 +167,7 @@ typedef struct {
   uint8_T receivedPing;                /* '<Root>/Board2' */
   uint8_T max_velocity;                /* '<Root>/Board2' */
   uint8_T turn_counter;                /* '<Root>/Board2' */
+  uint8_T init_count;                  /* '<Root>/Board2' */
   uint8_T is_active_c1_Board2;         /* '<Root>/Board2' */
   uint8_T is_c1_Board2;                /* '<Root>/Board2' */
   uint8_T is_active_Board_state;       /* '<Root>/Board2' */
