@@ -98,8 +98,8 @@ DecBus debug_decision;
 
 Controller_t controller;
 mpu6050_t mpu_device;
-imu_vector_t acceleration;
-imu_vector_t gyroyaw;
+
+float gyroyaw;
 
 Motor_t motor_FA_openLoop;
 Motor_t motor_FB_openLoop;
@@ -607,12 +607,11 @@ static void supervision_read_inputs(void)
 		safety_stop_and_halt();
 	}
 
-	/*TODO: da prendere solo il valore di z*/
-	mpu_status = mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
+	mpu_status = mpu6050_get_gyro_z(&mpu_device, &gyroyaw);
 
 	if (mpu_status == MPU6050_OK) {
 	    Board2_U.gyroError = 0;
-	    Board2_U.gyroYaw = gyroyaw.z;
+	    Board2_U.gyroYaw = gyroyaw;
 	    imu_recovery_attempted = 0;
 	} else {
 	    Board2_U.gyroError = 1;

@@ -90,4 +90,12 @@ MPU60X0_StatusTypeDef mpu6050_get_gyro_fs(mpu6050_t* dev, mpu6050_gyro_fs_t* fs)
 MPU60X0_StatusTypeDef mpu6050_set_interrupt_mask(mpu6050_t* dev, uint8_t int_mask);
 MPU60X0_StatusTypeDef mpu6050_get_interrupt_mask(mpu6050_t* dev, uint8_t* int_mask);
 
+MPU60X0_StatusTypeDef mpu6050_get_accel_x(mpu6050_t* dev, float* ax);
+MPU60X0_StatusTypeDef mpu6050_get_accel_y(mpu6050_t* dev, float* ay);
+MPU60X0_StatusTypeDef mpu6050_get_accel_z(mpu6050_t* dev, float* az);
+MPU60X0_StatusTypeDef mpu6050_get_gyro_x(mpu6050_t* dev, float* gx);
+MPU60X0_StatusTypeDef mpu6050_get_gyro_y(mpu6050_t* dev, float* gy);
+MPU60X0_StatusTypeDef mpu6050_get_gyro_z(mpu6050_t* dev, float* gz);
+
+
 #endif /* INC_MPU6050_H_ */

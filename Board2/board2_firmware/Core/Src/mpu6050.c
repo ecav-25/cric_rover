@@ -30,6 +30,22 @@ static MPU60X0_StatusTypeDef mpu6050_read_bytes(mpu6050_t* dev, uint8_t reg, uin
     return MPU6050_OK;
 }
 
+static MPU60X0_StatusTypeDef mpu6050_read_axis(mpu6050_t* dev, uint8_t reg_h, float sensitivity, float* out){
+    if (dev == NULL || out == NULL)
+        return MPU6050_ERR;
+
+    uint8_t buf[2];
+
+    if (mpu6050_read_bytes(dev, reg_h, buf, 2) != MPU6050_OK)
+        return MPU6050_ERR_COMM;
+
+    int16_t raw = (int16_t)((buf[0] << 8) | buf[1]);
+    *out = (float)raw / sensitivity;
+
+    return MPU6050_OK;
+}
+
+
 /* -------------------- Sensibilità (g, °/s) -------------------- */
 
 static float mpu6050_accel_sensitivity(mpu6050_accel_fs_t range){
@@ -340,3 +356,35 @@ MPU60X0_StatusTypeDef mpu6050_get_interrupt_mask(mpu6050_t* dev, uint8_t* int_ma
     *int_mask = dev->mpu6050_cfg.int_enable;
     return MPU6050_OK;
 }
+
+MPU60X0_StatusTypeDef mpu6050_get_accel_x(mpu6050_t* dev, float* ax){
+    float sens = mpu6050_accel_sensitivity(dev->mpu6050_cfg.accel_range);
+    return mpu6050_read_axis(dev, ACCEL_XOUT_H, sens, ax);
+}
+
+MPU60X0_StatusTypeDef mpu6050_get_accel_y(mpu6050_t* dev, float* ay){
+    float sens = mpu6050_accel_sensitivity(dev->mpu6050_cfg.accel_range);
+    return mpu6050_read_axis(dev, ACCEL_YOUT_H, sens, ay);
+}
+
+MPU60X0_StatusTypeDef mpu6050_get_accel_z(mpu6050_t* dev, float* az){
+    float sens = mpu6050_accel_sensitivity(dev->mpu6050_cfg.accel_range);
+    return mpu6050_read_axis(dev, ACCEL_ZOUT_H, sens, az);
+}
+
+MPU60X0_StatusTypeDef mpu6050_get_gyro_x(mpu6050_t* dev, float* gx){
+    float sens = mpu6050_gyro_sensitivity(dev->mpu6050_cfg.gyro_range);
+    return mpu6050_read_axis(dev, GYRO_XOUT_H, sens, gx);
+}
+
+MPU60X0_StatusTypeDef mpu6050_get_gyro_y(mpu6050_t* dev, float* gy){
+    float sens = mpu6050_gyro_sensitivity(dev->mpu6050_cfg.gyro_range);
+    return mpu6050_read_axis(dev, GYRO_YOUT_H, sens, gy);
+}
+
+MPU60X0_StatusTypeDef mpu6050_get_gyro_z(mpu6050_t* dev, float* gz){
+    float sens = mpu6050_gyro_sensitivity(dev->mpu6050_cfg.gyro_range);
+    return mpu6050_read_axis(dev, GYRO_ZOUT_H, sens, gz);
+}
+
+
