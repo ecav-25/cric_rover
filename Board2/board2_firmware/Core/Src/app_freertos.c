@@ -101,8 +101,6 @@ mpu6050_t mpu_device;
 imu_vector_t acceleration;
 imu_vector_t gyroyaw;
 
-static bool imu_initialized = false;
-
 Motor_t motor_FA_openLoop;
 Motor_t motor_FB_openLoop;
 Motor_t motor_BA_openLoop;
@@ -131,8 +129,6 @@ extern TIM_HandleTypeDef htim4;
 extern I2C_HandleTypeDef hi2c1;
 
 extern UART_HandleTypeDef huart3;
-
-static bool imu_available = false;
 
 boolean_T deadline = 0;
 /* USER CODE END Variables */
@@ -221,10 +217,10 @@ void MX_FREERTOS_Init(void) {
 	    Error_Handler();
 	}
 	else if (status_mpu == MPU6050_ERR_COMM) {
-	    imu_available = false;
+		Board2_U.gyroError = 1;
 	}
 	else {
-	    imu_available = true;
+		Board2_U.gyroError = 0;
 	}
 
 	if (motor_init(&motor_FA_openLoop, MOTOR_HW_CONFIG[MOTOR_FA].htim, MOTOR_HW_CONFIG[MOTOR_FA].channel, &MOTOR_HW_CONFIG[MOTOR_FA].calib) != MOTOR_OK){
@@ -615,7 +611,6 @@ static void supervision_read_inputs(void)
 	mpu_status = mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
 
 	if (mpu_status == MPU6050_OK) {
-	    imu_initialized = true;
 	    Board2_U.gyroError = 0;
 	    Board2_U.gyroYaw = gyroyaw.z;
 	    imu_recovery_attempted = 0;
