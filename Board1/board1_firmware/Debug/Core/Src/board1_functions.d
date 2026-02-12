@@ -45,7 +45,8 @@ Core/Src/board1_functions.o: ../Core/Src/board1_functions.c \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h \
- ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h
+ ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
+ ../Core/Inc/pid_law.h
 ../Core/Inc/board1_functions.h:
 ../Core/Inc/Board1_types.h:
 ../Core/Inc/rtwtypes.h:
@@ -95,3 +96,4 @@ Core/Src/board1_functions.o: ../Core/Src/board1_functions.c \
 ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
+../Core/Inc/pid_law.h:

@@ -147,7 +147,7 @@ void UART_Send_Local_State(const void* s)
     static PacketStateB1 packet;
 
     /* 1. Pulizia memoria (Padding bytes a 0) */
-    memset(&packet, 0, sizeof(packet));
+    (void)memset(&packet, 0, sizeof(packet));
 
     /* 2. Copia dati sicura */
     Copy_StateBusB1(&packet.state, (const StateBusB1*)s);
@@ -167,7 +167,7 @@ void UART_Send_GlobalState(const void* gs)
 {
     static PacketGstate packet; /* Static per persistenza DMA */
 
-    memset(&packet, 0, sizeof(packet));
+    (void)memset(&packet, 0, sizeof(packet));
     Copy_GSBus(&packet.global_state, (const GSBus*)gs);
 
     __HAL_CRC_DR_RESET(&hcrc);
@@ -183,7 +183,7 @@ void UART_Send_Decision(const void* dec)
 {
     static PacketDecision packet; /* Static per persistenza DMA */
 
-    memset(&packet, 0, sizeof(packet));
+    (void)memset(&packet, 0, sizeof(packet));
     Copy_DecBus(&packet.decision, (const DecBus*)dec);
 
     __HAL_CRC_DR_RESET(&hcrc);
@@ -251,7 +251,7 @@ boolean_T CRC_Check_State(const void* s_packet)
 
     /* Crea una copia locale pulita per ricalcolare il CRC */
     StateBusB2 clean_state;
-    memset(&clean_state, 0, sizeof(clean_state));
+    (void)memset(&clean_state, 0, sizeof(clean_state));
     Copy_StateBusB2(&clean_state, &packet->state);
 
     __HAL_CRC_DR_RESET(&hcrc);
@@ -269,7 +269,7 @@ boolean_T CRC_Check_GlobalState(const void* gs_packet)
     const PacketGstate* packet = (const PacketGstate*)gs_packet;
 
     GSBus clean_state;
-    memset(&clean_state, 0, sizeof(clean_state));
+    (void)memset(&clean_state, 0, sizeof(clean_state));
     Copy_GSBus(&clean_state, &packet->global_state);
 
     __HAL_CRC_DR_RESET(&hcrc);
@@ -286,7 +286,7 @@ boolean_T CRC_Check_Decision(const void* dec_packet)
     const PacketDecision* packet = (const PacketDecision*)dec_packet;
 
     DecBus clean_decision;
-    memset(&clean_decision, 0, sizeof(clean_decision));
+    (void)memset(&clean_decision, 0, sizeof(clean_decision));
     Copy_DecBus(&clean_decision, &packet->decision);
 
     __HAL_CRC_DR_RESET(&hcrc);
@@ -335,10 +335,10 @@ boolean_T IO_Read_MasterTalk(void)
 void PID_Reset(void)
 {
 	/*Reset dello stato interno di tutti i regolatori PID.*/
-	PID_Law_reset(&pid_FA);
-	PID_Law_reset(&pid_FB);
-	PID_Law_reset(&pid_BA);
-	PID_Law_reset(&pid_BB);
+	(void)PID_Law_reset(&pid_FA);
+	(void)PID_Law_reset(&pid_FB);
+	(void)PID_Law_reset(&pid_BA);
+	(void)PID_Law_reset(&pid_BB);
 }
 
 
