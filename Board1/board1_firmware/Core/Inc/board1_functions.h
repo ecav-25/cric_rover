@@ -19,7 +19,7 @@
 /* ========================================================================== */
 
 /** @brief Byte di sincronizzazione per il protocollo di comunicazione. */
-#define PING    0xAA
+#define PING ((uint8_t)0xAA)
 
 /* ========================================================================== */
 /* 								  DATA TYPES                                  */
@@ -35,6 +35,18 @@ typedef struct {
   uint32_T crc;     /**< Checksum CRC-32 calcolato sul payload */
 } PacketStateB1;
 
+/**
+ * @brief Flag di completamento trasmissione (TX).
+ * @details Variabile globale che indica se l'operazione di trasmissione dati è stata conclusa con successo.
+ */
+extern boolean_T tx_complete;
+
+/**
+ * @brief Flag di completamento ricezione (RX).
+ * @details Variabile globale che indica se l'operazione di ricezione dati
+ * è terminata.
+ */
+extern boolean_T rx_complete;
 /* ========================================================================== */
 /* 							   UART FUNCTIONS                                 */
 /* ========================================================================== */

@@ -46,6 +46,6 @@ void DWD_Notify(Deadline_Watchdog_t *hwd, uint32_t flag);
  * @param hwd Puntatore all'istanza del watchdog.
  * @param htim_irq Puntatore al timer che ha generato l'interrupt corrente.
  */
-void DWD_CheckStatus(Deadline_Watchdog_t *hwd, TIM_HandleTypeDef *htim_irq);
+void DWD_CheckStatus(Deadline_Watchdog_t *hwd, const TIM_HandleTypeDef *htim_irq);
 
 #endif /* DEADLINE_WATCHDOG_H */
