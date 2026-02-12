@@ -1,3 +1,0 @@
-../Core/Src/deadline_watchdog.c:12:6:DWD_Init	24	static
-../Core/Src/deadline_watchdog.c:25:6:DWD_Notify	16	static
-../Core/Src/deadline_watchdog.c:37:6:DWD_CheckStatus	16	static

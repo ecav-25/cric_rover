@@ -1,0 +1,39 @@
+---
+:source:
+  :file: test/test_temp.c
+  :dirname: test
+  :basename: test_temp.c
+:successes:
+- :test: test_temp_init_should_calibrate_and_setup
+  :line: 61
+  :message: ''
+  :unity_test_time: 0
+- :test: test_temp_get_celsius_at_25_degrees
+  :line: 82
+  :message: ''
+  :unity_test_time: 0
+- :test: test_temp_get_celsius_at_high_temp
+  :line: 103
+  :message: ''
+  :unity_test_time: 0
+- :test: test_temp_read_raw_fails_if_start_fails
+  :line: 123
+  :message: ''
+  :unity_test_time: 0
+- :test: test_temp_null_pointers
+  :line: 137
+  :message: ''
+  :unity_test_time: 0
+- :test: test_temp_conversion_at_boundaries
+  :line: 147
+  :message: ''
+  :unity_test_time: 0
+:failures: []
+:ignores: []
+:counts:
+  :total: 6
+  :passed: 6
+  :failed: 0
+  :ignored: 0
+:stdout: []
+:time: 0.10690150037407875

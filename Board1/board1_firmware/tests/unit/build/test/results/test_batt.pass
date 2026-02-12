@@ -1,0 +1,47 @@
+---
+:source:
+  :file: test/test_batt.c
+  :dirname: test
+  :basename: test_batt.c
+:successes:
+- :test: test_batt_init_success
+  :line: 41
+  :message: ''
+  :unity_test_time: 0
+- :test: test_batt_init_fails_if_calibration_fails
+  :line: 53
+  :message: ''
+  :unity_test_time: 0
+- :test: test_batt_get_voltage_once_nominal
+  :line: 70
+  :message: ''
+  :unity_test_time: 0
+- :test: test_batt_get_voltage_at_zero
+  :line: 88
+  :message: ''
+  :unity_test_time: 0
+- :test: test_batt_get_voltage_at_max
+  :line: 106
+  :message: ''
+  :unity_test_time: 0
+- :test: test_batt_read_fails_if_start_fails
+  :line: 127
+  :message: ''
+  :unity_test_time: 0
+- :test: test_batt_read_fails_on_polling_timeout
+  :line: 141
+  :message: ''
+  :unity_test_time: 0
+- :test: test_batt_api_should_handle_null_pointers
+  :line: 161
+  :message: ''
+  :unity_test_time: 0
+:failures: []
+:ignores: []
+:counts:
+  :total: 8
+  :passed: 8
+  :failed: 0
+  :ignored: 0
+:stdout: []
+:time: 0.6842149998992682

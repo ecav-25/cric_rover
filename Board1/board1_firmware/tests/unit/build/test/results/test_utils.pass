@@ -1,0 +1,47 @@
+---
+:source:
+  :file: test/test_utils.c
+  :dirname: test
+  :basename: test_utils.c
+:successes:
+- :test: test_ramp_should_increase_gradually
+  :line: 17
+  :message: ''
+  :unity_test_time: 0
+- :test: test_ramp_emergency_braking_should_be_instant
+  :line: 28
+  :message: ''
+  :unity_test_time: 0
+- :test: test_ramp_normal_braking_to_zero_should_be_smoothed
+  :line: 39
+  :message: ''
+  :unity_test_time: 0
+- :test: test_ramp_should_snap_to_target
+  :line: 47
+  :message: ''
+  :unity_test_time: 0
+- :test: test_ramp_decrease_towards_non_zero_target
+  :line: 57
+  :message: ''
+  :unity_test_time: 0
+- :test: test_ramp_steady_state
+  :line: 66
+  :message: ''
+  :unity_test_time: 0
+- :test: test_ramp_zero_step_should_not_change_speed
+  :line: 75
+  :message: ''
+  :unity_test_time: 0
+- :test: test_ramp_crossing_zero
+  :line: 84
+  :message: ''
+  :unity_test_time: 0
+:failures: []
+:ignores: []
+:counts:
+  :total: 8
+  :passed: 8
+  :failed: 0
+  :ignored: 0
+:stdout: []
+:time: 0.06424149964004755

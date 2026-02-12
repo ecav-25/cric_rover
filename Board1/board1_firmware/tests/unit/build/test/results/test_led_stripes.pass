@@ -1,0 +1,39 @@
+---
+:source:
+  :file: test/test_led_stripes.c
+  :dirname: test
+  :basename: test_led_stripes.c
+:successes:
+- :test: test_led_set_range_invalid_params_should_do_nothing
+  :line: 42
+  :message: ''
+  :unity_test_time: 0
+- :test: test_led_render_only_when_dirty
+  :line: 57
+  :message: ''
+  :unity_test_time: 0
+- :test: test_led_ignore_commands_when_busy
+  :line: 69
+  :message: ''
+  :unity_test_time: 0
+- :test: test_steps_reset_on_animation_change
+  :line: 89
+  :message: ''
+  :unity_test_time: 0
+- :test: test_emergency_lights_cycle
+  :line: 108
+  :message: ''
+  :unity_test_time: 0
+- :test: test_DMA_callbacks_logic
+  :line: 125
+  :message: ''
+  :unity_test_time: 0
+:failures: []
+:ignores: []
+:counts:
+  :total: 6
+  :passed: 6
+  :failed: 0
+  :ignored: 0
+:stdout: []
+:time: 0.3511185999959707

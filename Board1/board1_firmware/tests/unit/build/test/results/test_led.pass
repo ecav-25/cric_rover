@@ -1,0 +1,43 @@
+---
+:source:
+  :file: test/test_led.c
+  :dirname: test
+  :basename: test_led.c
+:successes:
+- :test: test_led_init_should_setup_gpio_correctly
+  :line: 59
+  :message: ''
+  :unity_test_time: 0
+- :test: test_led_on_should_set_pin_high
+  :line: 72
+  :message: ''
+  :unity_test_time: 0
+- :test: test_led_step_red_solid
+  :line: 91
+  :message: ''
+  :unity_test_time: 0
+- :test: test_led_step_blinking_red_sequence
+  :line: 110
+  :message: ''
+  :unity_test_time: 0
+- :test: test_led_transition_between_blinkings_resets_timing
+  :line: 132
+  :message: ''
+  :unity_test_time: 0
+- :test: test_led_step_blinking_red_slow_timing
+  :line: 161
+  :message: ''
+  :unity_test_time: 0
+- :test: test_led_api_should_return_error_on_null_pointer
+  :line: 186
+  :message: ''
+  :unity_test_time: 0
+:failures: []
+:ignores: []
+:counts:
+  :total: 7
+  :passed: 7
+  :failed: 0
+  :ignored: 0
+:stdout: []
+:time: 0.4240498999133706

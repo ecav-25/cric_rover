@@ -1,0 +1,55 @@
+---
+:source:
+  :file: test/test_motor.c
+  :dirname: test
+  :basename: test_motor.c
+:successes:
+- :test: test_motor_init_should_set_stop_value_and_start_pwm
+  :line: 53
+  :message: ''
+  :unity_test_time: 0
+- :test: test_motor_set_forward_half_speed
+  :line: 72
+  :message: ''
+  :unity_test_time: 0
+- :test: test_motor_set_backward_full_speed
+  :line: 88
+  :message: ''
+  :unity_test_time: 0
+- :test: test_motor_set_zero_duty_should_go_to_stop_value
+  :line: 100
+  :message: ''
+  :unity_test_time: 0
+- :test: test_motor_set_over_100_duty_should_be_clipped
+  :line: 120
+  :message: ''
+  :unity_test_time: 0
+- :test: test_motor_api_should_return_error_on_null_ptrs
+  :line: 133
+  :message: ''
+  :unity_test_time: 0
+- :test: test_motor_set_rounding_check
+  :line: 143
+  :message: ''
+  :unity_test_time: 0
+- :test: test_motor_set_invalid_direction_should_stop
+  :line: 157
+  :message: ''
+  :unity_test_time: 0
+- :test: test_motor_init_on_channel_2
+  :line: 170
+  :message: ''
+  :unity_test_time: 0
+- :test: test_motor_set_max_uint16_scale
+  :line: 185
+  :message: ''
+  :unity_test_time: 0
+:failures: []
+:ignores: []
+:counts:
+  :total: 10
+  :passed: 10
+  :failed: 0
+  :ignored: 0
+:stdout: []
+:time: 0.24895050004124641

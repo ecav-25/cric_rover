@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board1'.
  *
- * Model version                  : 1.2490
+ * Model version                  : 1.2505
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Tue Feb 10 12:36:38 2026
+ * C/C++ source code generated on : Thu Feb 12 10:49:12 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -292,13 +292,13 @@ extern RT_MODEL_Board1_T *const Board1_M;
  * MATLAB hilite_system command to trace the generated code back
  * to the parent model.  For example,
  *
- * hilite_system('Board1_supervision_Copia/Board1')    - opens subsystem Board1_supervision_Copia/Board1
- * hilite_system('Board1_supervision_Copia/Board1/Kp') - opens and selects block Kp
+ * hilite_system('Board1_supervision/Board1')    - opens subsystem Board1_supervision/Board1
+ * hilite_system('Board1_supervision/Board1/Kp') - opens and selects block Kp
  *
  * Here is the system hierarchy for this model
  *
- * '<Root>' : 'Board1_supervision_Copia'
- * '<S1>'   : 'Board1_supervision_Copia/Board1'
+ * '<Root>' : 'Board1_supervision'
+ * '<S1>'   : 'Board1_supervision/Board1'
  */
 #endif                                 /* Board1_h_ */
 
