@@ -3,16 +3,12 @@
 
 /* -------------------- Helpers -------------------- */
 
-static inline uint8_t clip_duty(uint8_t duty)
-{
-    uint8_t res = duty;
-
-    if (res > MOTOR_MAX_DUTY)
-    {
-        res = MOTOR_MAX_DUTY;
+static inline uint8_t clip_duty(uint8_t duty){
+    if (duty > MOTOR_MAX_DUTY){
+    	return MOTOR_MAX_DUTY;
     }
 
-    return res;
+    return duty;
 }
 
 static uint16_t compute_pwm(const Motor_t* m, uint8_t duty, Motor_Direction_t dir){
@@ -43,37 +39,28 @@ static inline void apply_pwm(const Motor_t* m, uint16_t value){
 
 /* -------------------- API -------------------- */
 
-Motor_Status_t motor_init(Motor_t* motor, TIM_HandleTypeDef* htim, uint32_t channel, const Motor_Calibration_t* calib)
-{
-    Motor_Status_t status = MOTOR_ERR;
-
-    if ((motor != NULL) && (htim != NULL) && (calib != NULL))
-    {
-        motor->htim = htim;
-        motor->channel = channel;
-        motor->calib = *calib;
-
-        apply_pwm(motor, calib->pwm_stop);
-        (void)HAL_TIM_PWM_Start(htim, channel);
-
-        status = MOTOR_OK;
+Motor_Status_t motor_init(Motor_t* motor, TIM_HandleTypeDef* htim, uint32_t channel, const Motor_Calibration_t* calib){
+	if ((motor == NULL) || (htim == NULL) || (calib == NULL)){
+        return MOTOR_ERR;
     }
 
-    return status;
+    motor->htim   = htim;
+    motor->channel = channel;
+    motor->calib  = *calib;
+
+    apply_pwm(motor, calib->pwm_stop);
+    HAL_TIM_PWM_Start(htim, channel);
+
+    return MOTOR_OK;
 }
 
-Motor_Status_t motor_set(const Motor_t* motor, uint8_t duty, Motor_Direction_t dir)
-{
-    Motor_Status_t status = MOTOR_ERR;
-
-    if (motor != NULL)
-    {
-        uint8_t safe_duty = clip_duty(duty);
-
-        apply_pwm(motor, compute_pwm(motor, safe_duty, dir));
-
-        status = MOTOR_OK;
+Motor_Status_t motor_set(Motor_t* motor, uint8_t duty, Motor_Direction_t dir){
+	if (motor == NULL){
+        return MOTOR_ERR;
     }
 
-    return status;
+    duty = clip_duty(duty);
+    apply_pwm(motor, compute_pwm(motor, duty, dir));
+
+    return MOTOR_OK;
 }

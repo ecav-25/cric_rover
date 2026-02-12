@@ -47,13 +47,12 @@ Core/Src/app_freertos.o: ../Core/Src/app_freertos.c \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  ../Core/Inc/Board1.h ../Core/Inc/board1_functions.h ../Core/Inc/batt.h \
  ../Core/Inc/temp.h ../Core/Inc/encoder.h ../Core/Inc/tim.h \
- ../Core/Inc/main.h ../Core/Inc/pid_law.h ../Core/Inc/motor.h \
- ../Core/Inc/led.h ../Core/Inc/gpio.h ../Core/Inc/led_stripes.h \
+ ../Core/Inc/main.h ../Core/Inc/pid.h ../Core/Inc/pid_law.h \
+ ../Core/Inc/motor.h ../Core/Inc/led.h ../Core/Inc/gpio.h \
+ ../Core/Inc/led_stripes.h \
  ../Drivers/CMSIS/Device/ST/STM32G4xx/Include/stm32g474xx.h \
  ../Core/Inc/dma.h ../Core/Inc/deadline_watchdog.h ../Core/Inc/utils.h \
- ../Core/Inc/hw_config.h ../Core/Inc/motor.h ../Core/Inc/encoder.h \
- ../Core/Inc/led_stripes.h ../Core/Inc/led.h \
- ../Core/Inc/motor_diagnostic.h
+ ../Core/Inc/hw_config.h ../Core/Inc/motor.h ../Core/Inc/encoder.h
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
@@ -109,6 +108,7 @@ Core/Src/app_freertos.o: ../Core/Src/app_freertos.c \
 ../Core/Inc/encoder.h:
 ../Core/Inc/tim.h:
 ../Core/Inc/main.h:
+../Core/Inc/pid.h:
 ../Core/Inc/pid_law.h:
 ../Core/Inc/motor.h:
 ../Core/Inc/led.h:
@@ -121,6 +121,3 @@ Core/Src/app_freertos.o: ../Core/Src/app_freertos.c \
 ../Core/Inc/hw_config.h:
 ../Core/Inc/motor.h:
 ../Core/Inc/encoder.h:
-../Core/Inc/led_stripes.h:
-../Core/Inc/led.h:
-../Core/Inc/motor_diagnostic.h:

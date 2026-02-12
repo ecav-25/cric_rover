@@ -1,5 +1,5 @@
-#ifndef UTILS_H_
-#define UTILS_H_
+#ifndef RAMP_H_
+#define RAMP_H_
 
 #include "rtwtypes.h"
 #include "Board1_types.h"
@@ -13,6 +13,7 @@
 static inline real32_T ramp(real32_T current, real32_T target, real32_T step, BRAKING_TYPE braking_mode){
     real32_T effective_step = step;
 
+    /* Gestione braking */
     if ((braking_mode == EMERGENCY) && (target == 0.0f)) {
         return target;
     }
@@ -21,6 +22,7 @@ static inline real32_T ramp(real32_T current, real32_T target, real32_T step, BR
         effective_step = step * NORMAL_BRK_COEFF;
     }
 
+    /* Ramping vero e proprio */
     if (current < (target - effective_step)) {
         return current + effective_step;
     }
@@ -33,4 +35,4 @@ static inline real32_T ramp(real32_T current, real32_T target, real32_T step, BR
 }
 
 
-#endif /* UTILS_H_ */
+#endif /* RAMP_H_ */

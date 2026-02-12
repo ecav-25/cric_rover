@@ -43,7 +43,8 @@ const HW_Led_Config_t HW_LED_CONFIG[LED_COUNT_HW] = {
 			.init_pin_state = {
 					GPIO_PIN_RESET,
 					GPIO_PIN_RESET
-			}
+			},
+			.toggle_steps = 8
 		},
 		[LED_B] = {
 			.port = {
@@ -57,7 +58,8 @@ const HW_Led_Config_t HW_LED_CONFIG[LED_COUNT_HW] = {
 			.init_pin_state = {
 					GPIO_PIN_RESET,
 					GPIO_PIN_RESET
-			}
+			},
+			.toggle_steps = 8
 		}
 };
 

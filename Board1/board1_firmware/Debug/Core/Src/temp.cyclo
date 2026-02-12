@@ -1,7 +1,11 @@
 ../Core/Src/temp.c:5:22:temp_cfg_channel_	4
-../Core/Src/temp.c:24:22:temp_read_once_	6
-../Core/Src/temp.c:54:14:temp_raw_to_celsius_	1
-../Core/Src/temp.c:61:22:temp_read_raw_internal_	9
-../Core/Src/temp.c:98:15:temp_init	5
-../Core/Src/temp.c:124:15:temp_read_raw_once	1
-../Core/Src/temp.c:129:15:temp_get_celsius_once	4
+../Core/Src/temp.c:14:22:temp_read_once_	5
+../Core/Src/temp.c:32:14:temp_raw_to_celsius_	1
+../Core/Src/temp.c:39:22:temp_read_raw_internal_	7
+../Core/Src/temp.c:63:15:temp_init	4
+../Core/Src/temp.c:81:15:temp_read_raw_once	1
+../Core/Src/temp.c:86:15:temp_read_raw_avg	1
+../Core/Src/temp.c:91:15:temp_get_celsius_once	4
+../Core/Src/temp.c:106:15:temp_get_celsius_avg	4
+../Core/Src/temp.c:121:15:temp_get_last_raw	3
+../Core/Src/temp.c:129:15:temp_get_last_celsius	3
