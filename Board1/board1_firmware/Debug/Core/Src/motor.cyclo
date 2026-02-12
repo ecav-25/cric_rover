@@ -1,5 +1,0 @@
-../Core/Src/motor.c:6:23:clip_duty	2
-../Core/Src/motor.c:14:17:compute_pwm	4
-../Core/Src/motor.c:36:20:apply_pwm	6
-../Core/Src/motor.c:42:16:motor_init	4
-../Core/Src/motor.c:57:16:motor_set	2

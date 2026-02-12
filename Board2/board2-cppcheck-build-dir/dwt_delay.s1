@@ -1,0 +1,5 @@
+DWT_Delay_Init
+DWT_Delay_IsReady
+dwt_delay_cycles
+DWT_Delay_us call:[DWT_Delay_IsReady,dwt_delay_cycles]
+DWT_Delay_ms call:[DWT_Delay_IsReady,DWT_Delay_us]

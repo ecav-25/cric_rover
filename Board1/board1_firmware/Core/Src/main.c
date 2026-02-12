@@ -179,13 +179,6 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
-{
-    (void)xTask;
-    (void)pcTaskName;
-    taskDISABLE_INTERRUPTS();
-    for (;;);
-}
 
 /* USER CODE END 4 */
 

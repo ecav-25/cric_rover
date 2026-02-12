@@ -1,0 +1,43 @@
+---
+:source:
+  :file: test/test_mpu6050.c
+  :dirname: test
+  :basename: test_mpu6050.c
+:successes:
+- :test: test_mpu6050_who_am_i_success
+  :line: 77
+  :message: ''
+  :unity_test_time: 0
+- :test: test_mpu6050_get_accel_value_1g_z
+  :line: 93
+  :message: ''
+  :unity_test_time: 0
+- :test: test_mpu6050_comm_error
+  :line: 114
+  :message: ''
+  :unity_test_time: 0
+- :test: test_mpu6050_get_accel_negative_g
+  :line: 127
+  :message: ''
+  :unity_test_time: 0
+- :test: test_mpu6050_accel_range_8g
+  :line: 141
+  :message: ''
+  :unity_test_time: 0
+- :test: test_mpu6050_get_gyro_conversion
+  :line: 156
+  :message: ''
+  :unity_test_time: 0
+- :test: test_mpu6050_timeout_error
+  :line: 171
+  :message: ''
+  :unity_test_time: 0
+:failures: []
+:ignores: []
+:counts:
+  :total: 7
+  :passed: 7
+  :failed: 0
+  :ignored: 0
+:stdout: []
+:time: 0.23265730030834675

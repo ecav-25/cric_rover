@@ -1,0 +1,3 @@
+HAL_InitTick global:[htim6] call:[HAL_NVIC_EnableIRQ,HAL_NVIC_SetPriority,HAL_RCC_GetClockConfig,HAL_RCC_GetPCLK1Freq,HAL_TIM_Base_Init,HAL_TIM_Base_Start_IT,__HAL_RCC_TIM6_CLK_ENABLE]
+HAL_SuspendTick global:[htim6] call:[__HAL_TIM_DISABLE_IT] noreturn:[__HAL_TIM_DISABLE_IT]
+HAL_ResumeTick global:[htim6] call:[__HAL_TIM_ENABLE_IT] noreturn:[__HAL_TIM_ENABLE_IT]

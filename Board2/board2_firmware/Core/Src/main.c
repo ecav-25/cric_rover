@@ -190,13 +190,6 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
     }
 }
 
-void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
-{
-    (void)xTask;
-    (void)pcTaskName;
-    taskDISABLE_INTERRUPTS();
-    for (;;);
-}
 
 /* USER CODE END 4 */
 

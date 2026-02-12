@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board1'.
  *
- * Model version                  : 1.2312
+ * Model version                  : 1.2505
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Thu Jan 29 18:13:58 2026
+ * C/C++ source code generated on : Thu Feb 12 10:49:12 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -38,8 +38,9 @@ typedef enum {
   OFF = 0,                             /* Default value */
   WHITE,
   RED,
+  BLINKING_WHITE,
   BLINKING_RED,
-  BLINKING_WHITE
+  BLINKING_RED_SLOW
 } LED_TYPE;
 
 #endif
@@ -50,11 +51,13 @@ typedef enum {
 typedef enum {
   IDLE = 0,                            /* Default value */
   BACKLIGHTS,
-  BRAKING_LIGHT,
+  BRAKING_LIGHTS,
   BACKWARD_LIGHTS,
   ARROW_LEFT,
   ARROW_RIGHT,
-  SPECIAL_LIGHTS
+  SPECIAL_LIGHTS,
+  EMERGENCY_LIGHTS,
+  DEGRADED_LIGHTS
 } REAR_LED_TYPE;
 
 #endif
@@ -67,7 +70,8 @@ typedef enum {
   SIGN_WHITE,
   SIGN_GREEN,
   SIGN_ORANGE,
-  SIGN_RED
+  SIGN_RED,
+  SIGN_YELLOW
 } REAR_SIGN_TYPE;
 
 #endif
@@ -98,6 +102,7 @@ typedef struct {
   REAR_SIGN_TYPE rear_sign;
   ROVER_MODE mode;
   boolean_T relay;
+  boolean_T mux;
 } DecBus;
 
 #endif
@@ -112,6 +117,10 @@ typedef struct {
   int16_T velocity_FB;
   int16_T velocity_BA;
   int16_T velocity_BB;
+  boolean_T motorError_FA;
+  boolean_T motorError_FB;
+  boolean_T motorError_BA;
+  boolean_T motorError_BB;
 } StateBusB1;
 
 #endif
@@ -120,8 +129,6 @@ typedef struct {
 #define DEFINED_TYPEDEF_FOR_StateBusB2_
 
 typedef struct {
-  real32_T acceleration_y;
-  real32_T acceleration_x;
   real32_T gyroYaw;
   uint16_T sonar1;
   uint16_T sonar2;
@@ -135,6 +142,8 @@ typedef struct {
   boolean_T r_stick_button;
   boolean_T l_stick_button;
   uint8_T controller_battery;
+  boolean_T controllerError;
+  boolean_T gyroError;
 } StateBusB2;
 
 #endif
@@ -145,7 +154,8 @@ typedef struct {
 typedef enum {
   NO_OBSTACLE = 0,                     /* Default value */
   MOVING_FROM_LEFT,
-  MOVING_FROM_RIGHT
+  MOVING_FROM_RIGHT,
+  MOVING_FROM_BOTH
 } MOVING_OBSTACLE_TYPE;
 
 #endif
@@ -158,7 +168,8 @@ typedef struct {
   StateBusB2 stateB2;
   MOVING_OBSTACLE_TYPE mov_obs;
   boolean_T spc_retro;
-  uint8_T max_vel;
+  boolean_T limit_vel;
+  int8_T change_vel;
   boolean_T obs_detection;
 } GSBus;
 
@@ -191,6 +202,17 @@ typedef struct {
   StateBusB2 state;
   uint32_T crc;
 } PacketStateB2;
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_WORKING_STATUS_TYPE_
+#define DEFINED_TYPEDEF_FOR_WORKING_STATUS_TYPE_
+
+typedef enum {
+  NORMAL_WORKING = 0,                  /* Default value */
+  CRITICAL_VOLTAGE_WORKING,
+  MOTOR_ERROR_WORKING
+} WORKING_STATUS_TYPE;
 
 #endif
 

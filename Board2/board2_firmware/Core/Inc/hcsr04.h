@@ -1,7 +1,7 @@
 #ifndef HCSR04_H
 #define HCSR04_H
 
-#define HCSR04_MAX_DISTANCE 400
+#define HCSR04_MAX_DISTANCE 400U
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -26,7 +26,7 @@ typedef enum {
 } hcsr04_status_t;
 
 /* Delay in microsecondi fornito dall’app (OS-agnostico). */
-typedef void (*hcsr04_delay_us_f)(uint32_t us);
+typedef uint8_t (*hcsr04_delay_us_f)(uint32_t us);
 
 typedef struct {
     TIM_HandleTypeDef *htim;

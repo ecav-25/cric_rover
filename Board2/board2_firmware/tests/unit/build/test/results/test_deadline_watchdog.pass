@@ -1,0 +1,51 @@
+---
+:source:
+  :file: test/test_deadline_watchdog.c
+  :dirname: test
+  :basename: test_deadline_watchdog.c
+:successes:
+- :test: test_callback
+  :line: 29
+  :message: ''
+  :unity_test_time: 0
+- :test: test_DWD_Init_Should_SetupAndStartTimer
+  :line: 54
+  :message: ''
+  :unity_test_time: 0
+- :test: test_DWD_Notify_Should_UpdateMaskAndNotResetIfIncomplete
+  :line: 79
+  :message: ''
+  :unity_test_time: 0
+- :test: test_DWD_Notify_Should_ResetWatchdogWhenAllTasksNotified
+  :line: 98
+  :message: ''
+  :unity_test_time: 0
+- :test: test_DWD_Notify_Should_IgnoreRedundantFlags
+  :line: 115
+  :message: ''
+  :unity_test_time: 0
+- :test: test_DWD_Notify_Should_ResetCounterPreciselyOnLastFlag
+  :line: 134
+  :message: ''
+  :unity_test_time: 0
+- :test: test_DWD_CheckStatus_Should_CallCallbackAndStopTimerOnMatch
+  :line: 156
+  :message: ''
+  :unity_test_time: 0
+- :test: test_DWD_CheckStatus_Should_IgnoreOtherTimers
+  :line: 173
+  :message: ''
+  :unity_test_time: 0
+- :test: test_DWD_CheckStatus_Should_NotCrashIfCallbackIsNull
+  :line: 191
+  :message: ''
+  :unity_test_time: 0
+:failures: []
+:ignores: []
+:counts:
+  :total: 9
+  :passed: 9
+  :failed: 0
+  :ignored: 0
+:stdout: []
+:time: 0.5479765003547072

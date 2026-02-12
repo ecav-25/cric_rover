@@ -4,30 +4,52 @@
 
 static Temp_Status_t temp_cfg_channel_(temp_t *t)
 {
-	//t == NULL ecc anche dopo
-    if(t == NULL || t->hadc == NULL)
-		return TEMP_ERR;
+    Temp_Status_t status = TEMP_ERR;
 
-    return (HAL_ADC_ConfigChannel(t->hadc, &t->channel_cfg) == HAL_OK) ? TEMP_OK : TEMP_ERR;
+    if ((t != NULL) && (t->hadc != NULL))
+    {
+        if (HAL_ADC_ConfigChannel(t->hadc, &t->channel_cfg) == HAL_OK)
+        {
+            status = TEMP_OK;
+        }
+        else
+        {
+            status = TEMP_ERR_COMM;
+        }
+    }
+
+    return status;
 }
 
 static Temp_Status_t temp_read_once_(temp_t *t, uint32_t *raw)
 {
-    if (t == NULL || raw == NULL) return TEMP_ERR;
+    Temp_Status_t status = TEMP_ERR;
 
-    if (HAL_ADC_Start(t->hadc) != HAL_OK)
-        return TEMP_ERR;
+    if ((t != NULL) && (raw != NULL) && (t->hadc != NULL))
+    {
+        if (HAL_ADC_Start(t->hadc) == HAL_OK)
+        {
+            if (HAL_ADC_PollForConversion(t->hadc, t->timeout_ms) == HAL_OK)
+            {
+                *raw = HAL_ADC_GetValue(t->hadc);
+                status = TEMP_OK;
+            }
+            else
+            {
+                status = TEMP_ERR_COMM;
+            }
 
-    if (HAL_ADC_PollForConversion(t->hadc, t->timeout_ms) != HAL_OK) {
-        HAL_ADC_Stop(t->hadc);
-        return TEMP_ERR;
+            (void)HAL_ADC_Stop(t->hadc);
+        }
+        else
+        {
+            status = TEMP_ERR_COMM;
+        }
     }
 
-    *raw = HAL_ADC_GetValue(t->hadc);
-    HAL_ADC_Stop(t->hadc);
-
-    return TEMP_OK;
+    return status;
 }
+
 
 static float temp_raw_to_celsius_(uint32_t raw)
 {
@@ -38,44 +60,65 @@ static float temp_raw_to_celsius_(uint32_t raw)
 
 static Temp_Status_t temp_read_raw_internal_(temp_t *t, uint8_t samples, uint32_t *raw)
 {
-    if (t == NULL || raw == NULL || samples == 0) return TEMP_ERR;
+    Temp_Status_t status = TEMP_ERR;
 
-    if (temp_cfg_channel_(t) != TEMP_OK)
-        return TEMP_ERR;
+    if ((t != NULL) && (raw != NULL) && (samples != 0U))
+    {
+        status = temp_cfg_channel_(t);
 
-    uint32_t acc = 0U;
-    uint32_t sample;
+        if (status == TEMP_OK)
+        {
+            uint32_t acc = 0U;
+            uint32_t sample = 0U;
 
-    for (uint8_t i = 0; i < samples; i++) {
-        if (temp_read_once_(t, &sample) != TEMP_OK)
-            return TEMP_ERR;
-        acc += sample;
+            for (uint8_t i = 0U; (i < samples) && (status == TEMP_OK); i++)
+            {
+                status = temp_read_once_(t, &sample);
+
+                if (status == TEMP_OK)
+                {
+                    acc += sample;
+                }
+            }
+
+            if (status == TEMP_OK)
+            {
+                *raw = acc / (uint32_t)samples;
+                t->raw_last = *raw;
+            }
+        }
     }
 
-    *raw = acc / samples;
-    t->raw_last = *raw;
-
-    return TEMP_OK;
+    return status;
 }
+
 
 /* ================== PUBLIC API ================== */
 
 Temp_Status_t temp_init(temp_t *t, ADC_HandleTypeDef *hadc, const ADC_ChannelConfTypeDef* channel_cfg, uint32_t timeout_ms)
 {
-    if (t == NULL || hadc == NULL) return TEMP_ERR;
+    Temp_Status_t status = TEMP_ERR;
 
-    t->hadc          = hadc;
-    t->channel_cfg   = *channel_cfg;
-    t->timeout_ms    = timeout_ms;
+    if ((t != NULL) && (hadc != NULL) && (channel_cfg != NULL))
+    {
+        t->hadc = hadc;
+        t->channel_cfg = *channel_cfg;
+        t->timeout_ms = timeout_ms;
 
-    t->raw_last      = 0U;
-    t->temp_c_last   = 0.0f;
+        t->raw_last = 0U;
+        t->temp_c_last = 0.0f;
 
-    /* calibrazione ADC (una tantum) */
-    if (HAL_ADCEx_Calibration_Start(t->hadc, t->channel_cfg.SingleDiff) != HAL_OK)
-        return TEMP_ERR;
+        if (HAL_ADCEx_Calibration_Start(t->hadc, t->channel_cfg.SingleDiff) == HAL_OK)
+        {
+            status = TEMP_OK;
+        }
+        else
+        {
+            status = TEMP_ERR_COMM;
+        }
+    }
 
-    return TEMP_OK;
+    return status;
 }
 
 Temp_Status_t temp_read_raw_once(temp_t *t, uint32_t *raw)
@@ -83,53 +126,25 @@ Temp_Status_t temp_read_raw_once(temp_t *t, uint32_t *raw)
     return temp_read_raw_internal_(t, 1, raw);
 }
 
-Temp_Status_t temp_read_raw_avg(temp_t *t, uint8_t samples, uint32_t *raw)
-{
-    return temp_read_raw_internal_(t, samples, raw);
-}
-
 Temp_Status_t temp_get_celsius_once(temp_t *t, float *temp_c)
 {
-    if (t == NULL || temp_c == NULL) return TEMP_ERR;
+    Temp_Status_t status = TEMP_ERR;
 
-    uint32_t raw;
+    if ((t != NULL) && (temp_c != NULL))
+    {
+        uint32_t raw;
 
-    if (temp_read_raw_once(t, &raw) != TEMP_OK)
-        return TEMP_ERR;
+        status = temp_read_raw_once(t, &raw);
 
-    t->temp_c_last = temp_raw_to_celsius_(raw);
-    *temp_c = t->temp_c_last;
+        if (status == TEMP_OK)
+        {
+            t->temp_c_last = temp_raw_to_celsius_(raw);
+            *temp_c = t->temp_c_last;
+        }
+    }
 
-    return TEMP_OK;
+    return status;
 }
 
-Temp_Status_t temp_get_celsius_avg(temp_t *t, uint8_t samples, float *temp_c)
-{
-    if (t == NULL || temp_c == NULL) return TEMP_ERR;
 
-    uint32_t raw;
 
-    if (temp_read_raw_avg(t, samples, &raw) != TEMP_OK)
-        return TEMP_ERR;
-
-    t->temp_c_last = temp_raw_to_celsius_(raw);
-    *temp_c = t->temp_c_last;
-
-    return TEMP_OK;
-}
-
-Temp_Status_t temp_get_last_raw(const temp_t *t, uint32_t *raw)
-{
-    if (t == NULL || raw == NULL) return TEMP_ERR;
-
-    *raw = t->raw_last;
-    return TEMP_OK;
-}
-
-Temp_Status_t temp_get_last_celsius(const temp_t *t, float *temp_c)
-{
-    if (t == NULL || temp_c == NULL) return TEMP_ERR;
-
-    *temp_c = t->temp_c_last;
-    return TEMP_OK;
-}

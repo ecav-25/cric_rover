@@ -28,7 +28,52 @@ const ADC_HW_Config_t ADC_HW_CONFIG[ADC_COUNT] = {
 	[ADC_BATTERY_VOLTAGE] = { &hadc1, { ADC_CHANNEL_9, ADC_REGULAR_RANK_1, ADC_SAMPLETIME_247CYCLES_5, ADC_SINGLE_ENDED, ADC_OFFSET_NONE, 0U } },
 };
 
+/* ===================== LEDS ===================== */
 
+const HW_Led_Config_t HW_LED_CONFIG[LED_COUNT_HW] = {
+		[LED_A] = {
+			.port = {
+				FA_LED_RED_GPIO_Port,   	// LED_RED
+				FA_LED_WHITE_GPIO_Port    	// LED_WHITE
+			},
+			.pin = {
+				FA_LED_RED_Pin,   	// LED_RED
+				FA_LED_WHITE_Pin    // LED_WHITE
+			},
+			.init_pin_state = {
+					GPIO_PIN_RESET,
+					GPIO_PIN_RESET
+			}
+		},
+		[LED_B] = {
+			.port = {
+				FB_LED_RED_GPIO_Port,   	// LED_RED
+				FB_LED_WHITE_GPIO_Port    	// LED_WHITE
+			},
+			.pin = {
+				FB_LED_RED_Pin,   	// LED_RED
+				FB_LED_WHITE_Pin    // LED_WHITE
+			},
+			.init_pin_state = {
+					GPIO_PIN_RESET,
+					GPIO_PIN_RESET
+			}
+		}
+};
+
+const led_stripes_config_t led_stripes_cfg[LED_STRIPES_COUNT] = {
+		[LED_STRIPES_MAIN] = {
+		  .htim = &htim17,
+		  .hdma = &hdma_tim17_ch1,
+		  .pwm_hi = 135,
+		  .pwm_lo = 55,
+		  .reset_halves = 2,
+		  .scale_b = 0xF0,
+		  .scale_g = 0xB0,
+		  .scale_r = 0xFF,
+		  .tim_channel = TIM_CHANNEL_1
+		}
+};
 
 
 

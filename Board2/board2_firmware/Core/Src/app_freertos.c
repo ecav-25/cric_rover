@@ -54,25 +54,21 @@ typedef StaticTask_t osStaticThreadDef_t;
 #define SUPERVISION_PERIOD		(60)
 #define TELEMETRY_LOGGER_PERIOD	(120)
 #define SONAR_SCAN_PERIOD 		(40)
-#define MAX_RPM 				(150)
+#define MAX_RPM 				(150U)
 
 #define OPENLOOP_STEP       	(OPENLOOP_RAMP_SLOPE * (SUPERVISION_PERIOD / 1000.0))
 
-#define SONAR_NUMBER			(3)
+#define SONAR_NUMBER			(3U)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-static void app_delay_us(uint32_t us)
-{
-    (void)DWT_Delay_us(us);
-}
 
-typedef enum { S_LEFT = 0, S_CENTER, S_RIGHT } rr_state_t;
 
-static volatile uint16_T g_sonar_distances[3];
 
-static hcsr04_t us_left, us_center, us_right;
+static hcsr04_t us_left;
+static hcsr04_t us_center;
+static hcsr04_t us_right;
 
 /* USER CODE END PM */
 
@@ -87,57 +83,25 @@ boolean_T button3 = 0;
 boolean_T button4 = 0;
 uint8_T controller_battery = 0;
 
-volatile uint16_t dbg_controller_x = 255;
-volatile uint16_t dbg_controller_y = 255;
-
-volatile uint8_t dbg_B1 = 0;
-volatile uint8_t dbg_B2 = 0;
-volatile uint8_t dbg_B3 = 0;
-volatile uint8_t dbg_B4 = 0;
-
-volatile uint8_t dbg_B_r_stick = 0;
-volatile uint8_t dbg_B_l_stick = 0;
-
-volatile uint8_t dbg_controller_battery = 100;
-
-DecBus debug_decision;
-
 Controller_t controller;
 mpu6050_t mpu_device;
-imu_vector_t acceleration;
-imu_vector_t gyroyaw;
 
-Motor_t motor_FA_openLoop;
-Motor_t motor_FB_openLoop;
-Motor_t motor_BA_openLoop;
-Motor_t motor_BB_openLoop;
+float gyroyaw;
 
-DecBus debug_output;
-volatile uint32_t debug_count_step = 0;
-volatile uint8_t debug_state_degraded = 0;
-volatile uint8_t debug_state = 0;
-volatile uint16_t debug_sonar1=400;
-volatile uint16_t debug_sonar2=400;
-volatile uint16_t debug_sonar3=400;
+static Motor_t motor_FA_openLoop;
+static Motor_t motor_FB_openLoop;
+static Motor_t motor_BA_openLoop;
+static Motor_t motor_BB_openLoop;
+
 volatile MPU60X0_StatusTypeDef status_acc = 0;
 volatile MPU60X0_StatusTypeDef status_gyro = 0;
-volatile real32_T debug_acc_x = 0;
-volatile real32_T debug_acc_y = 0;
-volatile real32_T debug_gyroYaw = 0;
-uint32_t debug_time = 0, debug_diff = 0, debug_diff_2 = 0;
-uint32_t degraded=0;
-uint8_t state_good=0;
-boolean_T retransmit_seen_in_cycle = false;
-uint32_t count_retransmit=0;
 
 extern TIM_HandleTypeDef htim1;
-extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim4;
 extern I2C_HandleTypeDef hi2c1;
 
 extern UART_HandleTypeDef huart3;
 
-boolean_T deadline = 0;
 /* USER CODE END Variables */
 /* Definitions for readSonar */
 osThreadId_t readSonarHandle;
@@ -181,7 +145,7 @@ const osThreadAttr_t telemetryLogger_attributes = {
 static void supervision_read_inputs(void);
 void executeSupervision();
 static void supervision_apply_actuation(void);
-void deadlineProcedure();
+void safety_stop_and_halt();
 /* USER CODE END FunctionPrototypes */
 
 void readSonarTask(void *argument);
@@ -197,41 +161,38 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-	DWD_Init(&hard_rt_deadline_wd, &htim4, SYSTEM_ALIVE_MASK, deadlineProcedure);
+	DWD_Init(&hard_rt_deadline_wd, &htim4, SYSTEM_ALIVE_MASK, safety_stop_and_halt);
+
 	(void)DWT_Delay_Init();
 
-	hcsr04_cfg_t base = {
-	  .htim = &htim2,
-	  .timer_hz = 1000000,
-	  .timeout_ms = 30,
-	  .delay_us = app_delay_us
-	};
+	MPU60X0_StatusTypeDef status_mpu;
 
-	/* LEFT:  TIM2_CH1, TRIG PA0 */
-	hcsr04_cfg_t cL = base;
-	cL.channel = TIM_CHANNEL_1;
-	cL.trig_port = TRIG_LEFT_GPIO_Port;
-	cL.trig_pin  = TRIG_LEFT_Pin;
+	if(HCSR04_Init(&us_left,   &ULTRASONIC_HW_CONFIG[US_LEFT]) != HCSR04_OK){
+	    Error_Handler();
+	}
+	if(HCSR04_Init(&us_center, &ULTRASONIC_HW_CONFIG[US_CENTER]) != HCSR04_OK){
+	    Error_Handler();
+	}
 
-	/* CENTER: TIM2_CH2, TRIG PA1 */
-	hcsr04_cfg_t cC = base;
-	cC.channel = TIM_CHANNEL_2;
-	cC.trig_port = TRIG_CENTER_GPIO_Port;
-	cC.trig_pin  = TRIG_CENTER_Pin;
+	if(HCSR04_Init(&us_right,  &ULTRASONIC_HW_CONFIG[US_RIGHT]) != HCSR04_OK){
+	    Error_Handler();
+	}
 
-	/* RIGHT: TIM2_CH3, TRIG PA2 */
-	hcsr04_cfg_t cR = base;
-	cR.channel = TIM_CHANNEL_3;
-	cR.trig_port = TRIG_RIGHT_GPIO_Port;
-	cR.trig_pin  = TRIG_RIGHT_Pin;
+	if(telecontrol_init(&controller, CONTROLLER_HW_CONFIG[CONTROLLER_MAIN].i2c, CONTROLLER_HW_CONFIG[CONTROLLER_MAIN].address ) != CONTROLLER_OK){
+	    Error_Handler();
+	}
 
-	(void)HCSR04_Init(&us_left,   &cL);
-	(void)HCSR04_Init(&us_center, &cC);
-	(void)HCSR04_Init(&us_right,  &cR);
+	status_mpu = mpu6050_init(&mpu_device, MPU_HW_CONFIG[MPU_MAIN].i2c, MPU_HW_CONFIG[MPU_MAIN].address, &MPU_HW_CONFIG[MPU_MAIN].cfg);
 
-	telecontrol_init(&controller, &hi2c1);
-
-	mpu6050_init(&mpu_device, &hi2c1, 0, NULL);
+	if (status_mpu == MPU6050_ERR) {
+	    Error_Handler();
+	}
+	else if (status_mpu == MPU6050_ERR_COMM) {
+		Board2_U.gyroError = 1;
+	}
+	else {
+		Board2_U.gyroError = 0;
+	}
 
 	if (motor_init(&motor_FA_openLoop, MOTOR_HW_CONFIG[MOTOR_FA].htim, MOTOR_HW_CONFIG[MOTOR_FA].channel, &MOTOR_HW_CONFIG[MOTOR_FA].calib) != MOTOR_OK){
 	    Error_Handler();
@@ -303,11 +264,10 @@ void readSonarTask(void *argument)
 	const TickType_t xFrequency = pdMS_TO_TICKS(SONAR_SCAN_PERIOD);
 
 	hcsr04_t *dev[SONAR_NUMBER] = { &us_left, &us_center, &us_right };
-
+	uint16_T g_sonar_distances[US_COUNT];
 	// Variabili di stato per la gestione ciclica
-	uint8_t curr_idx = 0;      // Indice del sonar da avviare (Start)
-	bool first_run = true;     // Flag per saltare la lettura al primo avvio assoluto
-
+	uint8_t curr_idx = 0U;      // Indice del sonar da avviare (Start)
+	boolean_T first_run = true;
 
 	for (;;)
 	{
@@ -315,7 +275,7 @@ void readSonarTask(void *argument)
 
 		if (!first_run)
 		{
-			uint8_t prev_idx = (curr_idx == 0) ? (SONAR_NUMBER - 1) : (curr_idx - 1);
+			uint8_t prev_idx = (curr_idx == 0U) ? (SONAR_NUMBER - 1U) : (curr_idx - 1U);
 
 			uint16_T cm = 0;
 
@@ -323,13 +283,13 @@ void readSonarTask(void *argument)
 
 			g_sonar_distances[prev_idx]=cm;
 
-			if (prev_idx == (SONAR_NUMBER - 1))
+			if (prev_idx == (SONAR_NUMBER - 1U))
 			{
 				taskENTER_CRITICAL();
 
-				Board2_U.sonar1 = g_sonar_distances[S_LEFT];
-				Board2_U.sonar2 = g_sonar_distances[S_CENTER];
-				Board2_U.sonar3 = g_sonar_distances[S_RIGHT];
+				Board2_U.sonar1 = g_sonar_distances[US_LEFT];
+				Board2_U.sonar2 = g_sonar_distances[US_CENTER];
+				Board2_U.sonar3 = g_sonar_distances[US_RIGHT];
 
 				taskEXIT_CRITICAL();
 			}
@@ -391,13 +351,14 @@ void supervisionTask(void *argument)
 void telemetryLoggerTask(void *argument)
 {
   /* USER CODE BEGIN telemetryLoggerTask */
+    static uint8_t telemetry_tx_failures = 0;
+    static ControllerStatus_t status_telemetry;
     TickType_t xLastWakeTime = xTaskGetTickCount();
     const TickType_t xFrequency = pdMS_TO_TICKS(TELEMETRY_LOGGER_PERIOD);
 
     Telemetry_t telemetry;
 
     StateBusB1 stateB1;
-    DecBus output;
 
     uint16_T sonar1, sonar2, sonar3;
 
@@ -408,6 +369,8 @@ void telemetryLoggerTask(void *argument)
     uint8_t max_velocity;
     boolean_T special_retro;
     boolean_T obs_avoidance;
+    boolean_T gyro_status;
+    boolean_T traction_status;
 
     if (telemetry_init(&telemetry) != CONTROLLER_OK) {
         Error_Handler();
@@ -423,15 +386,15 @@ void telemetryLoggerTask(void *argument)
         sonar1 = Board2_U.sonar1;
         sonar2 = Board2_U.sonar2;
         sonar3 = Board2_U.sonar3;
-
-        output = Board2_Y.output;
+        gyro_status = Board2_U.gyroError;
 
         supervision_state = Board2_DW.is_Board_state;
-        light_state       = Board2_DW.is_Normal_voltage_lights;
+        light_state       = Board2_DW.is_Normal_lights;
         special_retro     = Board2_DW.special_retro;
         obs_avoidance     = Board2_DW.obs_detection;
-        driving_mode      = Board2_DW.is_Normal_voltage_driving;
-        max_velocity     = Board2_DW.max_vel;
+        driving_mode      = Board2_DW.is_Normal_driving;
+        max_velocity      = Board2_DW.max_velocity;
+        traction_status   = (Board2_DW.working_status == MOTOR_ERROR_WORKING || Board2_DW.panic_lockdown);
 
         if (supervision_state == Board2_IN_Normal) {
             stateB1 = Board2_DW.global_state.stateB1;
@@ -443,88 +406,95 @@ void telemetryLoggerTask(void *argument)
         /* ===================== NORMAL MODE ===================== */
         if (supervision_state == Board2_IN_Normal)
         {
-            telemetry_set_backward_mode(
-                &telemetry,
-                special_retro ? BW_SPECIAL : BW_NORMAL
-            );
+        	if (telemetry_set_backward_mode(&telemetry, special_retro ? BW_SPECIAL : BW_NORMAL) != CONTROLLER_OK) {
+        		safety_stop_and_halt();
+        	}
 
-            telemetry_set_battery(
-                &telemetry,
-                calculate_battery_percent(stateB1.battery_voltage)
-            );
+        	if (telemetry_set_battery(&telemetry, calculate_battery_percent(stateB1.battery_voltage)) != CONTROLLER_OK) {
+        		safety_stop_and_halt();
+        	}
 
-            telemetry_set_temperature(
-                &telemetry,
-                saturate_temperature(stateB1.temperature)
-            );
+        	if (telemetry_set_temperature(&telemetry, saturate_temperature(stateB1.temperature)) != CONTROLLER_OK) {
+        		safety_stop_and_halt();
+        	}
 
-            telemetry_set_light_mode(
-                &telemetry,
-                get_light_mode(light_state)
-            );
+        	if (telemetry_set_light_mode(&telemetry, get_light_mode(light_state)) != CONTROLLER_OK) {
+        		safety_stop_and_halt();
+        	}
 
-            telemetry_set_obstacle_avoidance_mode(
-				&telemetry,
-				obs_avoidance ? COMPLETE : MINIMAL
-			);
+        	if (telemetry_set_obstacle_avoidance_mode(&telemetry, obs_avoidance ? COMPLETE : MINIMAL) != CONTROLLER_OK) {
+        		safety_stop_and_halt();
+        	}
 
-            telemetry_set_driving_mode(
-				&telemetry,
-				get_driving_mode(driving_mode)
-			);
+        	if (telemetry_set_driving_mode(&telemetry, get_driving_mode(driving_mode)) != CONTROLLER_OK) {
+        		safety_stop_and_halt();
+        	}
 
-            telemetry_set_rpm(
-                &telemetry,
-                stateB1.velocity_FA,
-                stateB1.velocity_FB,
-                stateB1.velocity_BA,
-                stateB1.velocity_BB
-            );
+        	if (telemetry_set_rpm(&telemetry, stateB1.velocity_FA, stateB1.velocity_FB, stateB1.velocity_BA, stateB1.velocity_BB) != CONTROLLER_OK) {
+        		safety_stop_and_halt();
+        	}
 
-            telemetry_set_operating_mode(&telemetry, OM_NORMAL);
+        	if (telemetry_set_operating_mode(&telemetry, OM_NORMAL) != CONTROLLER_OK) {
+        		safety_stop_and_halt();
+        	}
         }
         /* ===================== NON-NORMAL MODES ===================== */
         else
         {
-            telemetry_set_backward_mode(&telemetry, BW_NORMAL);
-            telemetry_set_battery(&telemetry, 0);
-            telemetry_set_temperature(&telemetry, 0);
-            telemetry_set_light_mode(&telemetry, LIGHT_OFF);
-            telemetry_set_obstacle_avoidance_mode(&telemetry, COMPLETE);
-            telemetry_set_driving_mode(&telemetry, DEFAULT);
+        	if (telemetry_set_backward_mode(&telemetry, BW_NORMAL) != CONTROLLER_OK)
+        		safety_stop_and_halt();
 
-            telemetry_set_rpm(&telemetry, 0, 0, 0, 0);
+        	if (telemetry_set_battery(&telemetry, 0) != CONTROLLER_OK)
+        		safety_stop_and_halt();
 
-            telemetry_set_operating_mode(
-                &telemetry,
-                (supervision_state == Board2_IN_Degraded)
-                    ? OM_DEGRADED
-                    : OM_SINGLE_BOARD
-            );
+        	if (telemetry_set_temperature(&telemetry, 0) != CONTROLLER_OK)
+        		safety_stop_and_halt();
+
+        	if (telemetry_set_light_mode(&telemetry, LIGHT_OFF) != CONTROLLER_OK)
+        		safety_stop_and_halt();
+
+        	if (telemetry_set_obstacle_avoidance_mode(&telemetry, COMPLETE) != CONTROLLER_OK)
+        		safety_stop_and_halt();
+
+        	if (telemetry_set_driving_mode(&telemetry, DEFAULT) != CONTROLLER_OK)
+        		safety_stop_and_halt();
+
+        	if (telemetry_set_rpm(&telemetry, 0, 0, 0, 0) != CONTROLLER_OK)
+        		safety_stop_and_halt();
+
+        	if (telemetry_set_operating_mode(&telemetry, (supervision_state == Board2_IN_Degraded) ? OM_DEGRADED : OM_SINGLE_BOARD) != CONTROLLER_OK) {
+        		safety_stop_and_halt();
+        	}
         }
 
         /* ===================== COMMON FIELDS ===================== */
 
-        telemetry_set_sonars(
-            &telemetry,
-            sonar1,
-            sonar2,
-            sonar3
-        );
+        if (telemetry_set_sonars(&telemetry, sonar1, sonar2, sonar3) != CONTROLLER_OK) {
+        	safety_stop_and_halt();
+        }
 
-        telemetry_set_targets(
-            &telemetry,
-            output.rif_FA,
-            output.rif_FB,
-            output.rif_BA,
-            output.rif_BB);
+        
+        if	(telemetry_set_gyro_status(&telemetry, gyro_status ? GYRO_STATUS_DEGRADED : GYRO_STATUS_READY) != CONTROLLER_OK) {
+        	safety_stop_and_halt();
+		}
 
-        telemetry_set_max_velocity(&telemetry, max_velocity);
+        if (telemetry_set_traction_health(&telemetry, traction_status ? T_UNHEALTHY : T_HEALTHY) != CONTROLLER_OK) {
+        	safety_stop_and_halt();
+		}
+
+        if (telemetry_set_max_velocity(&telemetry, max_velocity) != CONTROLLER_OK) {
+        	safety_stop_and_halt();
+        }
 
         /* ===================== TX ===================== */
-
-        //Qui va fatta una gestione senza ErrorHandler in caso di errore
-        telecontrol_send_telemetry(&controller, &telemetry);
+        status_telemetry = telecontrol_send_telemetry(&controller, &telemetry);
+        if (status_telemetry != CONTROLLER_OK) {
+            if (status_telemetry == CONTROLLER_ERR) {
+            	safety_stop_and_halt();
+            } else {
+                telemetry_tx_failures++;
+            }
+        }
     }
   /* USER CODE END telemetryLoggerTask */
 }
@@ -533,115 +503,147 @@ void telemetryLoggerTask(void *argument)
 /* USER CODE BEGIN Application */
 static void supervision_read_inputs(void)
 {
-    // Lettura hardware
-    //Qui va fatta una gestione senza ErrorHandler in caso di errore
+	static ControllerStatus_t telecontroller_status;
+	static MPU60X0_StatusTypeDef mpu_status;
+	static uint8_t imu_recovery_attempted = 0;
 
-	//telecontrol_read(&controller);
-    mpu6050_get_gyro_value(&mpu_device, &gyroyaw);
-    mpu6050_get_accel_value(&mpu_device, &acceleration);
-    /*
-    Board2_U.controller_x = get_telecontrol_bx(&controller);
-    Board2_U.controller_y = get_telecontrol_ay(&controller);
-    Board2_U.B1 = get_telecontrol_button_btn1(&controller);
-    Board2_U.B2 = get_telecontrol_button_btn2(&controller);
-    Board2_U.B3 = get_telecontrol_button_btn3(&controller);
-    Board2_U.B4 = get_telecontrol_button_btn4(&controller);
-    Board2_U.B_r_stick = get_telecontrol_b_btn(&controller);
-    Board2_U.B_l_stick = get_telecontrol_a_btn(&controller);
-    Board2_U.controller_battery = get_telecontrol_percentage(&controller);
+	telecontroller_status = telecontrol_read(&controller);
 
-    */
-    Board2_U.controller_x = dbg_controller_x;
-	Board2_U.controller_y = dbg_controller_y;
+	
+	switch (telecontroller_status){
+	    case CONTROLLER_OK:
+	        controller.crc_error_count = 0;
+	        controller.last_valid_information = controller.controller_information;
+	        Board2_U.controllerError = 0;
+	        break;
 
-	Board2_U.B1 = dbg_B1;
-	Board2_U.B2 = dbg_B2;
-	Board2_U.B3 = dbg_B3;
-	Board2_U.B4 = dbg_B4;
+	    case CONTROLLER_ERR_CRC:
+	    	controller.crc_error_count++;
+	        controller.controller_information = controller.last_valid_information;
 
-	Board2_U.B_r_stick = dbg_B_r_stick;
-	Board2_U.B_l_stick = dbg_B_l_stick;
+	        Board2_U.controllerError = 1;
 
-	Board2_U.controller_battery = dbg_controller_battery;
+	        if (controller.crc_error_count >= CONTROLLER_MAX_CRC_ERRORS) {
+	        	Board2_U.controllerError = 1;
+	        }
+	        break;
 
+	    case CONTROLLER_ERR_COMM:
+	        Board2_U.controllerError = 1;
+	        break;
 
-    Board2_U.acceleration_x = acceleration.x;
-    Board2_U.acceleration_y = acceleration.y;
-    Board2_U.gyroYaw = gyroyaw.z;
+	    case CONTROLLER_ERR:
+	    	safety_stop_and_halt();
+	    	break;
+
+	    default:
+	    	safety_stop_and_halt();
+	        break;
+	}
+
+	if (get_telecontrol_bx(&controller, &Board2_U.controller_x) != CONTROLLER_OK){
+		safety_stop_and_halt();
+	}
+
+	if (get_telecontrol_ay(&controller, &Board2_U.controller_y) != CONTROLLER_OK){
+		safety_stop_and_halt();
+	}
+
+	if (get_telecontrol_button_btn1(&controller, &Board2_U.B1) != CONTROLLER_OK){
+		safety_stop_and_halt();
+	}
+
+	if (get_telecontrol_button_btn2(&controller, &Board2_U.B2) != CONTROLLER_OK){
+		safety_stop_and_halt();
+	}
+
+	if (get_telecontrol_button_btn3(&controller, &Board2_U.B3) != CONTROLLER_OK){
+		safety_stop_and_halt();
+	}
+
+	if (get_telecontrol_button_btn4(&controller, &Board2_U.B4) != CONTROLLER_OK){
+		safety_stop_and_halt();
+	}
+
+	if (get_telecontrol_b_btn(&controller, &Board2_U.B_r_stick) != CONTROLLER_OK){
+		safety_stop_and_halt();
+	}
+
+	if (get_telecontrol_a_btn(&controller, &Board2_U.B_l_stick) != CONTROLLER_OK){
+		safety_stop_and_halt();
+	}
+
+	if (get_telecontrol_percentage(&controller, &Board2_U.controller_battery) != CONTROLLER_OK){
+		safety_stop_and_halt();
+	}
+
+	mpu_status = mpu6050_get_gyro_z(&mpu_device, &gyroyaw);
+
+	if (mpu_status == MPU6050_OK) {
+	    Board2_U.gyroError = 0;
+	    Board2_U.gyroYaw = gyroyaw;
+	    imu_recovery_attempted = 0;
+	} else {
+	    Board2_U.gyroError = 1;
+
+	    if (!imu_recovery_attempted) {
+	    	mpu6050_recovery_init(&mpu_device);
+	        imu_recovery_attempted = 1;
+	    }
+	}
+
 }
 
 void executeSupervision(){
 	do{
-		debug_state = Board2_DW.is_Supervisor;
-		debug_state_degraded = Board2_DW.is_Restablish;
-		if(degraded == 0)
-			state_good = debug_state;
-		debug_count_step++;
 		Board2_step();
-		if(Board2_DW.is_Board_state != Board2_IN_Normal)
-			degraded=degraded+1;
-
-		if(Board2_DW.is_Board_state == Board2_IN_Single_Board)
-			debug_decision = Board2_DW.decision;
-
-		if(Board2_DW.is_Board_state == Board2_IN_Normal && Board2_DW.retransmitted)
-			retransmit_seen_in_cycle = true;
 	}
-	while(Board2_DW.is_Supervisor != Board2_IN_Same_decision &&
-			Board2_DW.is_Single_Board != Board2_IN_Other_board_failure &&
-				Board2_DW.is_Degraded != Board2_IN_Restarting &&
-					Board2_DW.is_Restablish != Boar_IN_Connection_restablished);
-
-	if (retransmit_seen_in_cycle){
-	      count_retransmit++;
-	      retransmit_seen_in_cycle = false;
-	}
-
-	debug_output = Board2_Y.output;
+	while((Board2_DW.is_Supervisor != Board2_IN_Same_decision) &&
+			(Board2_DW.is_Single_Board != Board2_IN_Other_board_failure) &&
+				(Board2_DW.is_Degraded != Board2_IN_Restarting) &&
+					(Board2_DW.is_Restablish != Boar_IN_Connection_restablished));
 }
 
 static void supervision_apply_actuation(void)
 {
-    // Variabili statiche per mantenere lo stato della rampa tra le chiamate
-    static real32_T rif_FA_r = 0;
-    static real32_T rif_FB_r = 0;
-    static real32_T rif_BA_r = 0;
-    static real32_T rif_BB_r = 0;
+    static real32_T rif_FA_r = 0.0;
+    static real32_T rif_FB_r = 0.0;
+    static real32_T rif_BA_r = 0.0;
+    static real32_T rif_BB_r = 0.0;
 
     real32_T rif_FA, rif_FB, rif_BA, rif_BB;
     BRAKING_TYPE braking_mode;
     uint8_T duty_FA, duty_FB, duty_BA, duty_BB;
 
-    // Gestione Relè
+    real32_T calc_duty;
+
     HAL_GPIO_WritePin(RELAY_GPIO_Port, RELAY_Pin,
                       Board2_Y.output.relay ? GPIO_PIN_SET : GPIO_PIN_RESET);
 
-    // Lettura output modello
+	HAL_GPIO_WritePin(SELECT_GPIO_Port, SELECT_Pin,
+					  Board2_Y.output.mux ? GPIO_PIN_SET : GPIO_PIN_RESET);
+
     rif_FA = Board2_Y.output.rif_FA;
     rif_FB = Board2_Y.output.rif_FB;
     rif_BA = Board2_Y.output.rif_BA;
     rif_BB = Board2_Y.output.rif_BB;
     braking_mode = Board2_Y.output.brk_mode;
 
-    // Logica Ramping
     if (braking_mode == EMERGENCY &&
-        rif_FA == 0 && rif_FB == 0 && rif_BA == 0 && rif_BB == 0) {
-        // Reset immediato rampe in emergenza
+        rif_FA == 0.0 && rif_FB == 0.0 && rif_BA == 0.0 && rif_BB == 0.0) {
         rif_FA_r = rif_FA;
         rif_FB_r = rif_FB;
         rif_BA_r = rif_BA;
         rif_BB_r = rif_BB;
     }
     else if (braking_mode == NORMAL &&
-             rif_FA == 0 && rif_FB == 0 && rif_BA == 0 && rif_BB == 0) {
-        // Frenata dolce
+             rif_FA == 0.0 && rif_FB == 0.0 && rif_BA == 0.0 && rif_BB == 0.0) {
         rif_FA_r = ramp(rif_FA_r, rif_FA, OPENLOOP_STEP * NORMAL_BRK_COEFF);
         rif_FB_r = ramp(rif_FB_r, rif_FB, OPENLOOP_STEP * NORMAL_BRK_COEFF);
         rif_BA_r = ramp(rif_BA_r, rif_BA, OPENLOOP_STEP * NORMAL_BRK_COEFF);
         rif_BB_r = ramp(rif_BB_r, rif_BB, OPENLOOP_STEP * NORMAL_BRK_COEFF);
     }
     else {
-        // Funzionamento normale
         rif_FA_r = ramp(rif_FA_r, rif_FA, OPENLOOP_STEP);
         rif_FB_r = ramp(rif_FB_r, rif_FB, OPENLOOP_STEP);
         rif_BA_r = ramp(rif_BA_r, rif_BA, OPENLOOP_STEP);
@@ -649,10 +651,17 @@ static void supervision_apply_actuation(void)
     }
 
     /* ====== RPM -> duty % (0-100) ====== */
-    duty_FA = (uint8_T)(abs(rif_FA_r) * MOTOR_MAX_DUTY / MAX_RPM);
-    duty_FB = (uint8_T)(abs(rif_FB_r) * MOTOR_MAX_DUTY / MAX_RPM);
-    duty_BA = (uint8_T)(abs(rif_BA_r) * MOTOR_MAX_DUTY / MAX_RPM);
-    duty_BB = (uint8_T)(abs(rif_BB_r) * MOTOR_MAX_DUTY / MAX_RPM);
+    calc_duty = (fabsf(rif_FA_r) * (real32_T)MOTOR_MAX_DUTY) / (real32_T)MAX_RPM;
+    duty_FA = (uint8_T)calc_duty;
+
+    calc_duty = (fabsf(rif_FB_r) * (real32_T)MOTOR_MAX_DUTY) / (real32_T)MAX_RPM;
+    duty_FB = (uint8_T)calc_duty;
+
+    calc_duty = (fabsf(rif_BA_r) * (real32_T)MOTOR_MAX_DUTY) / (real32_T)MAX_RPM;
+    duty_BA = (uint8_T)calc_duty;
+
+    calc_duty = (fabsf(rif_BB_r) * (real32_T)MOTOR_MAX_DUTY) / (real32_T)MAX_RPM;
+    duty_BB = (uint8_T)calc_duty;
 
     /* ====== SATURAZIONE ====== */
     if (duty_FA > MOTOR_MAX_DUTY) duty_FA = MOTOR_MAX_DUTY;
@@ -662,27 +671,32 @@ static void supervision_apply_actuation(void)
 
     /* ====== COMANDO MOTORI ====== */
     if (motor_set(&motor_FA_openLoop, duty_FA,
-                  (rif_FA_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
-        Error_Handler();
+                  (rif_FA_r >= 0.0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
+    	safety_stop_and_halt();
     }
 
     if (motor_set(&motor_FB_openLoop, duty_FB,
-                  (rif_FB_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
-        Error_Handler();
+                  (rif_FB_r >= 0.0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
+    	safety_stop_and_halt();
     }
 
     if (motor_set(&motor_BA_openLoop, duty_BA,
-                  (rif_BA_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
-        Error_Handler();
+                  (rif_BA_r >= 0.0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
+    	safety_stop_and_halt();
     }
 
     if (motor_set(&motor_BB_openLoop, duty_BB,
-                  (rif_BB_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
-        Error_Handler();
+                  (rif_BB_r >= 0.0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
+    	safety_stop_and_halt();
     }
 }
 
-void deadlineProcedure(){
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
+{
+    safety_stop_and_halt();
+}
+
+void safety_stop_and_halt(){
 
 	__disable_irq(); // Disabilitazione di ogni ulteriore Interrupt
 

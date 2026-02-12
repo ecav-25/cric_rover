@@ -7,10 +7,11 @@
  * Si interfaccia con le librerie HAL di STM32 e FreeRTOS.
  */
 
-#include "board_functions.h"
+#include "board1_functions.h"
 #include "main.h"
 #include "string.h"
 #include "cmsis_os.h"
+#include "pid_law.h"
 
 /* ========================================================================== */
 /* 							   EXTERNAL HANDLES                               */
@@ -19,6 +20,11 @@
 extern UART_HandleTypeDef huart3; /**< Handle UART per la comunicazione Inter-Board */
 extern CRC_HandleTypeDef hcrc;    /**< Handle unità di calcolo CRC hardware */
 extern TIM_HandleTypeDef htim2;   /**< Handle Timer per il cronometraggio (us/ms) */
+
+extern PID_Law_t pid_FA; /**< Istanza PID Motore Front-A */
+extern PID_Law_t pid_FB; /**< Istanza PID Motore Front-B */
+extern PID_Law_t pid_BA; /**< Istanza PID Motore Back-A */
+extern PID_Law_t pid_BB; /**< Istanza PID Motore Back-B */
 
 /* ========================================================================== */
 /* 							   GLOBAL VARIABLES                               */
@@ -46,14 +52,16 @@ static void Copy_StateBusB1(StateBusB1* dest, const StateBusB1* src) {
     dest->velocity_FB = src->velocity_FB;
     dest->velocity_BA = src->velocity_BA;
     dest->velocity_BB = src->velocity_BB;
+    dest->motorError_FA = src->motorError_FA;
+    dest->motorError_FB = src->motorError_FB;
+    dest->motorError_BA = src->motorError_BA;
+    dest->motorError_BB = src->motorError_BB;
 }
 
 /**
  * @brief Copia sicura campo per campo di StateBusB2.
  */
 static void Copy_StateBusB2(StateBusB2* dest, const StateBusB2* src) {
-    dest->acceleration_y = src->acceleration_y;
-    dest->acceleration_x = src->acceleration_x;
     dest->gyroYaw = src->gyroYaw;
     dest->sonar1 = src->sonar1;
     dest->sonar2 = src->sonar2;
@@ -67,6 +75,8 @@ static void Copy_StateBusB2(StateBusB2* dest, const StateBusB2* src) {
     dest->r_stick_button = src->r_stick_button;
     dest->l_stick_button = src->l_stick_button;
     dest->controller_battery = src->controller_battery;
+    dest->controllerError = src->controllerError;
+    dest->gyroError = src->gyroError;
 }
 
 /**
@@ -77,7 +87,8 @@ static void Copy_GSBus(GSBus* dest, const GSBus* src) {
     Copy_StateBusB2(&dest->stateB2, &src->stateB2);
     dest->mov_obs = src->mov_obs;
     dest->spc_retro = src->spc_retro;
-    dest->max_vel = src->max_vel;
+    dest->limit_vel = src->limit_vel;
+    dest->change_vel = src->change_vel;
     dest->obs_detection = src->obs_detection;
 }
 
@@ -96,6 +107,7 @@ static void Copy_DecBus(DecBus* dest, const DecBus* src) {
     dest->rear_sign = src->rear_sign;
     dest->mode = src->mode;
     dest->relay = src->relay;
+    dest->mux = src->mux;
 }
 
 /* ========================================================================== */
@@ -135,7 +147,7 @@ void UART_Send_Local_State(const void* s)
     static PacketStateB1 packet;
 
     /* 1. Pulizia memoria (Padding bytes a 0) */
-    memset(&packet, 0, sizeof(packet));
+    (void)memset(&packet, 0, sizeof(packet));
 
     /* 2. Copia dati sicura */
     Copy_StateBusB1(&packet.state, (const StateBusB1*)s);
@@ -155,7 +167,7 @@ void UART_Send_GlobalState(const void* gs)
 {
     static PacketGstate packet; /* Static per persistenza DMA */
 
-    memset(&packet, 0, sizeof(packet));
+    (void)memset(&packet, 0, sizeof(packet));
     Copy_GSBus(&packet.global_state, (const GSBus*)gs);
 
     __HAL_CRC_DR_RESET(&hcrc);
@@ -171,7 +183,7 @@ void UART_Send_Decision(const void* dec)
 {
     static PacketDecision packet; /* Static per persistenza DMA */
 
-    memset(&packet, 0, sizeof(packet));
+    (void)memset(&packet, 0, sizeof(packet));
     Copy_DecBus(&packet.decision, (const DecBus*)dec);
 
     __HAL_CRC_DR_RESET(&hcrc);
@@ -239,7 +251,7 @@ boolean_T CRC_Check_State(const void* s_packet)
 
     /* Crea una copia locale pulita per ricalcolare il CRC */
     StateBusB2 clean_state;
-    memset(&clean_state, 0, sizeof(clean_state));
+    (void)memset(&clean_state, 0, sizeof(clean_state));
     Copy_StateBusB2(&clean_state, &packet->state);
 
     __HAL_CRC_DR_RESET(&hcrc);
@@ -257,7 +269,7 @@ boolean_T CRC_Check_GlobalState(const void* gs_packet)
     const PacketGstate* packet = (const PacketGstate*)gs_packet;
 
     GSBus clean_state;
-    memset(&clean_state, 0, sizeof(clean_state));
+    (void)memset(&clean_state, 0, sizeof(clean_state));
     Copy_GSBus(&clean_state, &packet->global_state);
 
     __HAL_CRC_DR_RESET(&hcrc);
@@ -274,7 +286,7 @@ boolean_T CRC_Check_Decision(const void* dec_packet)
     const PacketDecision* packet = (const PacketDecision*)dec_packet;
 
     DecBus clean_decision;
-    memset(&clean_decision, 0, sizeof(clean_decision));
+    (void)memset(&clean_decision, 0, sizeof(clean_decision));
     Copy_DecBus(&clean_decision, &packet->decision);
 
     __HAL_CRC_DR_RESET(&hcrc);
@@ -315,6 +327,20 @@ boolean_T IO_Read_MasterTalk(void)
     return (HAL_GPIO_ReadPin(MTALK_GPIO_Port, MTALK_Pin)
             == GPIO_PIN_SET);
 }
+
+/* ========================================================================== */
+/* 							   PID                                            */
+/* ========================================================================== */
+
+void PID_Reset(void)
+{
+	/*Reset dello stato interno di tutti i regolatori PID.*/
+	(void)PID_Law_reset(&pid_FA);
+	(void)PID_Law_reset(&pid_FB);
+	(void)PID_Law_reset(&pid_BA);
+	(void)PID_Law_reset(&pid_BB);
+}
+
 
 /* ========================================================================== */
 /* 							   TIMING & OS                                    */

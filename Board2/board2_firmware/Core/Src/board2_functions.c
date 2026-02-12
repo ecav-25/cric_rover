@@ -6,7 +6,7 @@
  * calcolo CRC-32, gestione GPIO (Master Control) e primitive di sistema.
  */
 
-#include "board_functions.h"
+#include "board2_functions.h"
 #include "main.h"
 #include "string.h"
 #include "cmsis_os.h"
@@ -44,6 +44,10 @@ static void Copy_StateBusB1(StateBusB1* dest, const StateBusB1* src) {
     dest->velocity_FB = src->velocity_FB;
     dest->velocity_BA = src->velocity_BA;
     dest->velocity_BB = src->velocity_BB;
+    dest->motorError_FA = src->motorError_FA;
+    dest->motorError_FB = src->motorError_FB;
+    dest->motorError_BA = src->motorError_BA;
+    dest->motorError_BB = src->motorError_BB;
 }
 
 /**
@@ -51,8 +55,6 @@ static void Copy_StateBusB1(StateBusB1* dest, const StateBusB1* src) {
  * @details Necessaria per serializzare lo stato del Master prima dell'invio.
  */
 static void Copy_StateBusB2(StateBusB2* dest, const StateBusB2* src) {
-    dest->acceleration_y = src->acceleration_y;
-    dest->acceleration_x = src->acceleration_x;
     dest->gyroYaw = src->gyroYaw;
     dest->sonar1 = src->sonar1;
     dest->sonar2 = src->sonar2;
@@ -66,6 +68,8 @@ static void Copy_StateBusB2(StateBusB2* dest, const StateBusB2* src) {
     dest->r_stick_button = src->r_stick_button;
     dest->l_stick_button = src->l_stick_button;
     dest->controller_battery = src->controller_battery;
+    dest->controllerError = src->controllerError;
+    dest->gyroError = src->gyroError;
 }
 
 /**
@@ -76,7 +80,8 @@ static void Copy_GSBus(GSBus* dest, const GSBus* src) {
     Copy_StateBusB2(&dest->stateB2, &src->stateB2);
     dest->mov_obs = src->mov_obs;
     dest->spc_retro = src->spc_retro;
-    dest->max_vel = src->max_vel;
+    dest->limit_vel = src->limit_vel;
+    dest->change_vel = src->change_vel;
     dest->obs_detection = src->obs_detection;
 }
 
@@ -95,6 +100,7 @@ static void Copy_DecBus(DecBus* dest, const DecBus* src) {
     dest->rear_sign = src->rear_sign;
     dest->mode = src->mode;
     dest->relay = src->relay;
+    dest->mux = src->mux;
 }
 
 /* ========================================================================== */
@@ -297,18 +303,6 @@ boolean_T IO_Read_SlaveTalk(void)
 {
     /* Input: Legge lo stato dello Slave */
     return (HAL_GPIO_ReadPin(STALK_GPIO_Port, STALK_Pin) == GPIO_PIN_SET);
-}
-
-void IO_Disable_MUX(void)
-{
-    /* Motori controllati dallo slave */
-    HAL_GPIO_WritePin(SELECT_GPIO_Port, SELECT_Pin, GPIO_PIN_RESET);
-}
-
-void IO_Enable_MUX(void)
-{
-    /* Motori controllati dal master */
-    HAL_GPIO_WritePin(SELECT_GPIO_Port, SELECT_Pin, GPIO_PIN_SET);
 }
 
 /* ========================================================================== */

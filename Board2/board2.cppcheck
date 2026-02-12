@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="1">
+    <builddir>board2-cppcheck-build-dir</builddir>
+    <analyze-all-vs-configs>false</analyze-all-vs-configs>
+    <check-headers>true</check-headers>
+    <check-unused-templates>true</check-unused-templates>
+    <inline-suppression>true</inline-suppression>
+    <max-ctu-depth>2</max-ctu-depth>
+    <max-template-recursion>100</max-template-recursion>
+    <includedir>
+        <dir name="board2_firmware/Core/Inc/"/>
+    </includedir>
+    <paths>
+        <dir name="board2_firmware/Core/Src"/>
+    </paths>
+    <addons>
+        <addon>threadsafety</addon>
+        <addon>y2038</addon>
+        <addon>misra</addon>
+    </addons>
+    <check-level-normal/>
+    <project-name>board2</project-name>
+</project>

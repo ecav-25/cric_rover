@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="9132484447997857376">
+        <error id="missingInclude" severity="information" msg="Include file: &quot;stm32g4xx_hal.h&quot; not found." verbose="Include file: &quot;stm32g4xx_hal.h&quot; not found.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/main.h" line="30" column="0"/>
+        </error>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl file="board2_firmware/Core/Src/dma.c" functionName="MX_DMA_Init" lineNumber="39" column="6"/>
+    <functioncall functionName="DMA1_Channel1_IRQn"/>
+    <functioncall functionName="DMA1_Channel2_IRQn"/>
+    <functioncall functionName="HAL_NVIC_EnableIRQ"/>
+    <functioncall functionName="HAL_NVIC_SetPriority"/>
+    <functioncall functionName="__HAL_RCC_DMA1_CLK_ENABLE"/>
+    <functioncall functionName="__HAL_RCC_DMAMUX1_CLK_ENABLE"/>
+  </FileInfo>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/dma.c">
+            <location file="board2_firmware/Core/Src/dma.c" line="43" column="3"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/dma.c">
+            <location file="board2_firmware/Core/Src/dma.c" line="44" column="3"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/dma.c">
+            <location file="board2_firmware/Core/Src/dma.c" line="48" column="3"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/dma.c">
+            <location file="board2_firmware/Core/Src/dma.c" line="49" column="3"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/dma.c">
+            <location file="board2_firmware/Core/Src/dma.c" line="51" column="3"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/dma.c">
+            <location file="board2_firmware/Core/Src/dma.c" line="52" column="3"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/dma.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/dma.h" line="22" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/dma.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/main.h" line="23" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/dma.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/rtwtypes.h" line="26" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/dma.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/rtwtypes.h" line="30" column="0"/>
+        </error>
+</analyzerinfo>

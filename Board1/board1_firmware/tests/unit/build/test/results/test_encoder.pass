@@ -1,0 +1,43 @@
+---
+:source:
+  :file: test/test_encoder.c
+  :dirname: test
+  :basename: test_encoder.c
+:successes:
+- :test: test_encoder_init_success
+  :line: 50
+  :message: ''
+  :unity_test_time: 0
+- :test: test_encoder_init_fails_on_null_ptr
+  :line: 68
+  :message: ''
+  :unity_test_time: 0
+- :test: test_encoder_readRPM_forward_counting
+  :line: 82
+  :message: ''
+  :unity_test_time: 0
+- :test: test_encoder_readRPM_backward_counting
+  :line: 106
+  :message: ''
+  :unity_test_time: 0
+- :test: test_encoder_readRPM_overflow_up
+  :line: 129
+  :message: ''
+  :unity_test_time: 0
+- :test: test_encoder_readRPM_underflow_down
+  :line: 150
+  :message: ''
+  :unity_test_time: 0
+- :test: test_encoder_readRPM_quadrature_x4
+  :line: 174
+  :message: ''
+  :unity_test_time: 0
+:failures: []
+:ignores: []
+:counts:
+  :total: 7
+  :passed: 7
+  :failed: 0
+  :ignored: 0
+:stdout: []
+:time: 0.5262519996613264

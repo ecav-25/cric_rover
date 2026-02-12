@@ -34,7 +34,7 @@ void DWD_Notify(Deadline_Watchdog_t *hwd, uint32_t flag)
     taskEXIT_CRITICAL();
 }
 
-void DWD_CheckStatus(Deadline_Watchdog_t *hwd, TIM_HandleTypeDef *htim_irq)
+void DWD_CheckStatus(Deadline_Watchdog_t *hwd,const TIM_HandleTypeDef *htim_irq)
 {
     if (htim_irq->Instance == hwd->htim->Instance)
     {

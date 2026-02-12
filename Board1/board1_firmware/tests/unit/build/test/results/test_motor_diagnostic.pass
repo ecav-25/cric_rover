@@ -1,0 +1,51 @@
+---
+:source:
+  :file: test/test_motor_diagnostic.c
+  :dirname: test
+  :basename: test_motor_diagnostic.c
+:successes:
+- :test: test_motor_diag_init_should_clear_all_buffers
+  :line: 42
+  :message: ''
+  :unity_test_time: 0
+- :test: test_motor_diag_record_should_switch_buffers_when_full
+  :line: 65
+  :message: ''
+  :unity_test_time: 0
+- :test: test_motor_diag_process_healthy_motor
+  :line: 88
+  :message: ''
+  :unity_test_time: 0
+- :test: test_motor_diag_process_failure_detection
+  :line: 107
+  :message: ''
+  :unity_test_time: 0
+- :test: test_motor_diag_shift_logic
+  :line: 126
+  :message: ''
+  :unity_test_time: 0
+- :test: test_motor_diag_null_pointers
+  :line: 149
+  :message: ''
+  :unity_test_time: 0
+- :test: test_motor_diag_extreme_shift_management
+  :line: 160
+  :message: ''
+  :unity_test_time: 0
+- :test: test_motor_diag_buffer_isolation
+  :line: 180
+  :message: ''
+  :unity_test_time: 0
+- :test: test_motor_diag_recovery_logic
+  :line: 206
+  :message: ''
+  :unity_test_time: 0
+:failures: []
+:ignores: []
+:counts:
+  :total: 9
+  :passed: 9
+  :failed: 0
+  :ignored: 0
+:stdout: []
+:time: 0.179751000367105

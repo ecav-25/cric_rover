@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="2129395637492671024">
+        <error id="missingInclude" severity="information" msg="Include file: &quot;stm32g4xx_hal.h&quot; not found." verbose="Include file: &quot;stm32g4xx_hal.h&quot; not found.">
+            <location file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" line="21" column="0"/>
+        </error>
+        <error id="missingInclude" severity="information" msg="Include file: &quot;stm32g4xx_hal_tim.h&quot; not found." verbose="Include file: &quot;stm32g4xx_hal_tim.h&quot; not found.">
+            <location file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" line="22" column="0"/>
+        </error>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" functionName="HAL_InitTick" lineNumber="41" column="19"/>
+    <functiondecl file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" functionName="HAL_SuspendTick" lineNumber="109" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" functionName="HAL_ResumeTick" lineNumber="121" column="6"/>
+    <functioncall functionName="HAL_ERROR"/>
+    <functioncall functionName="HAL_NVIC_EnableIRQ"/>
+    <functioncall functionName="HAL_NVIC_SetPriority"/>
+    <functioncall functionName="HAL_RCC_GetClockConfig"/>
+    <functioncall functionName="HAL_RCC_GetPCLK1Freq"/>
+    <functioncall functionName="HAL_TIM_Base_Init"/>
+    <functioncall functionName="HAL_TIM_Base_Start_IT"/>
+    <functioncall functionName="TIM6"/>
+    <functioncall functionName="TIM6_DAC_IRQn"/>
+    <functioncall functionName="TIM_COUNTERMODE_UP"/>
+    <functioncall functionName="TIM_IT_UPDATE"/>
+    <functioncall functionName="__HAL_RCC_TIM6_CLK_ENABLE"/>
+    <functioncall functionName="__HAL_TIM_DISABLE_IT"/>
+    <functioncall functionName="__HAL_TIM_ENABLE_IT"/>
+  </FileInfo>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c">
+            <location file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" line="41" column="19"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c">
+            <location file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" line="109" column="6"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c">
+            <location file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" line="121" column="6"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c">
+            <location file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" line="28" column="26"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c">
+            <location file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" line="51" column="3"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c">
+            <location file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" line="54" column="3"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c">
+            <location file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" line="57" column="16"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c">
+            <location file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" line="76" column="12"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c">
+            <location file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" line="80" column="14"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c">
+            <location file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" line="84" column="9"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c">
+            <location file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" line="89" column="9"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c">
+            <location file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" line="112" column="3"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c">
+            <location file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" line="124" column="3"/>
+        </error>
+        <error id="misra-config" severity="error" msg="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;HAL_OK&apos; is unknown" verbose="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;HAL_OK&apos; is unknown" file0="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c">
+            <location file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" line="77" column="17"/>
+        </error>
+        <error id="misra-config" severity="error" msg="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;HAL_OK&apos; is unknown" verbose="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;HAL_OK&apos; is unknown" file0="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c">
+            <location file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" line="81" column="19"/>
+        </error>
+        <error id="misra-config" severity="error" msg="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;__NVIC_PRIO_BITS&apos; is unknown" verbose="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;__NVIC_PRIO_BITS&apos; is unknown" file0="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c">
+            <location file="board2_firmware/Core/Src/stm32g4xx_hal_timebase_tim.c" line="86" column="34"/>
+        </error>
+</analyzerinfo>

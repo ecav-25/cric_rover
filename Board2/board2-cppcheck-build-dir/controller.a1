@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="3741524502532553496">
+        <error id="missingInclude" severity="information" msg="Include file: &quot;stm32g4xx_hal.h&quot; not found." verbose="Include file: &quot;stm32g4xx_hal.h&quot; not found.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/main.h" line="30" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;stdint.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;stdint.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h" line="5" column="0"/>
+        </error>
+  <FileInfo check="ctu">
+<function-call call-id="board2_firmware/Core/Src/controller.c:3:23" call-funcname="crc8_le" call-argnr="1" file="board2_firmware/Core/Src/controller.c" line="77" col="26" call-argexpr="crc" call-argvaluetype="0" call-argvalue="0" call-argvalue-ufr="0">
+  <path file="board2_firmware\Core\Src\controller.c" line="75" col="27" info="Assignment &apos;crc=0U&apos;, assigned value is 0"/>
+</function-call>  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h" functionName="get_telecontrol_bx" lineNumber="134" column="34"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h" functionName="get_telecontrol_ay" lineNumber="147" column="34"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h" functionName="get_telecontrol_button_btn1" lineNumber="160" column="34"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h" functionName="get_telecontrol_button_btn2" lineNumber="173" column="34"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h" functionName="get_telecontrol_button_btn3" lineNumber="186" column="34"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h" functionName="get_telecontrol_button_btn4" lineNumber="199" column="34"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h" functionName="get_telecontrol_b_btn" lineNumber="212" column="34"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h" functionName="get_telecontrol_a_btn" lineNumber="225" column="34"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h" functionName="get_telecontrol_percentage" lineNumber="238" column="34"/>
+    <functiondecl file="board2_firmware/Core/Src/controller.c" functionName="crc8_le" lineNumber="3" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/controller.c" functionName="telecontrol_init" lineNumber="23" column="20"/>
+    <functiondecl file="board2_firmware/Core/Src/controller.c" functionName="telecontrol_read" lineNumber="59" column="20"/>
+    <functiondecl file="board2_firmware/Core/Src/controller.c" functionName="telecontrol_send_telemetry" lineNumber="115" column="20"/>
+    <functiondecl file="board2_firmware/Core/Src/controller.c" functionName="telemetry_init" lineNumber="144" column="20"/>
+    <functiondecl file="board2_firmware/Core/Src/controller.c" functionName="telemetry_set_light_mode" lineNumber="176" column="20"/>
+    <functiondecl file="board2_firmware/Core/Src/controller.c" functionName="telemetry_set_operating_mode" lineNumber="189" column="20"/>
+    <functiondecl file="board2_firmware/Core/Src/controller.c" functionName="telemetry_set_backward_mode" lineNumber="202" column="20"/>
+    <functiondecl file="board2_firmware/Core/Src/controller.c" functionName="telemetry_set_driving_mode" lineNumber="215" column="20"/>
+    <functiondecl file="board2_firmware/Core/Src/controller.c" functionName="telemetry_set_obstacle_avoidance_mode" lineNumber="228" column="20"/>
+    <functiondecl file="board2_firmware/Core/Src/controller.c" functionName="telemetry_set_battery" lineNumber="241" column="20"/>
+    <functiondecl file="board2_firmware/Core/Src/controller.c" functionName="telemetry_set_temperature" lineNumber="254" column="20"/>
+    <functiondecl file="board2_firmware/Core/Src/controller.c" functionName="telemetry_set_rpm" lineNumber="267" column="20"/>
+    <functiondecl file="board2_firmware/Core/Src/controller.c" functionName="telemetry_set_max_velocity" lineNumber="284" column="20"/>
+    <functiondecl file="board2_firmware/Core/Src/controller.c" functionName="telemetry_set_sonars" lineNumber="297" column="20"/>
+    <functiondecl file="board2_firmware/Core/Src/controller.c" functionName="telemetry_set_gyro_status" lineNumber="313" column="20"/>
+    <functiondecl file="board2_firmware/Core/Src/controller.c" functionName="telemetry_set_traction_health" lineNumber="327" column="20"/>
+    <functioncall functionName="HAL_I2C_Master_Receive"/>
+    <functioncall functionName="HAL_I2C_Master_Transmit"/>
+    <functioncall functionName="crc8_le"/>
+  </FileInfo>
+        <error id="misra-c2012-10.3" severity="style" msg="The value of an expression shall not be assigned to an object with a narrower essential type or of a different essential type category." verbose="The value of an expression shall not be assigned to an object with a narrower essential type or of a different essential type category." file0="board2_firmware/Core/Src/controller.c">
+            <location file="board2_firmware/Core/Src/controller.c" line="10" column="25"/>
+        </error>
+        <error id="misra-c2012-10.4" severity="style" msg="Both operands of an operator in which the usual arithmetic conversions are performed shall have the same essential type category." verbose="Both operands of an operator in which the usual arithmetic conversions are performed shall have the same essential type category." file0="board2_firmware/Core/Src/controller.c">
+            <location file="board2_firmware/Core/Src/controller.c" line="10" column="38"/>
+        </error>
+        <error id="misra-c2012-10.8" severity="style" msg="The value of a composite expression shall not be cast to a different essential type category or a wider essential type." verbose="The value of a composite expression shall not be cast to a different essential type category or a wider essential type." file0="board2_firmware/Core/Src/controller.c">
+            <location file="board2_firmware/Core/Src/controller.c" line="123" column="13"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/controller.c">
+            <location file="board2_firmware/Core/Src/controller.c" line="65" column="40"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/controller.c">
+            <location file="board2_firmware/Core/Src/controller.c" line="121" column="40"/>
+        </error>
+        <error id="misra-config" severity="error" msg="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;HAL_OK&apos; is unknown" verbose="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;HAL_OK&apos; is unknown" file0="board2_firmware/Core/Src/controller.c">
+            <location file="board2_firmware/Core/Src/controller.c" line="73" column="27"/>
+        </error>
+        <error id="misra-config" severity="error" msg="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;HAL_OK&apos; is unknown" verbose="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;HAL_OK&apos; is unknown" file0="board2_firmware/Core/Src/controller.c">
+            <location file="board2_firmware/Core/Src/controller.c" line="129" column="27"/>
+        </error>
+        <error id="misra-c2012-17.8" severity="style" msg="A function parameter should not be modified." verbose="A function parameter should not be modified." file0="board2_firmware/Core/Src/controller.c">
+            <location file="board2_firmware/Core/Src/controller.c" line="4" column="13"/>
+        </error>
+        <error id="misra-c2012-17.8" severity="style" msg="A function parameter should not be modified." verbose="A function parameter should not be modified." file0="board2_firmware/Core/Src/controller.c">
+            <location file="board2_firmware/Core/Src/controller.c" line="7" column="17"/>
+        </error>
+        <error id="misra-c2012-17.8" severity="style" msg="A function parameter should not be modified." verbose="A function parameter should not be modified." file0="board2_firmware/Core/Src/controller.c">
+            <location file="board2_firmware/Core/Src/controller.c" line="7" column="25"/>
+        </error>
+        <error id="misra-c2012-17.8" severity="style" msg="A function parameter should not be modified." verbose="A function parameter should not be modified." file0="board2_firmware/Core/Src/controller.c">
+            <location file="board2_firmware/Core/Src/controller.c" line="10" column="25"/>
+        </error>
+        <error id="misra-c2012-17.8" severity="style" msg="A function parameter should not be modified." verbose="A function parameter should not be modified." file0="board2_firmware/Core/Src/controller.c">
+            <location file="board2_firmware/Core/Src/controller.c" line="12" column="25"/>
+        </error>
+        <error id="misra-c2012-17.8" severity="style" msg="A function parameter should not be modified." verbose="A function parameter should not be modified." file0="board2_firmware/Core/Src/controller.c">
+            <location file="board2_firmware/Core/Src/controller.c" line="15" column="16"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/controller.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/i2c.h" line="22" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/controller.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/main.h" line="23" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/controller.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/rtwtypes.h" line="26" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/controller.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/rtwtypes.h" line="30" column="0"/>
+        </error>
+</analyzerinfo>

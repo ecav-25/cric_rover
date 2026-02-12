@@ -1,0 +1,43 @@
+---
+:source:
+  :file: test/test_hcsr04.c
+  :dirname: test
+  :basename: test_hcsr04.c
+:successes:
+- :test: test_HCSR04_CompleteMeasurement_10cm
+  :line: 58
+  :message: ''
+  :unity_test_time: 0
+- :test: test_HCSR04_TimerOverflow_Calculation
+  :line: 92
+  :message: ''
+  :unity_test_time: 0
+- :test: test_HCSR04_Start_Busy
+  :line: 116
+  :message: ''
+  :unity_test_time: 0
+- :test: test_HCSR04_GetDistance_TimeoutIfStillWaiting
+  :line: 131
+  :message: ''
+  :unity_test_time: 0
+- :test: test_HCSR04_OutOfRange_ReturnsMaxDistance
+  :line: 150
+  :message: ''
+  :unity_test_time: 0
+- :test: test_HCSR04_Callback_WrongChannel_Ignored
+  :line: 169
+  :message: ''
+  :unity_test_time: 0
+- :test: test_HCSR04_Distance_Rounding
+  :line: 186
+  :message: ''
+  :unity_test_time: 0
+:failures: []
+:ignores: []
+:counts:
+  :total: 7
+  :passed: 7
+  :failed: 0
+  :ignored: 0
+:stdout: []
+:time: 0.41560500022023916

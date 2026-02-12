@@ -1,0 +1,5 @@
+clip_duty
+compute_pwm call:[roundf] noreturn:[roundf]
+apply_pwm call:[__HAL_TIM_SET_COMPARE] noreturn:[__HAL_TIM_SET_COMPARE]
+motor_init call:[HAL_TIM_PWM_Start,apply_pwm]
+motor_set call:[apply_pwm,clip_duty,compute_pwm]

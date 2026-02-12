@@ -1,6 +1,7 @@
 #include "hw_config.h"
 #include "hw_calibration.h"
 #include "tim.h"
+#include "dwt_delay.h"
 
 /* ===================== MOTORS ===================== */
 
@@ -9,4 +10,63 @@ const Motor_HW_Config_t MOTOR_HW_CONFIG[MOTOR_COUNT] = {
     [MOTOR_FB] = { &htim1, TIM_CHANNEL_2, { PWM_STOP_FB, PWM_SCALE_FORWARD_FB, PWM_SCALE_BACKWARD_FB } },
     [MOTOR_BA] = { &htim1, TIM_CHANNEL_3, { PWM_STOP_BA, PWM_SCALE_FORWARD_BA, PWM_SCALE_BACKWARD_BA } },
     [MOTOR_BB] = { &htim1, TIM_CHANNEL_4, { PWM_STOP_BB, PWM_SCALE_FORWARD_BB, PWM_SCALE_BACKWARD_BB } },
+};
+
+/* ===================== MPU6050 ===================== */
+
+const MPU_HW_Config_t MPU_HW_CONFIG[MPU_COUNT] = {
+    [MPU_MAIN] = {
+        .i2c     = &hi2c1,
+        .address = MPU60X0_ADDRESS,
+        .cfg = {
+            .dlpf_cfg    = MPU6050_DEFAULT_DLPF_CFG,
+            .smplrt_div  = 4,                     // Fs = 200 Hz
+            .accel_range = MPU6050_ACCEL_FS_2G,
+            .gyro_range  = MPU6050_GYRO_FS_250DPS,
+            .int_enable  = MPU6050_INT_NONE
+        }
+    }
+};
+
+
+/* ===================== ULTRASONIC SENSORS ===================== */
+
+const hcsr04_cfg_t ULTRASONIC_HW_CONFIG[US_COUNT] = {
+	[US_LEFT] = {
+		.htim        = &htim2,
+		.channel     = TIM_CHANNEL_1,
+		.trig_port   = TRIG_LEFT_GPIO_Port,
+		.trig_pin    = TRIG_LEFT_Pin,
+		.timer_hz    = 1000000,
+		.timeout_ms  = 30,
+		.delay_us    = DWT_Delay_us
+	},
+	[US_CENTER] = {
+		.htim        = &htim2,
+		.channel     = TIM_CHANNEL_2,
+		.trig_port   = TRIG_CENTER_GPIO_Port,
+		.trig_pin    = TRIG_CENTER_Pin,
+		.timer_hz    = 1000000,
+		.timeout_ms  = 30,
+		.delay_us    = DWT_Delay_us
+	},
+	[US_RIGHT] = {
+		.htim        = &htim2,
+		.channel     = TIM_CHANNEL_3,
+		.trig_port   = TRIG_RIGHT_GPIO_Port,
+		.trig_pin    = TRIG_RIGHT_Pin,
+		.timer_hz    = 1000000,
+		.timeout_ms  = 30,
+		.delay_us    = DWT_Delay_us
+	}
+};
+
+
+/* ===================== CONTROLLER ===================== */
+
+const Controller_HW_Config_t CONTROLLER_HW_CONFIG[CONTROLLER_COUNT] = {
+	[CONTROLLER_MAIN] = {
+		.i2c     = &hi2c1,
+		.address = 0x55
+	}
 };

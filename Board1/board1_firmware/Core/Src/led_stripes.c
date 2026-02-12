@@ -13,9 +13,14 @@
 #define LED_REAR_LED_START 8
 #define LED_REAR_LED_END 20
 
+#define ARROW_OFF_STEPS  5
+#define ARROW_ON_STEPS   5
+
+
+#define EMERGENCY_PERIOD 16  // number of steps for a full emergency light cycle (on + off)
 
 typedef struct {
-  led_config_t cfg;
+  led_stripes_config_t cfg;
 
   uint8_t rgb_arr[NUM_BYTES];
   uint8_t wr_buf[WR_BUF_LEN];
@@ -35,6 +40,9 @@ typedef struct {
 
 } led_part_t;
 
+static uint16_t lfsr = 0xACE1u;  /* seed ≠ 0 */
+
+
 /* unico contesto HW condiviso */
 static led_bus_t g_led_bus;
 
@@ -50,14 +58,50 @@ static led_status_t rear_led_anim_arrow_left();
 static led_status_t rear_led_anim_arrow_right();
 static led_status_t rear_led_anim_backward();
 static led_status_t rear_led_special_lights();
+static led_status_t rear_led_emercency_lights();
+static led_status_t rear_led_degraded_lights();
+
+
+
+
 static led_status_t rear_sign_off();
 static led_status_t rear_sign_white();
 static led_status_t rear_sign_orange();
 static led_status_t rear_sign_green();
 static led_status_t rear_sign_red();
+static led_status_t rear_sign_yellow();
+
+static inline uint16_t lfsr_next(void)
+{
+    uint16_t lsb = lfsr & 1u;
+    lfsr >>= 1;
+    if (lsb)
+        lfsr ^= 0xB400u;  /* polinomio x^16 + x^14 + x^13 + x^11 + 1 */
+    return lfsr;
+}
 
 
-led_status_t led_stripe_init(led_config_t *cfg){
+static inline void random_rainbow(uint8_t *r, uint8_t *g, uint8_t *b)
+{
+    switch (lfsr_next() % 6) {
+        case 0: *r = 255; *g = 0;   *b = 0;   break; // rosso
+        case 1: *r = 255; *g = 80;  *b = 0;   break; // arancio
+        case 2: *r = 255; *g = 255; *b = 0;   break; // giallo
+        case 3: *r = 0;   *g = 255; *b = 0;   break; // verde
+        case 4: *r = 0;   *g = 0;   *b = 255; break; // blu
+        default:*r = 160; *g = 0;   *b = 255; break; // viola
+    }
+}
+
+
+
+
+static inline uint8_t scale8(uint8_t x, uint8_t scale) {
+  return ((uint16_t)x * scale) >> 8;
+}
+
+
+led_status_t led_stripe_init(const led_stripes_config_t *cfg){
 
   if (!cfg) return LED_STRIPE_ERR;
 
@@ -85,6 +129,10 @@ led_status_t led_stripe_init(led_config_t *cfg){
 
 led_status_t rear_led_step(REAR_LED_TYPE animation){
 
+    if (g_led_bus.wr_buf_p != 0) {
+        return LED_STRIPE_OK;   // DMA attivo → non tocco lo stato
+    }
+
 	led_status_t res = LED_STRIPE_ERR;
 
 
@@ -104,7 +152,7 @@ led_status_t rear_led_step(REAR_LED_TYPE animation){
 				res = LED_STRIPE_OK;
 			}
 			break;
-		case  BRAKING_LIGHT:
+		case  BRAKING_LIGHTS:
 			if(rear_led_anim_stop() == LED_STRIPE_OK){
 				res = LED_STRIPE_OK;
 			}
@@ -130,7 +178,18 @@ led_status_t rear_led_step(REAR_LED_TYPE animation){
 				res = LED_STRIPE_OK;
 			}
 			break;
-			
+
+		case  EMERGENCY_LIGHTS:
+			if(rear_led_emercency_lights() == LED_STRIPE_OK){
+				res = LED_STRIPE_OK;
+			}
+			break;
+
+		case DEGRADED_LIGHTS:
+			if(rear_led_degraded_lights() == LED_STRIPE_OK){
+				res = LED_STRIPE_OK;
+			}
+			break;
 		default:
 			rear_led_off();
 			res = LED_STRIPE_ERR;
@@ -143,6 +202,11 @@ led_status_t rear_led_step(REAR_LED_TYPE animation){
 
 
 led_status_t rear_sign_step(REAR_SIGN_TYPE animation){
+
+
+    if (g_led_bus.wr_buf_p != 0) {
+        return LED_STRIPE_OK;   // DMA attivo → non tocco lo stato
+    }
 
 	led_status_t res = LED_STRIPE_ERR;
 
@@ -175,6 +239,11 @@ led_status_t rear_sign_step(REAR_SIGN_TYPE animation){
 			break;
 		case SIGN_RED:
 			if(rear_sign_red() == LED_STRIPE_OK){
+				res = LED_STRIPE_OK;
+			}
+			break;
+		case SIGN_YELLOW:
+			if(rear_sign_yellow() == LED_STRIPE_OK){
 				res = LED_STRIPE_OK;
 			}
 			break;
@@ -216,64 +285,51 @@ static led_status_t rear_sign_off(void)
 
 static led_status_t rear_led_special_lights(void)
 {
-    const uint16_t start = rear_led.start;
-    const uint16_t end   = rear_led.end;
-    const uint16_t len   = (uint16_t)(end - start + 1);
 
-    /* centro del segmento */
-    const uint16_t mid_left  = (uint16_t)(start + (len - 1) / 2);
-    const uint16_t mid_right = (uint16_t)(start + len / 2);
+    for (uint16_t i = rear_led.start; i <= rear_led.end; i++) {
 
-    /* numero massimo di step di espansione */
-    const uint16_t max_steps = (uint16_t)((len + 1) / 2);
+        uint8_t r, g, b;
+        random_rainbow(&r, &g, &b);
 
-    /* step 0: frame iniziale spento */
-    if (rear_led.step == 0) {
-        led_set_RGB_range(start, end, 0, 0, 0);
-        g_led_bus.dirty = 1;
-        rear_led.step = 1;
-        return LED_STRIPE_OK;
+        led_set_RGB((uint8_t)i, r, g, b);
+
     }
 
-    /* step 1..max_steps: espansione simmetrica */
-    uint16_t s = rear_led.step - 1;   /* 0..max_steps-1 */
-
-    if (s < max_steps) {
-
-        led_set_RGB_range(start, end, 0, 0, 0);
-
-        for (uint16_t i = 0; i <= s; i++) {
-
-            /* colore arcobaleno a bande */
-            uint8_t r = 0, g = 0, b = 0;
-            uint8_t phase = (uint8_t)((i * 6) / max_steps);
-
-            switch (phase) {
-                case 0: r = 255; g = 0;   b = 0;   break; // rosso
-                case 1: r = 255; g = 80;  b = 0;   break; // arancio
-                case 2: r = 255; g = 255; b = 0;   break; // giallo
-                case 3: r = 0;   g = 255; b = 0;   break; // verde
-                case 4: r = 0;   g = 0;   b = 255; break; // blu
-                default:r = 160; g = 0;   b = 255; break; // viola
-            }
-
-            if (mid_left >= start + i)
-                led_set_RGB((uint8_t)(mid_left  - i), r, g, b);
-
-            if (mid_right + i <= end)
-                led_set_RGB((uint8_t)(mid_right + i), r, g, b);
-        }
-
-        g_led_bus.dirty = 1;
-        rear_led.step++;
-        return LED_STRIPE_OK;
-    }
-
-    /* fine animazione → ricomincia */
-    rear_led.step = 0;
+    g_led_bus.dirty = 1;
     return LED_STRIPE_OK;
 }
 
+
+static led_status_t rear_led_emercency_lights(void)
+{
+	led_status_t res = LED_STRIPE_ERR;
+	if (rear_led.step == 0 && led_set_RGB_range(rear_led.start, rear_led.end, 255, 0, 0) == LED_STRIPE_OK){
+		g_led_bus.dirty = 1;
+		res = LED_STRIPE_OK;
+	}else if (rear_led.step == (EMERGENCY_PERIOD / 2) && led_set_RGB_range(rear_led.start, rear_led.end, 0, 0, 0) == LED_STRIPE_OK){
+		g_led_bus.dirty = 1;
+		res = LED_STRIPE_OK;
+	}else{
+		res = LED_STRIPE_OK;
+	}
+
+
+	rear_led.step = (rear_led.step + 1) % EMERGENCY_PERIOD;
+
+	return res;
+}
+
+static led_status_t rear_led_degraded_lights(void)
+{
+	if (rear_led.step != 0) return LED_STRIPE_OK;
+
+	if (led_set_RGB_range(rear_led.start, rear_led.end, 255, 255, 0) != LED_STRIPE_OK)
+		return LED_STRIPE_ERR;
+
+	g_led_bus.dirty = 1;
+	rear_led.step = 1;
+	return LED_STRIPE_OK;
+}
 
 static led_status_t rear_led_anim_stop(void)
 {
@@ -473,14 +529,17 @@ static led_status_t rear_sign_orange(void)
     return LED_STRIPE_OK;
 }
 
+static led_status_t rear_sign_yellow(void)
+{
+	if (rear_sign.step != 0) return LED_STRIPE_OK;
 
+	if (led_set_RGB_range(rear_sign.start, rear_sign.end, 255, 255, 0) != LED_STRIPE_OK)
+		return LED_STRIPE_ERR;
 
-
-
-static inline uint8_t scale8(uint8_t x, uint8_t scale) {
-  return ((uint16_t)x * scale) >> 8;
+	g_led_bus.dirty = 1;
+	rear_sign.step = 1;
+	return LED_STRIPE_OK;
 }
-
 
 
 led_status_t led_set_RGB(uint8_t index, uint8_t r, uint8_t g, uint8_t b) {
@@ -526,13 +585,17 @@ led_status_t led_set_RGB_range(uint16_t start, uint16_t end, uint8_t r, uint8_t 
 // Shuttle the data to the LEDs!
 led_status_t led_render() {
 
-  if(!g_led_bus.dirty) return LED_STRIPE_OK;
+  if(!g_led_bus.dirty)
+	  return LED_STRIPE_OK;
 
   if(g_led_bus.wr_buf_p != 0 || g_led_bus.cfg.hdma->State != HAL_DMA_STATE_READY) {
     // Ongoing transfer, cancel!
+
+	  /*
     for(uint8_t i = 0; i < WR_BUF_LEN; ++i) g_led_bus.wr_buf[i] = 0;
     g_led_bus.wr_buf_p = 0;
     HAL_TIM_PWM_Stop_DMA(g_led_bus.cfg.htim, g_led_bus.cfg.tim_channel);
+    */
     return LED_STRIPE_OK;
 
   }

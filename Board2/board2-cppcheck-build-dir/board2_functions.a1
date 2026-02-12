@@ -1,0 +1,315 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="10779154338953498871">
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;stdint.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;stdint.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/board2_functions.h" line="13" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;stddef.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;stddef.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/board2_functions.h" line="14" column="0"/>
+        </error>
+        <error id="missingInclude" severity="information" msg="Include file: &quot;stm32g4xx_hal.h&quot; not found." verbose="Include file: &quot;stm32g4xx_hal.h&quot; not found.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/main.h" line="30" column="0"/>
+        </error>
+        <error id="missingInclude" severity="information" msg="Include file: &quot;string.h&quot; not found." verbose="Include file: &quot;string.h&quot; not found.">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="11" column="0"/>
+        </error>
+        <error id="missingInclude" severity="information" msg="Include file: &quot;cmsis_os.h&quot; not found." verbose="Include file: &quot;cmsis_os.h&quot; not found.">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="12" column="0"/>
+        </error>
+  <FileInfo check="ctu">
+<function-call call-id="board2_firmware/Core/Src/board2_functions.c:40:13" call-funcname="Copy_StateBusB1" call-argnr="1" file="board2_firmware/Core/Src/board2_functions.c" line="231" col="20" call-argexpr="&amp;clean_state" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="board2_firmware/Core/Src/board2_functions.c:78:13" call-funcname="Copy_GSBus" call-argnr="1" file="board2_firmware/Core/Src/board2_functions.c" line="246" col="15" call-argexpr="&amp;clean_state" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="board2_firmware/Core/Src/board2_functions.c:91:13" call-funcname="Copy_DecBus" call-argnr="1" file="board2_firmware/Core/Src/board2_functions.c" line="261" col="16" call-argexpr="&amp;clean_decision" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/>  </FileInfo>
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="board2_firmware/Core/Src/board2_functions.c:40:13" my-argnr="1" my-argname="dest" file="board2_firmware/Core/Src/board2_functions.c" line="41" col="5" value="0"/>
+    <unsafe-usage my-id="board2_firmware/Core/Src/board2_functions.c:40:13" my-argnr="2" my-argname="src" file="board2_firmware/Core/Src/board2_functions.c" line="41" col="29" value="0"/>
+    <unsafe-usage my-id="board2_firmware/Core/Src/board2_functions.c:57:13" my-argnr="1" my-argname="dest" file="board2_firmware/Core/Src/board2_functions.c" line="58" col="5" value="0"/>
+    <unsafe-usage my-id="board2_firmware/Core/Src/board2_functions.c:57:13" my-argnr="2" my-argname="src" file="board2_firmware/Core/Src/board2_functions.c" line="58" col="21" value="0"/>
+    <unsafe-usage my-id="board2_firmware/Core/Src/board2_functions.c:91:13" my-argnr="1" my-argname="dest" file="board2_firmware/Core/Src/board2_functions.c" line="92" col="5" value="0"/>
+    <unsafe-usage my-id="board2_firmware/Core/Src/board2_functions.c:91:13" my-argnr="2" my-argname="src" file="board2_firmware/Core/Src/board2_functions.c" line="92" col="20" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="board2_firmware/Core/Src/board2_functions.c:40:13" my-argnr="2" my-argname="src" file="board2_firmware/Core/Src/board2_functions.c" line="41" col="29" value="0"/>
+    <unsafe-usage my-id="board2_firmware/Core/Src/board2_functions.c:57:13" my-argnr="2" my-argname="src" file="board2_firmware/Core/Src/board2_functions.c" line="58" col="21" value="0"/>
+    <unsafe-usage my-id="board2_firmware/Core/Src/board2_functions.c:91:13" my-argnr="2" my-argname="src" file="board2_firmware/Core/Src/board2_functions.c" line="92" col="20" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="Copy_StateBusB1" lineNumber="40" column="13"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="Copy_StateBusB2" lineNumber="57" column="13"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="Copy_GSBus" lineNumber="78" column="13"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="Copy_DecBus" lineNumber="91" column="13"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="UART_Is_Tx_Complete" lineNumber="110" column="11"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="UART_Is_Rx_Complete" lineNumber="119" column="11"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="UART_Stop_DMA" lineNumber="128" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="UART_Send_Local_State" lineNumber="133" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="UART_Send_GlobalState" lineNumber="155" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="UART_Send_Decision" lineNumber="171" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="UART_Send_Ping" lineNumber="187" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="UART_Wait_State" lineNumber="195" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="UART_Wait_GlobalState" lineNumber="202" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="UART_Wait_Decision" lineNumber="208" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="UART_Wait_Ping" lineNumber="214" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="CRC_Check_State" lineNumber="224" column="11"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="CRC_Check_GlobalState" lineNumber="240" column="11"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="CRC_Check_Decision" lineNumber="255" column="11"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="UART_Check_Ping" lineNumber="271" column="11"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="IO_Set_Session" lineNumber="280" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="IO_Reset_Session" lineNumber="286" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="IO_Set_MasterTalk" lineNumber="291" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="IO_Reset_MasterTalk" lineNumber="297" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="IO_Read_SlaveTalk" lineNumber="302" column="11"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="Time_Get_Tick" lineNumber="312" column="10"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="Time_Check_Elapsed_us" lineNumber="318" column="11"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="Time_Check_Elapsed_ms" lineNumber="325" column="11"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="OS_Enter_Critical" lineNumber="335" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/board2_functions.c" functionName="OS_Exit_Critical" lineNumber="341" column="6"/>
+    <functioncall functionName="Copy_DecBus"/>
+    <functioncall functionName="Copy_GSBus"/>
+    <functioncall functionName="Copy_StateBusB1"/>
+    <functioncall functionName="Copy_StateBusB2"/>
+    <functioncall functionName="GPIOC"/>
+    <functioncall functionName="GPIO_PIN_11"/>
+    <functioncall functionName="GPIO_PIN_8"/>
+    <functioncall functionName="GPIO_PIN_9"/>
+    <functioncall functionName="GPIO_PIN_RESET"/>
+    <functioncall functionName="GPIO_PIN_SET"/>
+    <functioncall functionName="HAL_CRC_Calculate"/>
+    <functioncall functionName="HAL_GPIO_ReadPin"/>
+    <functioncall functionName="HAL_GPIO_WritePin"/>
+    <functioncall functionName="HAL_HalfDuplex_EnableReceiver"/>
+    <functioncall functionName="HAL_HalfDuplex_EnableTransmitter"/>
+    <functioncall functionName="HAL_UART_DMAStop"/>
+    <functioncall functionName="HAL_UART_Receive_DMA"/>
+    <functioncall functionName="HAL_UART_Transmit_DMA"/>
+    <functioncall functionName="__HAL_CRC_DR_RESET"/>
+    <functioncall functionName="__HAL_TIM_GET_COUNTER"/>
+    <functioncall functionName="memset"/>
+    <functioncall functionName="taskENTER_CRITICAL"/>
+    <functioncall functionName="taskEXIT_CRITICAL"/>
+  </FileInfo>
+        <error id="threadsafety-threadsafety" severity="warning" msg="Local static object: packet" verbose="Local static object: packet" file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="136" column="12"/>
+        </error>
+        <error id="threadsafety-threadsafety" severity="warning" msg="Local static variable: ping" verbose="Local static variable: ping" file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="189" column="12"/>
+        </error>
+        <error id="threadsafety-threadsafety" severity="warning" msg="Local static object: packet" verbose="Local static object: packet" file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="173" column="12"/>
+        </error>
+        <error id="threadsafety-threadsafety" severity="warning" msg="Local static object: packet" verbose="Local static object: packet" file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="157" column="12"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="27" column="11"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="30" column="11"/>
+        </error>
+        <error id="misra-c2012-10.3" severity="style" msg="The value of an expression shall not be assigned to an object with a narrower essential type or of a different essential type category." verbose="The value of an expression shall not be assigned to an object with a narrower essential type or of a different essential type category." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="189" column="25"/>
+        </error>
+        <error id="misra-c2012-10.4" severity="style" msg="Both operands of an operator in which the usual arithmetic conversions are performed shall have the same essential type category." verbose="Both operands of an operator in which the usual arithmetic conversions are performed shall have the same essential type category." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="273" column="22"/>
+        </error>
+        <error id="misra-c2012-11.3" severity="style" msg="A cast shall not be performed between a pointer to object type and a pointer to a different object type." verbose="A cast shall not be performed between a pointer to object type and a pointer to a different object type." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="147" column="35"/>
+        </error>
+        <error id="misra-c2012-11.3" severity="style" msg="A cast shall not be performed between a pointer to object type and a pointer to a different object type." verbose="A cast shall not be performed between a pointer to object type and a pointer to a different object type." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="164" column="35"/>
+        </error>
+        <error id="misra-c2012-11.3" severity="style" msg="A cast shall not be performed between a pointer to object type and a pointer to a different object type." verbose="A cast shall not be performed between a pointer to object type and a pointer to a different object type." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="180" column="35"/>
+        </error>
+        <error id="misra-c2012-11.3" severity="style" msg="A cast shall not be performed between a pointer to object type and a pointer to a different object type." verbose="A cast shall not be performed between a pointer to object type and a pointer to a different object type." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="235" column="34"/>
+        </error>
+        <error id="misra-c2012-11.3" severity="style" msg="A cast shall not be performed between a pointer to object type and a pointer to a different object type." verbose="A cast shall not be performed between a pointer to object type and a pointer to a different object type." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="250" column="34"/>
+        </error>
+        <error id="misra-c2012-11.3" severity="style" msg="A cast shall not be performed between a pointer to object type and a pointer to a different object type." verbose="A cast shall not be performed between a pointer to object type and a pointer to a different object type." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="265" column="34"/>
+        </error>
+        <error id="misra-c2012-11.5" severity="style" msg="A conversion should not be performed from pointer to void into pointer to object." verbose="A conversion should not be performed from pointer to void into pointer to object." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="142" column="36"/>
+        </error>
+        <error id="misra-c2012-11.5" severity="style" msg="A conversion should not be performed from pointer to void into pointer to object." verbose="A conversion should not be performed from pointer to void into pointer to object." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="160" column="38"/>
+        </error>
+        <error id="misra-c2012-11.5" severity="style" msg="A conversion should not be performed from pointer to void into pointer to object." verbose="A conversion should not be performed from pointer to void into pointer to object." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="176" column="35"/>
+        </error>
+        <error id="misra-c2012-11.5" severity="style" msg="A conversion should not be performed from pointer to void into pointer to object." verbose="A conversion should not be performed from pointer to void into pointer to object." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="199" column="35"/>
+        </error>
+        <error id="misra-c2012-11.5" severity="style" msg="A conversion should not be performed from pointer to void into pointer to object." verbose="A conversion should not be performed from pointer to void into pointer to object." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="205" column="35"/>
+        </error>
+        <error id="misra-c2012-11.5" severity="style" msg="A conversion should not be performed from pointer to void into pointer to object." verbose="A conversion should not be performed from pointer to void into pointer to object." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="211" column="35"/>
+        </error>
+        <error id="misra-c2012-11.5" severity="style" msg="A conversion should not be performed from pointer to void into pointer to object." verbose="A conversion should not be performed from pointer to void into pointer to object." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="217" column="35"/>
+        </error>
+        <error id="misra-c2012-11.5" severity="style" msg="A conversion should not be performed from pointer to void into pointer to object." verbose="A conversion should not be performed from pointer to void into pointer to object." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="227" column="35"/>
+        </error>
+        <error id="misra-c2012-11.5" severity="style" msg="A conversion should not be performed from pointer to void into pointer to object." verbose="A conversion should not be performed from pointer to void into pointer to object." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="242" column="34"/>
+        </error>
+        <error id="misra-c2012-11.5" severity="style" msg="A conversion should not be performed from pointer to void into pointer to object." verbose="A conversion should not be performed from pointer to void into pointer to object." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="257" column="36"/>
+        </error>
+        <error id="misra-c2012-14.4" severity="style" msg="The controlling expression of an if statement and the controlling expression of an iteration-statement shall have essentially Boolean type." verbose="The controlling expression of an if statement and the controlling expression of an iteration-statement shall have essentially Boolean type." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="112" column="8"/>
+        </error>
+        <error id="misra-c2012-14.4" severity="style" msg="The controlling expression of an if statement and the controlling expression of an iteration-statement shall have essentially Boolean type." verbose="The controlling expression of an if statement and the controlling expression of an iteration-statement shall have essentially Boolean type." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="121" column="8"/>
+        </error>
+        <error id="misra-c2012-15.5" severity="style" msg="A function should have a single point of exit at the end." verbose="A function should have a single point of exit at the end." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="114" column="9"/>
+        </error>
+        <error id="misra-c2012-15.5" severity="style" msg="A function should have a single point of exit at the end." verbose="A function should have a single point of exit at the end." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="123" column="9"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="130" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="145" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="146" column="18"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="151" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="152" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="162" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="163" column="18"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="167" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="168" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="178" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="179" column="18"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="183" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="184" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="191" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="192" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="198" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="199" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="204" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="205" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="210" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="211" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="216" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="217" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="233" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="235" column="9"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="248" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="250" column="9"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="263" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="265" column="9"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="283" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="288" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="294" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="299" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="305" column="13"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="315" column="12"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="321" column="27"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="329" column="27"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="338" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="344" column="5"/>
+        </error>
+        <error id="misra-c2012-17.7" severity="style" msg="The value returned by a function having non-void return type shall be used." verbose="The value returned by a function having non-void return type shall be used." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="139" column="11"/>
+        </error>
+        <error id="misra-c2012-17.7" severity="style" msg="The value returned by a function having non-void return type shall be used." verbose="The value returned by a function having non-void return type shall be used." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="159" column="11"/>
+        </error>
+        <error id="misra-c2012-17.7" severity="style" msg="The value returned by a function having non-void return type shall be used." verbose="The value returned by a function having non-void return type shall be used." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="175" column="11"/>
+        </error>
+        <error id="misra-c2012-17.7" severity="style" msg="The value returned by a function having non-void return type shall be used." verbose="The value returned by a function having non-void return type shall be used." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="230" column="11"/>
+        </error>
+        <error id="misra-c2012-17.7" severity="style" msg="The value returned by a function having non-void return type shall be used." verbose="The value returned by a function having non-void return type shall be used." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="245" column="11"/>
+        </error>
+        <error id="misra-c2012-17.7" severity="style" msg="The value returned by a function having non-void return type shall be used." verbose="The value returned by a function having non-void return type shall be used." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="board2_firmware/Core/Src/board2_functions.c" line="260" column="11"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/main.h" line="23" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/rtwtypes.h" line="26" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/board2_functions.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/rtwtypes.h" line="30" column="0"/>
+        </error>
+</analyzerinfo>

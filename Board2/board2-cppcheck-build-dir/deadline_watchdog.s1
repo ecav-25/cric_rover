@@ -1,0 +1,3 @@
+DWD_Init call:[HAL_TIM_Base_Start_IT,__HAL_TIM_CLEAR_FLAG,__HAL_TIM_SET_COUNTER] noreturn:[HAL_TIM_Base_Start_IT]
+DWD_Notify call:[__HAL_TIM_SET_COUNTER,taskENTER_CRITICAL,taskEXIT_CRITICAL] noreturn:[__HAL_TIM_SET_COUNTER,taskEXIT_CRITICAL]
+DWD_CheckStatus call:[HAL_TIM_Base_Stop_IT,on_deadline_cb] noreturn:[on_deadline_cb]
