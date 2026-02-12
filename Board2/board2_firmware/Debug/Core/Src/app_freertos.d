@@ -45,11 +45,13 @@ Core/Src/app_freertos.o: ../Core/Src/app_freertos.c \
  ../Core/Inc/main.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
- ../Core/Inc/Board2.h ../Core/Inc/board_functions.h \
+ ../Core/Inc/Board2.h ../Core/Inc/board2_functions.h \
  ../Core/Inc/dwt_delay.h ../Core/Inc/hcsr04.h ../Core/Inc/controller.h \
  ../Core/Inc/i2c.h ../Core/Inc/mpu6050.h ../Core/Inc/mpu_constants.h \
  ../Core/Inc/motor.h ../Core/Inc/tim.h ../Core/Inc/deadline_watchdog.h \
- ../Core/Inc/motor_config.h ../Core/Inc/motor.h
+ ../Core/Inc/utils.h ../Core/Inc/controller.h ../Core/Inc/Board2.h \
+ ../Core/Inc/hw_config.h ../Core/Inc/motor.h ../Core/Inc/mpu6050.h \
+ ../Core/Inc/hcsr04.h
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
 ../Core/Inc/main.h:
@@ -99,7 +101,7 @@ Core/Src/app_freertos.o: ../Core/Src/app_freertos.c \
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 ../Core/Inc/Board2.h:
-../Core/Inc/board_functions.h:
+../Core/Inc/board2_functions.h:
 ../Core/Inc/dwt_delay.h:
 ../Core/Inc/hcsr04.h:
 ../Core/Inc/controller.h:
@@ -109,5 +111,10 @@ Core/Src/app_freertos.o: ../Core/Src/app_freertos.c \
 ../Core/Inc/motor.h:
 ../Core/Inc/tim.h:
 ../Core/Inc/deadline_watchdog.h:
-../Core/Inc/motor_config.h:
+../Core/Inc/utils.h:
+../Core/Inc/controller.h:
+../Core/Inc/Board2.h:
+../Core/Inc/hw_config.h:
 ../Core/Inc/motor.h:
+../Core/Inc/mpu6050.h:
+../Core/Inc/hcsr04.h:

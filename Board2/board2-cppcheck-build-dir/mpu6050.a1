@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="10456567254941118888">
+        <error id="missingInclude" severity="information" msg="Include file: &quot;stdint.h&quot; not found." verbose="Include file: &quot;stdint.h&quot; not found.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h" line="4" column="0"/>
+        </error>
+        <error id="missingInclude" severity="information" msg="Include file: &quot;stm32g4xx_hal.h&quot; not found." verbose="Include file: &quot;stm32g4xx_hal.h&quot; not found.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/main.h" line="30" column="0"/>
+        </error>
+        <error id="missingInclude" severity="information" msg="Include file: &quot;stddef.h&quot; not found." verbose="Include file: &quot;stddef.h&quot; not found.">
+            <location file="board2_firmware/Core/Src/mpu6050.c" line="2" column="0"/>
+        </error>
+        <error id="normalCheckLevelMaxBranches" severity="information" msg="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." verbose="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." file0="board2_firmware/Core/Src/mpu6050.c">
+            <location file="board2_firmware/Core/Src/mpu6050.c" line="0" column="0"/>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;buf&apos; can be reduced." verbose="The scope of the variable &apos;buf&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="board2_firmware/Core/Src/mpu6050.c">
+            <location file="board2_firmware/Core/Src/mpu6050.c" line="69" column="13"/>
+            <symbol>buf</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;buf&apos; can be reduced." verbose="The scope of the variable &apos;buf&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="board2_firmware/Core/Src/mpu6050.c">
+            <location file="board2_firmware/Core/Src/mpu6050.c" line="350" column="13"/>
+            <symbol>buf</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;buf&apos; can be reduced." verbose="The scope of the variable &apos;buf&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="board2_firmware/Core/Src/mpu6050.c">
+            <location file="board2_firmware/Core/Src/mpu6050.c" line="386" column="13"/>
+            <symbol>buf</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;cfg_masked&apos; can be reduced." verbose="The scope of the variable &apos;cfg_masked&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="board2_firmware/Core/Src/mpu6050.c">
+            <location file="board2_firmware/Core/Src/mpu6050.c" line="437" column="13"/>
+            <symbol>cfg_masked</symbol>
+        </error>
+  <FileInfo check="ctu">
+<function-call call-id="board2_firmware/Core/Src/mpu6050.c:47:30" call-funcname="mpu6050_read_bytes" call-argnr="3" file="board2_firmware/Core/Src/mpu6050.c" line="73" col="31" call-argexpr="buf" call-argvaluetype="7" call-argvalue="2" call-argvalue-ufr="0"/><function-call call-id="board2_firmware/Core/Src/mpu6050.c:9:30" call-funcname="mpu6050_write_reg" call-argnr="3" file="board2_firmware/Core/Src/mpu6050.c" line="174" col="30" call-argexpr="0b00000000" call-argvaluetype="0" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="board2_firmware/Core/Src/mpu6050.c:28:30" call-funcname="mpu6050_read_reg" call-argnr="3" file="board2_firmware/Core/Src/mpu6050.c" line="194" col="29" call-argexpr="&amp;reg" call-argvaluetype="7" call-argvalue="1" call-argvalue-ufr="0"/><function-call call-id="board2_firmware/Core/Src/mpu6050.c:28:30" call-funcname="mpu6050_read_reg" call-argnr="3" file="board2_firmware/Core/Src/mpu6050.c" line="224" col="29" call-argexpr="&amp;reg" call-argvaluetype="7" call-argvalue="1" call-argvalue-ufr="0"/><function-call call-id="board2_firmware/Core/Src/mpu6050.c:47:30" call-funcname="mpu6050_read_bytes" call-argnr="3" file="board2_firmware/Core/Src/mpu6050.c" line="354" col="31" call-argexpr="buf" call-argvaluetype="7" call-argvalue="6" call-argvalue-ufr="0"/><function-call call-id="board2_firmware/Core/Src/mpu6050.c:47:30" call-funcname="mpu6050_read_bytes" call-argnr="3" file="board2_firmware/Core/Src/mpu6050.c" line="390" col="31" call-argexpr="buf" call-argvaluetype="7" call-argvalue="6" call-argvalue-ufr="0"/><function-call call-id="board2_firmware/Core/Src/mpu6050.c:28:30" call-funcname="mpu6050_read_reg" call-argnr="3" file="board2_firmware/Core/Src/mpu6050.c" line="443" col="29" call-argexpr="&amp;reg" call-argvaluetype="7" call-argvalue="1" call-argvalue-ufr="0"/><function-call call-id="board2_firmware/Core/Src/mpu6050.c:66:30" call-funcname="mpu6050_read_axis" call-argnr="4" file="board2_firmware/Core/Src/mpu6050.c" line="620" col="12" my-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:93:23" my-argnr="2"/>
+<function-call call-id="board2_firmware/Core/Src/mpu6050.c:66:30" call-funcname="mpu6050_read_axis" call-argnr="4" file="board2_firmware/Core/Src/mpu6050.c" line="625" col="12" my-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:94:23" my-argnr="2"/>
+<function-call call-id="board2_firmware/Core/Src/mpu6050.c:66:30" call-funcname="mpu6050_read_axis" call-argnr="4" file="board2_firmware/Core/Src/mpu6050.c" line="630" col="12" my-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:95:23" my-argnr="2"/>
+<function-call call-id="board2_firmware/Core/Src/mpu6050.c:66:30" call-funcname="mpu6050_read_axis" call-argnr="4" file="board2_firmware/Core/Src/mpu6050.c" line="635" col="12" my-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:96:23" my-argnr="2"/>
+<function-call call-id="board2_firmware/Core/Src/mpu6050.c:66:30" call-funcname="mpu6050_read_axis" call-argnr="4" file="board2_firmware/Core/Src/mpu6050.c" line="640" col="12" my-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:97:23" my-argnr="2"/>
+<function-call call-id="board2_firmware/Core/Src/mpu6050.c:66:30" call-funcname="mpu6050_read_axis" call-argnr="4" file="board2_firmware/Core/Src/mpu6050.c" line="645" col="12" my-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:98:23" my-argnr="2"/>
+  </FileInfo>
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:93:23" my-argnr="1" my-argname="dev" file="board2_firmware/Core/Src/mpu6050.c" line="619" col="44" value="0"/>
+    <unsafe-usage my-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:94:23" my-argnr="1" my-argname="dev" file="board2_firmware/Core/Src/mpu6050.c" line="624" col="44" value="0"/>
+    <unsafe-usage my-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:95:23" my-argnr="1" my-argname="dev" file="board2_firmware/Core/Src/mpu6050.c" line="629" col="44" value="0"/>
+    <unsafe-usage my-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:96:23" my-argnr="1" my-argname="dev" file="board2_firmware/Core/Src/mpu6050.c" line="634" col="43" value="0"/>
+    <unsafe-usage my-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:97:23" my-argnr="1" my-argname="dev" file="board2_firmware/Core/Src/mpu6050.c" line="639" col="43" value="0"/>
+    <unsafe-usage my-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:98:23" my-argnr="1" my-argname="dev" file="board2_firmware/Core/Src/mpu6050.c" line="644" col="43" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:93:23" my-argnr="1" my-argname="dev" file="board2_firmware/Core/Src/mpu6050.c" line="619" col="44" value="0"/>
+    <unsafe-usage my-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:94:23" my-argnr="1" my-argname="dev" file="board2_firmware/Core/Src/mpu6050.c" line="624" col="44" value="0"/>
+    <unsafe-usage my-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:95:23" my-argnr="1" my-argname="dev" file="board2_firmware/Core/Src/mpu6050.c" line="629" col="44" value="0"/>
+    <unsafe-usage my-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:96:23" my-argnr="1" my-argname="dev" file="board2_firmware/Core/Src/mpu6050.c" line="634" col="43" value="0"/>
+    <unsafe-usage my-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:97:23" my-argnr="1" my-argname="dev" file="board2_firmware/Core/Src/mpu6050.c" line="639" col="43" value="0"/>
+    <unsafe-usage my-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:98:23" my-argnr="1" my-argname="dev" file="board2_firmware/Core/Src/mpu6050.c" line="644" col="43" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_write_reg" lineNumber="9" column="30"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_read_reg" lineNumber="28" column="30"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_read_bytes" lineNumber="47" column="30"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_read_axis" lineNumber="66" column="30"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_accel_sensitivity" lineNumber="94" column="14"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_gyro_sensitivity" lineNumber="120" column="14"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_reset" lineNumber="148" column="30"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_wake" lineNumber="168" column="30"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_set_accel_range_lowlevel" lineNumber="187" column="30"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_set_gyro_range_lowlevel" lineNumber="217" column="30"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_apply_config" lineNumber="248" column="30"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_init" lineNumber="282" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_recovery_init" lineNumber="317" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_who_am_i" lineNumber="335" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_get_accel_value" lineNumber="347" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_get_gyro_value" lineNumber="383" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_signal_path_reset" lineNumber="421" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_set_dlpf" lineNumber="433" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_get_dlpf" lineNumber="467" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_set_sample_div" lineNumber="480" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_get_sample_div" lineNumber="500" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_set_accel_fs" lineNumber="513" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_get_accel_fs" lineNumber="536" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_set_gyro_fs" lineNumber="549" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_get_gyro_fs" lineNumber="572" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_set_interrupt_mask" lineNumber="585" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_get_interrupt_mask" lineNumber="605" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_get_accel_x" lineNumber="618" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_get_accel_y" lineNumber="623" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_get_accel_z" lineNumber="628" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_get_gyro_x" lineNumber="633" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_get_gyro_y" lineNumber="638" column="23"/>
+    <functiondecl file="board2_firmware/Core/Src/mpu6050.c" functionName="mpu6050_get_gyro_z" lineNumber="643" column="23"/>
+    <functioncall functionName="HAL_Delay"/>
+    <functioncall functionName="HAL_I2C_Mem_Read"/>
+    <functioncall functionName="HAL_I2C_Mem_Write"/>
+    <functioncall functionName="I2C_MEMADD_SIZE_8BIT"/>
+    <functioncall functionName="mpu6050_accel_sensitivity"/>
+    <functioncall functionName="mpu6050_apply_config"/>
+    <functioncall functionName="mpu6050_gyro_sensitivity"/>
+    <functioncall functionName="mpu6050_read_axis"/>
+    <functioncall functionName="mpu6050_read_bytes"/>
+    <functioncall functionName="mpu6050_read_reg"/>
+    <functioncall functionName="mpu6050_reset"/>
+    <functioncall functionName="mpu6050_set_accel_fs"/>
+    <functioncall functionName="mpu6050_set_accel_range_lowlevel"/>
+    <functioncall functionName="mpu6050_set_dlpf"/>
+    <functioncall functionName="mpu6050_set_gyro_fs"/>
+    <functioncall functionName="mpu6050_set_gyro_range_lowlevel"/>
+    <functioncall functionName="mpu6050_set_interrupt_mask"/>
+    <functioncall functionName="mpu6050_set_sample_div"/>
+    <functioncall functionName="mpu6050_signal_path_reset"/>
+    <functioncall functionName="mpu6050_wake"/>
+    <functioncall functionName="mpu6050_write_reg"/>
+  </FileInfo>
+        <error id="misra-c2012-7.3" severity="style" msg="The lowercase character \342\200\234l\342\200\235 shall not be used in a literal suffix." verbose="The lowercase character \342\200\234l\342\200\235 shall not be used in a literal suffix." file0="board2_firmware/Core/Src/mpu6050.c">
+            <location file="board2_firmware/Core/Src/mpu6050.c" line="375" column="23"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/mpu6050.c">
+            <location file="board2_firmware/Core/Src/mpu6050.c" line="15" column="40"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/mpu6050.c">
+            <location file="board2_firmware/Core/Src/mpu6050.c" line="34" column="40"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/mpu6050.c">
+            <location file="board2_firmware/Core/Src/mpu6050.c" line="53" column="40"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/mpu6050.c">
+            <location file="board2_firmware/Core/Src/mpu6050.c" line="160" column="13"/>
+        </error>
+        <error id="misra-config" severity="error" msg="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;HAL_OK&apos; is unknown" verbose="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;HAL_OK&apos; is unknown" file0="board2_firmware/Core/Src/mpu6050.c">
+            <location file="board2_firmware/Core/Src/mpu6050.c" line="19" column="27"/>
+        </error>
+        <error id="misra-config" severity="error" msg="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;HAL_OK&apos; is unknown" verbose="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;HAL_OK&apos; is unknown" file0="board2_firmware/Core/Src/mpu6050.c">
+            <location file="board2_firmware/Core/Src/mpu6050.c" line="38" column="27"/>
+        </error>
+        <error id="misra-config" severity="error" msg="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;HAL_OK&apos; is unknown" verbose="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;HAL_OK&apos; is unknown" file0="board2_firmware/Core/Src/mpu6050.c">
+            <location file="board2_firmware/Core/Src/mpu6050.c" line="57" column="27"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/mpu6050.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/i2c.h" line="22" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/mpu6050.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/main.h" line="23" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/mpu6050.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/rtwtypes.h" line="26" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/mpu6050.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/rtwtypes.h" line="30" column="0"/>
+        </error>
+</analyzerinfo>

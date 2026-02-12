@@ -1,0 +1,14 @@
+NMI_Handler
+HardFault_Handler
+MemManage_Handler
+BusFault_Handler
+UsageFault_Handler
+DebugMon_Handler
+DMA1_Channel1_IRQHandler global:[hdma_usart3_rx] call:[HAL_DMA_IRQHandler] noreturn:[HAL_DMA_IRQHandler]
+DMA1_Channel2_IRQHandler global:[hdma_usart3_tx] call:[HAL_DMA_IRQHandler] noreturn:[HAL_DMA_IRQHandler]
+TIM2_IRQHandler global:[htim2] call:[HAL_TIM_IRQHandler] noreturn:[HAL_TIM_IRQHandler]
+TIM4_IRQHandler global:[htim4] call:[HAL_TIM_IRQHandler] noreturn:[HAL_TIM_IRQHandler]
+USART3_IRQHandler global:[huart3] call:[HAL_UART_IRQHandler] noreturn:[HAL_UART_IRQHandler]
+TIM6_DAC_IRQHandler global:[htim6] call:[HAL_TIM_IRQHandler] noreturn:[HAL_TIM_IRQHandler]
+HAL_UART_TxCpltCallback global:[huart3,transmitted,tx_complete] call:[HAL_UART_DMAStop]
+HAL_UART_RxCpltCallback global:[huart3,received,rx_complete] call:[HAL_UART_DMAStop]

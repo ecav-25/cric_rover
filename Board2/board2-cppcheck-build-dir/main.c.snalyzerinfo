@@ -1,0 +1,6 @@
+main global:[htim5] call:[HAL_Init,HAL_TIM_Base_Start,MX_CRC_Init,MX_DMA_Init,MX_FREERTOS_Init,MX_GPIO_Init,MX_I2C1_Init,MX_TIM1_Init,MX_TIM2_Init,MX_TIM4_Init,MX_TIM5_Init,MX_USART3_UART_Init,SystemClock_Config,osKernelInitialize,osKernelStart]
+SystemClock_Config call:[Error_Handler,HAL_PWREx_ControlVoltageScaling,HAL_RCC_ClockConfig,HAL_RCC_OscConfig] noreturn:[Error_Handler]
+HAL_TIM_IC_CaptureCallback call:[HCSR04_IC_Callback] noreturn:[HCSR04_IC_Callback]
+HAL_TIM_PeriodElapsedCallback global:[hard_rt_deadline_wd] call:[DWD_CheckStatus,HAL_IncTick] noreturn:[DWD_CheckStatus,HAL_IncTick]
+Error_Handler call:[__disable_irq]
+assert_failed

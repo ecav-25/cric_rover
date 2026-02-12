@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="4186708570258543443">
+        <error id="missingInclude" severity="information" msg="Include file: &quot;stm32g4xx_hal.h&quot; not found." verbose="Include file: &quot;stm32g4xx_hal.h&quot; not found.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/main.h" line="30" column="0"/>
+        </error>
+        <error id="constParameterPointer" severity="style" msg="Parameter &apos;crcHandle&apos; can be declared as pointer to const" verbose="Parameter &apos;crcHandle&apos; can be declared as pointer to const" cwe="398" file0="board2_firmware/Core/Src/crc.c">
+            <location file="board2_firmware/Core/Src/crc.c" line="56" column="41" info="Parameter &apos;crcHandle&apos; can be declared as pointer to const"/>
+            <symbol>crcHandle</symbol>
+        </error>
+        <error id="constParameterPointer" severity="style" msg="Parameter &apos;crcHandle&apos; can be declared as pointer to const" verbose="Parameter &apos;crcHandle&apos; can be declared as pointer to const" cwe="398" file0="board2_firmware/Core/Src/crc.c">
+            <location file="board2_firmware/Core/Src/crc.c" line="72" column="43" info="Parameter &apos;crcHandle&apos; can be declared as pointer to const"/>
+            <symbol>crcHandle</symbol>
+        </error>
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="board2_firmware/Core/Src/crc.c:56:6" my-argnr="1" my-argname="crcHandle" file="board2_firmware/Core/Src/crc.c" line="59" col="6" value="0"/>
+    <unsafe-usage my-id="board2_firmware/Core/Src/crc.c:72:6" my-argnr="1" my-argname="crcHandle" file="board2_firmware/Core/Src/crc.c" line="75" col="6" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="board2_firmware/Core/Src/crc.c:56:6" my-argnr="1" my-argname="crcHandle" file="board2_firmware/Core/Src/crc.c" line="59" col="6" value="0"/>
+    <unsafe-usage my-id="board2_firmware/Core/Src/crc.c:72:6" my-argnr="1" my-argname="crcHandle" file="board2_firmware/Core/Src/crc.c" line="75" col="6" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl file="board2_firmware/Core/Src/crc.c" functionName="MX_CRC_Init" lineNumber="30" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/crc.c" functionName="HAL_CRC_MspInit" lineNumber="56" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/crc.c" functionName="HAL_CRC_MspDeInit" lineNumber="72" column="6"/>
+    <functioncall functionName="CRC"/>
+    <functioncall functionName="CRC_INPUTDATA_FORMAT_BYTES"/>
+    <functioncall functionName="CRC_INPUTDATA_INVERSION_NONE"/>
+    <functioncall functionName="CRC_OUTPUTDATA_INVERSION_DISABLE"/>
+    <functioncall functionName="DEFAULT_INIT_VALUE_ENABLE"/>
+    <functioncall functionName="DEFAULT_POLYNOMIAL_ENABLE"/>
+    <functioncall functionName="Error_Handler"/>
+    <functioncall functionName="HAL_CRC_Init"/>
+    <functioncall functionName="__HAL_RCC_CRC_CLK_DISABLE"/>
+    <functioncall functionName="__HAL_RCC_CRC_CLK_ENABLE"/>
+  </FileInfo>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/crc.c">
+            <location file="board2_firmware/Core/Src/crc.c" line="56" column="6"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/crc.c">
+            <location file="board2_firmware/Core/Src/crc.c" line="72" column="6"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/crc.c">
+            <location file="board2_firmware/Core/Src/crc.c" line="46" column="7"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/crc.c">
+            <location file="board2_firmware/Core/Src/crc.c" line="65" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/crc.c">
+            <location file="board2_firmware/Core/Src/crc.c" line="81" column="5"/>
+        </error>
+        <error id="misra-config" severity="error" msg="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;HAL_OK&apos; is unknown" verbose="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;HAL_OK&apos; is unknown" file0="board2_firmware/Core/Src/crc.c">
+            <location file="board2_firmware/Core/Src/crc.c" line="46" column="30"/>
+        </error>
+        <error id="misra-config" severity="error" msg="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;CRC&apos; is unknown" verbose="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;CRC&apos; is unknown" file0="board2_firmware/Core/Src/crc.c">
+            <location file="board2_firmware/Core/Src/crc.c" line="59" column="27"/>
+        </error>
+        <error id="misra-config" severity="error" msg="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;CRC&apos; is unknown" verbose="Because of missing configuration, misra checking is incomplete. There can be false negatives! Variable &apos;CRC&apos; is unknown" file0="board2_firmware/Core/Src/crc.c">
+            <location file="board2_firmware/Core/Src/crc.c" line="75" column="27"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/crc.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/crc.h" line="22" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/crc.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/main.h" line="23" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/crc.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/rtwtypes.h" line="26" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/crc.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/rtwtypes.h" line="30" column="0"/>
+        </error>
+</analyzerinfo>

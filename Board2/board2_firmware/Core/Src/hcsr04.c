@@ -9,21 +9,46 @@ static hcsr04_t *ic_map[16];
 
 static uint32_t tim_to_active(uint32_t ch)
 {
-    switch (ch) {
-        case TIM_CHANNEL_1: return HAL_TIM_ACTIVE_CHANNEL_1;
-        case TIM_CHANNEL_2: return HAL_TIM_ACTIVE_CHANNEL_2;
-        case TIM_CHANNEL_3: return HAL_TIM_ACTIVE_CHANNEL_3;
-        case TIM_CHANNEL_4: return HAL_TIM_ACTIVE_CHANNEL_4;
-        default: return 0;
+    uint32_t active;
+
+    switch (ch)
+    {
+        case TIM_CHANNEL_1:
+            active = (uint32_t)HAL_TIM_ACTIVE_CHANNEL_1;
+            break;
+        case TIM_CHANNEL_2:
+            active = (uint32_t)HAL_TIM_ACTIVE_CHANNEL_2;
+            break;
+        case TIM_CHANNEL_3:
+            active = (uint32_t)HAL_TIM_ACTIVE_CHANNEL_3;
+            break;
+        case TIM_CHANNEL_4:
+            active = (uint32_t)HAL_TIM_ACTIVE_CHANNEL_4;
+            break;
+        default:
+            active = 0U;
+            break;
     }
+
+    return active;
 }
 
 static inline uint32_t pulse_ticks(const hcsr04_t *s)
 {
+    uint32_t ticks;
     uint32_t arr = __HAL_TIM_GET_AUTORELOAD(s->cfg.htim);
-    if (s->t_fall >= s->t_rise) return s->t_fall - s->t_rise;
 
-    return (arr + 1U - s->t_rise) + s->t_fall;
+    if (s->t_fall >= s->t_rise)
+    {
+        ticks = s->t_fall - s->t_rise;
+    }
+    else
+    {
+        uint32_t diff_to_arr = (arr + 1U) - s->t_rise;
+        ticks = diff_to_arr + s->t_fall;
+    }
+
+    return ticks;
 }
 
 static inline uint32_t ticks_to_us(const hcsr04_t *s, uint32_t ticks)
@@ -49,100 +74,126 @@ static inline void trigger_pulse_10us(const hcsr04_t *s)
 
 hcsr04_status_t HCSR04_Init(hcsr04_t *s, const hcsr04_cfg_t *cfg)
 {
-    if (!s || !cfg || !cfg->htim || !cfg->trig_port || !cfg->delay_us || cfg->timer_hz == 0)
-        return HCSR04_ERR_BAD_PARAM;
+    hcsr04_status_t status = HCSR04_ERR_BAD_PARAM;
 
-    s->cfg = *cfg;
-    s->state = HCSR04_IDLE;
-    s->t_rise = 0;
-    s->t_fall = 0;
-    s->last_status = HCSR04_ERR_NOT_READY;
+    if ((s != NULL) && (cfg != NULL) && (cfg->htim != NULL) &&
+        (cfg->trig_port != NULL) && (cfg->delay_us != NULL) && (cfg->timer_hz != 0U))
+    {
+        s->cfg = *cfg;
+        s->state = HCSR04_IDLE;
+        s->t_rise = 0U;
+        s->t_fall = 0U;
+        s->last_status = HCSR04_ERR_NOT_READY;
 
-    uint32_t active = tim_to_active(cfg->channel);
-    if (active == 0) return HCSR04_ERR_BAD_PARAM;
-    ic_map[active] = s;
+        uint32_t active = tim_to_active(cfg->channel);
 
-    HAL_TIM_IC_Start_IT(cfg->htim, cfg->channel);
-    __HAL_TIM_SET_CAPTUREPOLARITY(cfg->htim, cfg->channel, TIM_INPUTCHANNELPOLARITY_RISING);
+        if (active != 0U)
+        {
+            ic_map[active] = s;
 
-    return HCSR04_OK;
+            (void)HAL_TIM_IC_Start_IT(cfg->htim, cfg->channel);
+            __HAL_TIM_SET_CAPTUREPOLARITY(cfg->htim, cfg->channel, TIM_INPUTCHANNELPOLARITY_RISING);
+
+            status = HCSR04_OK;
+        }
+    }
+
+    return status;
 }
 
 hcsr04_status_t HCSR04_Start(hcsr04_t *s)
 {
-    if (!s) return HCSR04_ERR_BAD_PARAM;
-    if (s->state != HCSR04_IDLE) return HCSR04_ERR_BUSY;
+    hcsr04_status_t status = HCSR04_ERR_BAD_PARAM;
 
-    s->last_status = HCSR04_ERR_NOT_READY;
-    s->state = HCSR04_WAIT_RISE;
+    if (s != NULL)
+    {
+        if (s->state != HCSR04_IDLE)
+        {
+            status = HCSR04_ERR_BUSY;
+        }
+        else
+        {
+            s->last_status = HCSR04_ERR_NOT_READY;
+            s->state = HCSR04_WAIT_RISE;
 
+            __HAL_TIM_SET_CAPTUREPOLARITY(s->cfg.htim, s->cfg.channel, TIM_INPUTCHANNELPOLARITY_RISING);
 
-    __HAL_TIM_SET_CAPTUREPOLARITY(s->cfg.htim, s->cfg.channel, TIM_INPUTCHANNELPOLARITY_RISING);
+            trigger_pulse_10us(s);
+            status = HCSR04_OK;
+        }
+    }
 
-    trigger_pulse_10us(s);
-    return HCSR04_OK;
+    return status;
 }
 
 hcsr04_status_t HCSR04_GetDistanceCm(hcsr04_t *s, uint16_t *cm)
 {
-    if (!s || !cm) return HCSR04_ERR_BAD_PARAM;
+    hcsr04_status_t status = HCSR04_ERR_BAD_PARAM;
 
+    if ((s != NULL) && (cm != NULL))
+    {
+        if (s->state != HCSR04_IDLE)
+        {
+            s->state = HCSR04_IDLE;
+            __HAL_TIM_SET_CAPTUREPOLARITY(s->cfg.htim, s->cfg.channel, TIM_INPUTCHANNELPOLARITY_RISING);
 
-    if (s->state != HCSR04_IDLE) {
-
-        s->state = HCSR04_IDLE;
-        __HAL_TIM_SET_CAPTUREPOLARITY(s->cfg.htim, s->cfg.channel, TIM_INPUTCHANNELPOLARITY_RISING);
-
-        s->last_status = HCSR04_ERR_TIMEOUT;
-        *cm = HCSR04_MAX_DISTANCE;
-        return HCSR04_ERR_TIMEOUT;
-    }
-
-
-    if (s->last_status == HCSR04_OK) {
-        uint32_t ticks = pulse_ticks(s);
-        uint32_t us = ticks_to_us(s, ticks);
-
-
-        if (us > MAX_ECHO_US) {
+            s->last_status = HCSR04_ERR_TIMEOUT;
             *cm = HCSR04_MAX_DISTANCE;
-
-            return HCSR04_OK;
+            status = HCSR04_ERR_TIMEOUT;
         }
+        else if (s->last_status == HCSR04_OK)
+        {
+            uint32_t ticks = pulse_ticks(s);
+            uint32_t us = ticks_to_us(s, ticks);
 
-        *cm = us_to_cm(us);
-        return HCSR04_OK;
+            if (us > MAX_ECHO_US)
+            {
+                *cm = HCSR04_MAX_DISTANCE;
+            }
+            else
+            {
+                *cm = us_to_cm(us);
+            }
+
+            status = HCSR04_OK;
+        }
+        else
+        {
+            *cm = 0U;
+            status = s->last_status;
+        }
     }
 
-
-    *cm = 0;
-    return s->last_status;
+    return status;
 }
-
 
 
 void HCSR04_IC_Callback(TIM_HandleTypeDef *htim)
 {
-    hcsr04_t *s = ic_map[htim->Channel];
-    if (!s) return;
+    if (htim != NULL)
+    {
+        uint32_t channel_idx = (uint32_t)htim->Channel;
+        hcsr04_t *s = ic_map[channel_idx];
 
-
-    if (s->state == HCSR04_WAIT_RISE) {
-        s->t_rise = HAL_TIM_ReadCapturedValue(htim, s->cfg.channel);
-        s->state = HCSR04_WAIT_FALL;
-        __HAL_TIM_SET_CAPTUREPOLARITY(htim, s->cfg.channel, TIM_INPUTCHANNELPOLARITY_FALLING);
-        return;
-    }
-
-
-    if (s->state == HCSR04_WAIT_FALL) {
-        s->t_fall = HAL_TIM_ReadCapturedValue(htim, s->cfg.channel);
-
-        s->state = HCSR04_IDLE;
-        s->last_status = HCSR04_OK;
-
-
-        __HAL_TIM_SET_CAPTUREPOLARITY(htim, s->cfg.channel, TIM_INPUTCHANNELPOLARITY_RISING);
-        return;
+        if (s != NULL)
+        {
+            if (s->state == HCSR04_WAIT_RISE)
+            {
+                s->t_rise = (uint32_t)HAL_TIM_ReadCapturedValue(htim, s->cfg.channel);
+                s->state = HCSR04_WAIT_FALL;
+                __HAL_TIM_SET_CAPTUREPOLARITY(htim, s->cfg.channel, TIM_INPUTCHANNELPOLARITY_FALLING);
+            }
+            else if (s->state == HCSR04_WAIT_FALL)
+            {
+                s->t_fall = (uint32_t)HAL_TIM_ReadCapturedValue(htim, s->cfg.channel);
+                s->state = HCSR04_IDLE;
+                s->last_status = HCSR04_OK;
+                __HAL_TIM_SET_CAPTUREPOLARITY(htim, s->cfg.channel, TIM_INPUTCHANNELPOLARITY_RISING);
+            }
+            else
+            {
+                /*MISRA Default case*/
+            }
+        }
     }
 }

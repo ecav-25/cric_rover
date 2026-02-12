@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="11153032069003456648">
+        <error id="missingInclude" severity="information" msg="Include file: &quot;stm32g4xx_hal.h&quot; not found." verbose="Include file: &quot;stm32g4xx_hal.h&quot; not found.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/main.h" line="30" column="0"/>
+        </error>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl file="board2_firmware/Core/Src/gpio.c" functionName="MX_GPIO_Init" lineNumber="37" column="6"/>
+    <functioncall functionName="GPIOA"/>
+    <functioncall functionName="GPIOC"/>
+    <functioncall functionName="GPIO_MODE_INPUT"/>
+    <functioncall functionName="GPIO_MODE_OUTPUT_PP"/>
+    <functioncall functionName="GPIO_NOPULL"/>
+    <functioncall functionName="GPIO_PIN_11"/>
+    <functioncall functionName="GPIO_PIN_7"/>
+    <functioncall functionName="GPIO_PIN_8"/>
+    <functioncall functionName="GPIO_PIN_RESET"/>
+    <functioncall functionName="GPIO_PULLDOWN"/>
+    <functioncall functionName="GPIO_SPEED_FREQ_LOW"/>
+    <functioncall functionName="HAL_GPIO_Init"/>
+    <functioncall functionName="HAL_GPIO_WritePin"/>
+    <functioncall functionName="__HAL_RCC_GPIOA_CLK_ENABLE"/>
+    <functioncall functionName="__HAL_RCC_GPIOB_CLK_ENABLE"/>
+    <functioncall functionName="__HAL_RCC_GPIOC_CLK_ENABLE"/>
+  </FileInfo>
+        <error id="misra-c2012-7.3" severity="style" msg="The lowercase character \342\200\234l\342\200\235 shall not be used in a literal suffix." verbose="The lowercase character \342\200\234l\342\200\235 shall not be used in a literal suffix." file0="board2_firmware/Core/Src/gpio.c">
+            <location file="board2_firmware/Core/Src/gpio.c" line="59" column="19"/>
+        </error>
+        <error id="misra-c2012-7.3" severity="style" msg="The lowercase character \342\200\234l\342\200\235 shall not be used in a literal suffix." verbose="The lowercase character \342\200\234l\342\200\235 shall not be used in a literal suffix." file0="board2_firmware/Core/Src/gpio.c">
+            <location file="board2_firmware/Core/Src/gpio.c" line="66" column="19"/>
+        </error>
+        <error id="misra-c2012-7.3" severity="style" msg="The lowercase character \342\200\234l\342\200\235 shall not be used in a literal suffix." verbose="The lowercase character \342\200\234l\342\200\235 shall not be used in a literal suffix." file0="board2_firmware/Core/Src/gpio.c">
+            <location file="board2_firmware/Core/Src/gpio.c" line="72" column="19"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/gpio.c">
+            <location file="board2_firmware/Core/Src/gpio.c" line="43" column="3"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/gpio.c">
+            <location file="board2_firmware/Core/Src/gpio.c" line="44" column="3"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/gpio.c">
+            <location file="board2_firmware/Core/Src/gpio.c" line="45" column="3"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/gpio.c">
+            <location file="board2_firmware/Core/Src/gpio.c" line="48" column="3"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/gpio.c">
+            <location file="board2_firmware/Core/Src/gpio.c" line="52" column="3"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/gpio.c">
+            <location file="board2_firmware/Core/Src/gpio.c" line="61" column="3"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/gpio.c">
+            <location file="board2_firmware/Core/Src/gpio.c" line="67" column="3"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/gpio.c">
+            <location file="board2_firmware/Core/Src/gpio.c" line="74" column="3"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/gpio.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/gpio.h" line="22" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/gpio.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/main.h" line="23" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/gpio.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/rtwtypes.h" line="26" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/gpio.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/rtwtypes.h" line="30" column="0"/>
+        </error>
+</analyzerinfo>

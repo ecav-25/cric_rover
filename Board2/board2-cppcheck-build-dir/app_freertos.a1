@@ -1,0 +1,511 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="11648072274077185259">
+        <error id="missingInclude" severity="information" msg="Include file: &quot;FreeRTOS.h&quot; not found." verbose="Include file: &quot;FreeRTOS.h&quot; not found.">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="21" column="0"/>
+        </error>
+        <error id="missingInclude" severity="information" msg="Include file: &quot;task.h&quot; not found." verbose="Include file: &quot;task.h&quot; not found.">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="22" column="0"/>
+        </error>
+        <error id="missingInclude" severity="information" msg="Include file: &quot;stm32g4xx_hal.h&quot; not found." verbose="Include file: &quot;stm32g4xx_hal.h&quot; not found.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/main.h" line="30" column="0"/>
+        </error>
+        <error id="missingInclude" severity="information" msg="Include file: &quot;cmsis_os.h&quot; not found." verbose="Include file: &quot;cmsis_os.h&quot; not found.">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="24" column="0"/>
+        </error>
+        <error id="missingInclude" severity="information" msg="Include file: &quot;math.h&quot; not found." verbose="Include file: &quot;math.h&quot; not found.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/Board2.h" line="25" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;stdint.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;stdint.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/board2_functions.h" line="13" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;stddef.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;stddef.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/board2_functions.h" line="14" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;stdint.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;stdint.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/dwt_delay.h" line="4" column="0"/>
+        </error>
+        <error id="missingInclude" severity="information" msg="Include file: &quot;stm32g4xx_hal.h&quot; not found." verbose="Include file: &quot;stm32g4xx_hal.h&quot; not found.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/dwt_delay.h" line="5" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;stdint.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;stdint.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/hcsr04.h" line="6" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;stdbool.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;stdbool.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/hcsr04.h" line="7" column="0"/>
+        </error>
+        <error id="missingInclude" severity="information" msg="Include file: &quot;stm32g4xx_hal.h&quot; not found." verbose="Include file: &quot;stm32g4xx_hal.h&quot; not found.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/hcsr04.h" line="8" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;stdint.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;stdint.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h" line="5" column="0"/>
+        </error>
+        <error id="missingInclude" severity="information" msg="Include file: &quot;stdint.h&quot; not found." verbose="Include file: &quot;stdint.h&quot; not found.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h" line="4" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;stdint.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;stdint.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/motor.h" line="15" column="0"/>
+        </error>
+        <error id="missingInclude" severity="information" msg="Include file: &quot;stdlib.h&quot; not found." verbose="Include file: &quot;stdlib.h&quot; not found.">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="34" column="0"/>
+        </error>
+        <error id="normalCheckLevelMaxBranches" severity="information" msg="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." verbose="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="0" column="0"/>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;status_telemetry&apos; can be reduced." verbose="The scope of the variable &apos;status_telemetry&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="355" column="31"/>
+            <symbol>status_telemetry</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;sonar1&apos; can be reduced." verbose="The scope of the variable &apos;sonar1&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="363" column="14"/>
+            <symbol>sonar1</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;sonar2&apos; can be reduced." verbose="The scope of the variable &apos;sonar2&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="363" column="22"/>
+            <symbol>sonar2</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;sonar3&apos; can be reduced." verbose="The scope of the variable &apos;sonar3&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="363" column="30"/>
+            <symbol>sonar3</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;supervision_state&apos; can be reduced." verbose="The scope of the variable &apos;supervision_state&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="365" column="13"/>
+            <symbol>supervision_state</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;light_state&apos; can be reduced." verbose="The scope of the variable &apos;light_state&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="366" column="13"/>
+            <symbol>light_state</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;driving_mode&apos; can be reduced." verbose="The scope of the variable &apos;driving_mode&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="367" column="13"/>
+            <symbol>driving_mode</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;max_velocity&apos; can be reduced." verbose="The scope of the variable &apos;max_velocity&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="369" column="13"/>
+            <symbol>max_velocity</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;special_retro&apos; can be reduced." verbose="The scope of the variable &apos;special_retro&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="370" column="15"/>
+            <symbol>special_retro</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;obs_avoidance&apos; can be reduced." verbose="The scope of the variable &apos;obs_avoidance&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="371" column="15"/>
+            <symbol>obs_avoidance</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;gyro_status&apos; can be reduced." verbose="The scope of the variable &apos;gyro_status&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="372" column="15"/>
+            <symbol>gyro_status</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;traction_status&apos; can be reduced." verbose="The scope of the variable &apos;traction_status&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="373" column="15"/>
+            <symbol>traction_status</symbol>
+        </error>
+        <error id="constParameterPointer" severity="style" msg="Parameter &apos;pcTaskName&apos; can be declared as pointer to const" verbose="Parameter &apos;pcTaskName&apos; can be declared as pointer to const" cwe="398" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="694" column="62" info="Parameter &apos;pcTaskName&apos; can be declared as pointer to const"/>
+            <symbol>pcTaskName</symbol>
+        </error>
+  <FileInfo check="ctu">
+<function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/deadline_watchdog.h:35:6" call-funcname="DWD_Init" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="164" col="10" call-argexpr="&amp;hard_rt_deadline_wd" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/hcsr04.h:58:17" call-funcname="HCSR04_Init" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="170" col="16" call-argexpr="&amp;us_left" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/hcsr04.h:58:17" call-funcname="HCSR04_Init" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="173" col="16" call-argexpr="&amp;us_center" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/hcsr04.h:58:17" call-funcname="HCSR04_Init" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="177" col="16" call-argexpr="&amp;us_right" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:126:20" call-funcname="telecontrol_init" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="181" col="21" call-argexpr="&amp;controller" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:57:23" call-funcname="mpu6050_init" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="185" col="27" call-argexpr="&amp;mpu_device" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/motor.h:71:16" call-funcname="motor_init" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="197" col="16" call-argexpr="&amp;motor_FA_openLoop" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/motor.h:71:16" call-funcname="motor_init" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="201" col="16" call-argexpr="&amp;motor_FB_openLoop" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/motor.h:71:16" call-funcname="motor_init" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="205" col="16" call-argexpr="&amp;motor_BA_openLoop" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/motor.h:71:16" call-funcname="motor_init" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="209" col="16" call-argexpr="&amp;motor_BB_openLoop" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/hcsr04.h:63:17" call-funcname="HCSR04_GetDistanceCm" call-argnr="2" file="board2_firmware/Core/Src/app_freertos.c" line="282" col="30" call-argexpr="&amp;cm" call-argvaluetype="7" call-argvalue="2" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/deadline_watchdog.h:42:6" call-funcname="DWD_Notify" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="310" col="13" call-argexpr="&amp;hard_rt_deadline_wd" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/deadline_watchdog.h:42:6" call-funcname="DWD_Notify" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="339" col="13" call-argexpr="&amp;hard_rt_deadline_wd" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:253:20" call-funcname="telemetry_init" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="375" col="23" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:259:20" call-funcname="telemetry_set_backward_mode" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="409" col="41" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:259:20" call-funcname="telemetry_set_backward_mode" call-argnr="2" file="board2_firmware/Core/Src/app_freertos.c" line="409" col="41" call-argexpr="special_retro?BW_SPECIAL:BW_NORMAL" call-argvaluetype="0" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:265:20" call-funcname="telemetry_set_battery" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="413" col="35" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:267:20" call-funcname="telemetry_set_temperature" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="417" col="39" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:255:20" call-funcname="telemetry_set_light_mode" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="421" col="38" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:263:20" call-funcname="telemetry_set_obstacle_avoidance_mode" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="425" col="51" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:263:20" call-funcname="telemetry_set_obstacle_avoidance_mode" call-argnr="2" file="board2_firmware/Core/Src/app_freertos.c" line="425" col="51" call-argexpr="obs_avoidance?COMPLETE:MINIMAL" call-argvaluetype="0" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:261:20" call-funcname="telemetry_set_driving_mode" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="429" col="40" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:269:20" call-funcname="telemetry_set_rpm" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="433" col="31" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:257:20" call-funcname="telemetry_set_operating_mode" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="437" col="42" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:257:20" call-funcname="telemetry_set_operating_mode" call-argnr="2" file="board2_firmware/Core/Src/app_freertos.c" line="437" col="42" call-argexpr="OM_NORMAL" call-argvaluetype="0" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:259:20" call-funcname="telemetry_set_backward_mode" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="444" col="41" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:259:20" call-funcname="telemetry_set_backward_mode" call-argnr="2" file="board2_firmware/Core/Src/app_freertos.c" line="444" col="41" call-argexpr="BW_NORMAL" call-argvaluetype="0" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:265:20" call-funcname="telemetry_set_battery" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="447" col="35" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:265:20" call-funcname="telemetry_set_battery" call-argnr="2" file="board2_firmware/Core/Src/app_freertos.c" line="447" col="35" call-argexpr="0" call-argvaluetype="0" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:267:20" call-funcname="telemetry_set_temperature" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="450" col="39" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:267:20" call-funcname="telemetry_set_temperature" call-argnr="2" file="board2_firmware/Core/Src/app_freertos.c" line="450" col="39" call-argexpr="0" call-argvaluetype="0" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:255:20" call-funcname="telemetry_set_light_mode" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="453" col="38" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:255:20" call-funcname="telemetry_set_light_mode" call-argnr="2" file="board2_firmware/Core/Src/app_freertos.c" line="453" col="38" call-argexpr="LIGHT_OFF" call-argvaluetype="0" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:263:20" call-funcname="telemetry_set_obstacle_avoidance_mode" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="456" col="51" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:263:20" call-funcname="telemetry_set_obstacle_avoidance_mode" call-argnr="2" file="board2_firmware/Core/Src/app_freertos.c" line="456" col="51" call-argexpr="COMPLETE" call-argvaluetype="0" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:261:20" call-funcname="telemetry_set_driving_mode" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="459" col="40" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:261:20" call-funcname="telemetry_set_driving_mode" call-argnr="2" file="board2_firmware/Core/Src/app_freertos.c" line="459" col="40" call-argexpr="DEFAULT" call-argvaluetype="0" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:269:20" call-funcname="telemetry_set_rpm" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="462" col="31" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:269:20" call-funcname="telemetry_set_rpm" call-argnr="2" file="board2_firmware/Core/Src/app_freertos.c" line="462" col="31" call-argexpr="0" call-argvaluetype="0" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:269:20" call-funcname="telemetry_set_rpm" call-argnr="3" file="board2_firmware/Core/Src/app_freertos.c" line="462" col="31" call-argexpr="0" call-argvaluetype="0" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:269:20" call-funcname="telemetry_set_rpm" call-argnr="4" file="board2_firmware/Core/Src/app_freertos.c" line="462" col="31" call-argexpr="0" call-argvaluetype="0" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:269:20" call-funcname="telemetry_set_rpm" call-argnr="5" file="board2_firmware/Core/Src/app_freertos.c" line="462" col="31" call-argexpr="0" call-argvaluetype="0" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:257:20" call-funcname="telemetry_set_operating_mode" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="465" col="42" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:273:20" call-funcname="telemetry_set_sonars" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="472" col="33" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:275:20" call-funcname="telemetry_set_gyro_status" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="477" col="38" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:275:20" call-funcname="telemetry_set_gyro_status" call-argnr="2" file="board2_firmware/Core/Src/app_freertos.c" line="477" col="38" call-argexpr="gyro_status?GYRO_STATUS_DEGRADED:GYRO_STATUS_READY" call-argvaluetype="0" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:277:20" call-funcname="telemetry_set_traction_health" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="481" col="42" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:277:20" call-funcname="telemetry_set_traction_health" call-argnr="2" file="board2_firmware/Core/Src/app_freertos.c" line="481" col="42" call-argexpr="traction_status?T_UNHEALTHY:T_HEALTHY" call-argvaluetype="0" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:271:20" call-funcname="telemetry_set_max_velocity" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="485" col="39" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:130:20" call-funcname="telecontrol_send_telemetry" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="490" col="54" call-argexpr="&amp;controller" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:130:20" call-funcname="telecontrol_send_telemetry" call-argnr="2" file="board2_firmware/Core/Src/app_freertos.c" line="490" col="54" call-argexpr="&amp;telemetry" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:128:20" call-funcname="telecontrol_read" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="510" col="42" call-argexpr="&amp;controller" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:134:34" call-funcname="get_telecontrol_bx" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="544" col="24" call-argexpr="&amp;controller" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:147:34" call-funcname="get_telecontrol_ay" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="548" col="24" call-argexpr="&amp;controller" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:160:34" call-funcname="get_telecontrol_button_btn1" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="552" col="33" call-argexpr="&amp;controller" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:173:34" call-funcname="get_telecontrol_button_btn2" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="556" col="33" call-argexpr="&amp;controller" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:186:34" call-funcname="get_telecontrol_button_btn3" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="560" col="33" call-argexpr="&amp;controller" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:199:34" call-funcname="get_telecontrol_button_btn4" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="564" col="33" call-argexpr="&amp;controller" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:212:34" call-funcname="get_telecontrol_b_btn" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="568" col="27" call-argexpr="&amp;controller" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:225:34" call-funcname="get_telecontrol_a_btn" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="572" col="27" call-argexpr="&amp;controller" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h:238:34" call-funcname="get_telecontrol_percentage" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="576" col="32" call-argexpr="&amp;controller" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:98:23" call-funcname="mpu6050_get_gyro_z" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="580" col="33" call-argexpr="&amp;mpu_device" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:98:23" call-funcname="mpu6050_get_gyro_z" call-argnr="2" file="board2_firmware/Core/Src/app_freertos.c" line="580" col="33" call-argexpr="&amp;gyroyaw" call-argvaluetype="7" call-argvalue="4" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/mpu6050.h:59:23" call-funcname="mpu6050_recovery_init" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="590" col="28" call-argexpr="&amp;mpu_device" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/motor.h:83:16" call-funcname="motor_set" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="673" col="18" call-argexpr="&amp;motor_FA_openLoop" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/motor.h:83:16" call-funcname="motor_set" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="678" col="18" call-argexpr="&amp;motor_FB_openLoop" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/motor.h:83:16" call-funcname="motor_set" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="683" col="18" call-argexpr="&amp;motor_BA_openLoop" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/><function-call call-id="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/motor.h:83:16" call-funcname="motor_set" call-argnr="1" file="board2_firmware/Core/Src/app_freertos.c" line="688" col="18" call-argexpr="&amp;motor_BB_openLoop" call-argvaluetype="7" call-argvalue="0" call-argvalue-ufr="0"/>  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h" functionName="get_telecontrol_bx" lineNumber="134" column="34"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h" functionName="get_telecontrol_ay" lineNumber="147" column="34"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h" functionName="get_telecontrol_button_btn1" lineNumber="160" column="34"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h" functionName="get_telecontrol_button_btn2" lineNumber="173" column="34"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h" functionName="get_telecontrol_button_btn3" lineNumber="186" column="34"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h" functionName="get_telecontrol_button_btn4" lineNumber="199" column="34"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h" functionName="get_telecontrol_b_btn" lineNumber="212" column="34"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h" functionName="get_telecontrol_a_btn" lineNumber="225" column="34"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/controller.h" functionName="get_telecontrol_percentage" lineNumber="238" column="34"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/utils.h" functionName="ramp" lineNumber="13" column="24"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/utils.h" functionName="calculate_battery_percent" lineNumber="35" column="23"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/utils.h" functionName="saturate_temperature" lineNumber="56" column="22"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/utils.h" functionName="get_light_mode" lineNumber="78" column="34"/>
+    <functiondecl file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/utils.h" functionName="get_driving_mode" lineNumber="98" column="27"/>
+    <functiondecl file="board2_firmware/Core/Src/app_freertos.c" functionName="MX_FREERTOS_Init" lineNumber="162" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/app_freertos.c" functionName="readSonarTask" lineNumber="260" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/app_freertos.c" functionName="supervisionTask" lineNumber="323" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/app_freertos.c" functionName="telemetryLoggerTask" lineNumber="351" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/app_freertos.c" functionName="supervision_read_inputs" lineNumber="504" column="13"/>
+    <functiondecl file="board2_firmware/Core/Src/app_freertos.c" functionName="executeSupervision" lineNumber="597" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/app_freertos.c" functionName="supervision_apply_actuation" lineNumber="607" column="13"/>
+    <functiondecl file="board2_firmware/Core/Src/app_freertos.c" functionName="vApplicationStackOverflowHook" lineNumber="694" column="6"/>
+    <functiondecl file="board2_firmware/Core/Src/app_freertos.c" functionName="safety_stop_and_halt" lineNumber="699" column="6"/>
+    <functioncall functionName="Board2_initialize"/>
+    <functioncall functionName="Board2_step"/>
+    <functioncall functionName="DWD_Init"/>
+    <functioncall functionName="DWD_Notify"/>
+    <functioncall functionName="DWT_Delay_Init"/>
+    <functioncall functionName="Error_Handler"/>
+    <functioncall functionName="GPIOA"/>
+    <functioncall functionName="GPIO_PIN_6"/>
+    <functioncall functionName="GPIO_PIN_7"/>
+    <functioncall functionName="GPIO_PIN_RESET"/>
+    <functioncall functionName="GPIO_PIN_SET"/>
+    <functioncall functionName="HAL_GPIO_WritePin"/>
+    <functioncall functionName="HAL_TIM_PWM_Stop"/>
+    <functioncall functionName="HCSR04_GetDistanceCm"/>
+    <functioncall functionName="HCSR04_Init"/>
+    <functioncall functionName="HCSR04_Start"/>
+    <functioncall functionName="NULL"/>
+    <functioncall functionName="TIM_CHANNEL_1"/>
+    <functioncall functionName="TIM_CHANNEL_2"/>
+    <functioncall functionName="TIM_CHANNEL_3"/>
+    <functioncall functionName="TIM_CHANNEL_4"/>
+    <functioncall functionName="__disable_irq"/>
+    <functioncall functionName="calculate_battery_percent"/>
+    <functioncall functionName="executeSupervision"/>
+    <functioncall functionName="fabsf"/>
+    <functioncall functionName="get_driving_mode"/>
+    <functioncall functionName="get_light_mode"/>
+    <functioncall functionName="get_telecontrol_a_btn"/>
+    <functioncall functionName="get_telecontrol_ay"/>
+    <functioncall functionName="get_telecontrol_b_btn"/>
+    <functioncall functionName="get_telecontrol_button_btn1"/>
+    <functioncall functionName="get_telecontrol_button_btn2"/>
+    <functioncall functionName="get_telecontrol_button_btn3"/>
+    <functioncall functionName="get_telecontrol_button_btn4"/>
+    <functioncall functionName="get_telecontrol_bx"/>
+    <functioncall functionName="get_telecontrol_percentage"/>
+    <functioncall functionName="motor_init"/>
+    <functioncall functionName="motor_set"/>
+    <functioncall functionName="mpu6050_get_gyro_z"/>
+    <functioncall functionName="mpu6050_init"/>
+    <functioncall functionName="mpu6050_recovery_init"/>
+    <functioncall functionName="osPriorityAboveNormal1"/>
+    <functioncall functionName="osPriorityLow"/>
+    <functioncall functionName="osPriorityNormal"/>
+    <functioncall functionName="osPriority_t"/>
+    <functioncall functionName="osThreadNew"/>
+    <functioncall functionName="pdMS_TO_TICKS"/>
+    <functioncall functionName="ramp"/>
+    <functioncall functionName="readSonarTask"/>
+    <functioncall functionName="safety_stop_and_halt"/>
+    <functioncall functionName="saturate_temperature"/>
+    <functioncall functionName="supervisionTask"/>
+    <functioncall functionName="supervision_apply_actuation"/>
+    <functioncall functionName="supervision_read_inputs"/>
+    <functioncall functionName="taskENTER_CRITICAL"/>
+    <functioncall functionName="taskEXIT_CRITICAL"/>
+    <functioncall functionName="telecontrol_init"/>
+    <functioncall functionName="telecontrol_read"/>
+    <functioncall functionName="telecontrol_send_telemetry"/>
+    <functioncall functionName="telemetryLoggerTask"/>
+    <functioncall functionName="telemetry_init"/>
+    <functioncall functionName="telemetry_set_backward_mode"/>
+    <functioncall functionName="telemetry_set_battery"/>
+    <functioncall functionName="telemetry_set_driving_mode"/>
+    <functioncall functionName="telemetry_set_gyro_status"/>
+    <functioncall functionName="telemetry_set_light_mode"/>
+    <functioncall functionName="telemetry_set_max_velocity"/>
+    <functioncall functionName="telemetry_set_obstacle_avoidance_mode"/>
+    <functioncall functionName="telemetry_set_operating_mode"/>
+    <functioncall functionName="telemetry_set_rpm"/>
+    <functioncall functionName="telemetry_set_sonars"/>
+    <functioncall functionName="telemetry_set_temperature"/>
+    <functioncall functionName="telemetry_set_traction_health"/>
+    <functioncall functionName="vTaskDelayUntil"/>
+    <functioncall functionName="xTaskGetTickCount"/>
+  </FileInfo>
+        <error id="threadsafety-threadsafety" severity="warning" msg="Local static variable: rif_FA_r" verbose="Local static variable: rif_FA_r" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="609" column="12"/>
+        </error>
+        <error id="threadsafety-threadsafety" severity="warning" msg="Local static variable: rif_BA_r" verbose="Local static variable: rif_BA_r" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="611" column="12"/>
+        </error>
+        <error id="threadsafety-threadsafety" severity="warning" msg="Local static variable: status_telemetry" verbose="Local static variable: status_telemetry" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="355" column="12"/>
+        </error>
+        <error id="threadsafety-threadsafety" severity="warning" msg="Local static variable: telemetry_tx_failures" verbose="Local static variable: telemetry_tx_failures" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="354" column="12"/>
+        </error>
+        <error id="threadsafety-threadsafety" severity="warning" msg="Local static variable: telecontroller_status" verbose="Local static variable: telecontroller_status" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="506" column="9"/>
+        </error>
+        <error id="threadsafety-threadsafety" severity="warning" msg="Local static variable: imu_recovery_attempted" verbose="Local static variable: imu_recovery_attempted" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="508" column="9"/>
+        </error>
+        <error id="threadsafety-threadsafety" severity="warning" msg="Local static variable: mpu_status" verbose="Local static variable: mpu_status" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="507" column="9"/>
+        </error>
+        <error id="threadsafety-threadsafety" severity="warning" msg="Local static variable: rif_FB_r" verbose="Local static variable: rif_FB_r" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="610" column="12"/>
+        </error>
+        <error id="threadsafety-threadsafety" severity="warning" msg="Local static variable: rif_BB_r" verbose="Local static variable: rif_BB_r" file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="612" column="12"/>
+        </error>
+        <error id="misra-c2012-2.7" severity="style" msg="There should be no unused parameters in functions." verbose="There should be no unused parameters in functions." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="260" column="26"/>
+        </error>
+        <error id="misra-c2012-2.7" severity="style" msg="There should be no unused parameters in functions." verbose="There should be no unused parameters in functions." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="323" column="28"/>
+        </error>
+        <error id="misra-c2012-2.7" severity="style" msg="There should be no unused parameters in functions." verbose="There should be no unused parameters in functions." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="351" column="32"/>
+        </error>
+        <error id="misra-c2012-2.7" severity="style" msg="There should be no unused parameters in functions." verbose="There should be no unused parameters in functions." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="694" column="49"/>
+        </error>
+        <error id="misra-c2012-2.7" severity="style" msg="There should be no unused parameters in functions." verbose="There should be no unused parameters in functions." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="694" column="62"/>
+        </error>
+        <error id="misra-c2012-8.2" severity="style" msg="Function types shall be in prototype form with named parameters." verbose="Function types shall be in prototype form with named parameters." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="146" column="24"/>
+        </error>
+        <error id="misra-c2012-8.2" severity="style" msg="Function types shall be in prototype form with named parameters." verbose="Function types shall be in prototype form with named parameters." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="148" column="26"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="694" column="6"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="81" column="11"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="78" column="10"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="79" column="10"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="97" column="32"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="84" column="9"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="82" column="11"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="96" column="32"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="83" column="11"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="80" column="11"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="109" column="21"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="119" column="14"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="108" column="10"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="107" column="14"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="122" column="22"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="120" column="10"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="132" column="10"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="110" column="22"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="134" column="22"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="121" column="21"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="77" column="21"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="86" column="14"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="89" column="7"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="131" column="14"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="133" column="21"/>
+        </error>
+        <error id="misra-c2012-8.4" severity="style" msg="A compatible declaration shall be visible when an object or function with external linkage is defined." verbose="A compatible declaration shall be visible when an object or function with external linkage is defined." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="87" column="11"/>
+        </error>
+        <error id="misra-c2012-10.3" severity="style" msg="The value of an expression shall not be assigned to an object with a narrower essential type or of a different essential type category." verbose="The value of an expression shall not be assigned to an object with a narrower essential type or of a different essential type category." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="397" column="27"/>
+        </error>
+        <error id="misra-c2012-12.1" severity="style" msg="The precedence of operators within expressions should be made explicit." verbose="The precedence of operators within expressions should be made explicit." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="397" column="78"/>
+        </error>
+        <error id="misra-c2012-12.1" severity="style" msg="The precedence of operators within expressions should be made explicit." verbose="The precedence of operators within expressions should be made explicit." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="632" column="35"/>
+        </error>
+        <error id="misra-c2012-12.1" severity="style" msg="The precedence of operators within expressions should be made explicit." verbose="The precedence of operators within expressions should be made explicit." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="633" column="23"/>
+        </error>
+        <error id="misra-c2012-12.1" severity="style" msg="The precedence of operators within expressions should be made explicit." verbose="The precedence of operators within expressions should be made explicit." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="633" column="40"/>
+        </error>
+        <error id="misra-c2012-12.1" severity="style" msg="The precedence of operators within expressions should be made explicit." verbose="The precedence of operators within expressions should be made explicit." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="633" column="57"/>
+        </error>
+        <error id="misra-c2012-12.1" severity="style" msg="The precedence of operators within expressions should be made explicit." verbose="The precedence of operators within expressions should be made explicit." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="639" column="37"/>
+        </error>
+        <error id="misra-c2012-12.1" severity="style" msg="The precedence of operators within expressions should be made explicit." verbose="The precedence of operators within expressions should be made explicit." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="640" column="28"/>
+        </error>
+        <error id="misra-c2012-12.1" severity="style" msg="The precedence of operators within expressions should be made explicit." verbose="The precedence of operators within expressions should be made explicit." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="640" column="45"/>
+        </error>
+        <error id="misra-c2012-12.1" severity="style" msg="The precedence of operators within expressions should be made explicit." verbose="The precedence of operators within expressions should be made explicit." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="640" column="62"/>
+        </error>
+        <error id="misra-c2012-12.3" severity="style" msg="The comma operator should not be used." verbose="The comma operator should not be used." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="363" column="20"/>
+        </error>
+        <error id="misra-c2012-12.3" severity="style" msg="The comma operator should not be used." verbose="The comma operator should not be used." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="363" column="28"/>
+        </error>
+        <error id="misra-c2012-12.3" severity="style" msg="The comma operator should not be used." verbose="The comma operator should not be used." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="614" column="20"/>
+        </error>
+        <error id="misra-c2012-12.3" severity="style" msg="The comma operator should not be used." verbose="The comma operator should not be used." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="614" column="28"/>
+        </error>
+        <error id="misra-c2012-12.3" severity="style" msg="The comma operator should not be used." verbose="The comma operator should not be used." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="614" column="36"/>
+        </error>
+        <error id="misra-c2012-12.3" severity="style" msg="The comma operator should not be used." verbose="The comma operator should not be used." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="616" column="20"/>
+        </error>
+        <error id="misra-c2012-12.3" severity="style" msg="The comma operator should not be used." verbose="The comma operator should not be used." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="616" column="29"/>
+        </error>
+        <error id="misra-c2012-12.3" severity="style" msg="The comma operator should not be used." verbose="The comma operator should not be used." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="616" column="38"/>
+        </error>
+        <error id="misra-c2012-15.6" severity="style" msg="The body of an iteration-statement or a selection-statement shall be a compound-statement." verbose="The body of an iteration-statement or a selection-statement shall be a compound-statement." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="444" column="10"/>
+        </error>
+        <error id="misra-c2012-15.6" severity="style" msg="The body of an iteration-statement or a selection-statement shall be a compound-statement." verbose="The body of an iteration-statement or a selection-statement shall be a compound-statement." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="447" column="10"/>
+        </error>
+        <error id="misra-c2012-15.6" severity="style" msg="The body of an iteration-statement or a selection-statement shall be a compound-statement." verbose="The body of an iteration-statement or a selection-statement shall be a compound-statement." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="450" column="10"/>
+        </error>
+        <error id="misra-c2012-15.6" severity="style" msg="The body of an iteration-statement or a selection-statement shall be a compound-statement." verbose="The body of an iteration-statement or a selection-statement shall be a compound-statement." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="453" column="10"/>
+        </error>
+        <error id="misra-c2012-15.6" severity="style" msg="The body of an iteration-statement or a selection-statement shall be a compound-statement." verbose="The body of an iteration-statement or a selection-statement shall be a compound-statement." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="456" column="10"/>
+        </error>
+        <error id="misra-c2012-15.6" severity="style" msg="The body of an iteration-statement or a selection-statement shall be a compound-statement." verbose="The body of an iteration-statement or a selection-statement shall be a compound-statement." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="459" column="10"/>
+        </error>
+        <error id="misra-c2012-15.6" severity="style" msg="The body of an iteration-statement or a selection-statement shall be a compound-statement." verbose="The body of an iteration-statement or a selection-statement shall be a compound-statement." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="462" column="10"/>
+        </error>
+        <error id="misra-c2012-15.6" severity="style" msg="The body of an iteration-statement or a selection-statement shall be a compound-statement." verbose="The body of an iteration-statement or a selection-statement shall be a compound-statement." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="667" column="5"/>
+        </error>
+        <error id="misra-c2012-15.6" severity="style" msg="The body of an iteration-statement or a selection-statement shall be a compound-statement." verbose="The body of an iteration-statement or a selection-statement shall be a compound-statement." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="668" column="5"/>
+        </error>
+        <error id="misra-c2012-15.6" severity="style" msg="The body of an iteration-statement or a selection-statement shall be a compound-statement." verbose="The body of an iteration-statement or a selection-statement shall be a compound-statement." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="669" column="5"/>
+        </error>
+        <error id="misra-c2012-15.6" severity="style" msg="The body of an iteration-statement or a selection-statement shall be a compound-statement." verbose="The body of an iteration-statement or a selection-statement shall be a compound-statement." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="670" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="235" column="21"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="238" column="23"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="241" column="27"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="263" column="29"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="264" column="32"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="274" column="3"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="288" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="294" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="327" column="29"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="328" column="32"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="331" column="3"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="356" column="32"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="357" column="35"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="381" column="9"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="384" column="9"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="403" column="9"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="620" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="623" column="2"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="701" column="2"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="706" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="709" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="710" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="711" column="5"/>
+        </error>
+        <error id="misra-c2012-17.3" severity="style" msg="A function shall not be declared implicitly." verbose="A function shall not be declared implicitly." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="712" column="5"/>
+        </error>
+        <error id="misra-c2012-17.7" severity="style" msg="The value returned by a function having non-void return type shall be used." verbose="The value returned by a function having non-void return type shall be used." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="board2_firmware/Core/Src/app_freertos.c" line="590" column="28"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/i2c.h" line="22" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/main.h" line="23" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/rtwtypes.h" line="26" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/rtwtypes.h" line="30" column="0"/>
+        </error>
+        <error id="misra-c2012-21.1" severity="style" msg="#define and #undef shall not be used on a reserved identifier or reserved macro name." verbose="#define and #undef shall not be used on a reserved identifier or reserved macro name." file0="board2_firmware/Core/Src/app_freertos.c">
+            <location file="C:/Users/erric/git/cric_rover/Board2/board2_firmware/Core/Inc/tim.h" line="22" column="0"/>
+        </error>
+</analyzerinfo>

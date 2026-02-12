@@ -54,19 +54,21 @@ typedef StaticTask_t osStaticThreadDef_t;
 #define SUPERVISION_PERIOD		(60)
 #define TELEMETRY_LOGGER_PERIOD	(120)
 #define SONAR_SCAN_PERIOD 		(40)
-#define MAX_RPM 				(150)
+#define MAX_RPM 				(150U)
 
 #define OPENLOOP_STEP       	(OPENLOOP_RAMP_SLOPE * (SUPERVISION_PERIOD / 1000.0))
 
-#define SONAR_NUMBER			(3)
+#define SONAR_NUMBER			(3U)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 
-static volatile uint16_T g_sonar_distances[US_COUNT];
 
-static hcsr04_t us_left, us_center, us_right;
+
+static hcsr04_t us_left;
+static hcsr04_t us_center;
+static hcsr04_t us_right;
 
 /* USER CODE END PM */
 
@@ -81,48 +83,18 @@ boolean_T button3 = 0;
 boolean_T button4 = 0;
 uint8_T controller_battery = 0;
 
-volatile uint16_t dbg_controller_x = 255;
-volatile uint16_t dbg_controller_y = 255;
-
-volatile uint8_t dbg_B1 = 0;
-volatile uint8_t dbg_B2 = 0;
-volatile uint8_t dbg_B3 = 0;
-volatile uint8_t dbg_B4 = 0;
-
-volatile uint8_t dbg_B_r_stick = 0;
-volatile uint8_t dbg_B_l_stick = 0;
-
-volatile uint8_t dbg_controller_battery = 100;
-
-DecBus debug_decision;
-
 Controller_t controller;
 mpu6050_t mpu_device;
 
 float gyroyaw;
 
-Motor_t motor_FA_openLoop;
-Motor_t motor_FB_openLoop;
-Motor_t motor_BA_openLoop;
-Motor_t motor_BB_openLoop;
+static Motor_t motor_FA_openLoop;
+static Motor_t motor_FB_openLoop;
+static Motor_t motor_BA_openLoop;
+static Motor_t motor_BB_openLoop;
 
-DecBus debug_output;
-volatile uint32_t debug_count_step = 0;
-volatile uint8_t debug_state_degraded = 0;
-volatile uint8_t debug_state = 0;
-volatile uint16_t debug_sonar1=400;
-volatile uint16_t debug_sonar2=400;
-volatile uint16_t debug_sonar3=400;
 volatile MPU60X0_StatusTypeDef status_acc = 0;
 volatile MPU60X0_StatusTypeDef status_gyro = 0;
-volatile real32_T debug_acc_x = 0;
-volatile real32_T debug_acc_y = 0;
-volatile real32_T debug_gyroYaw = 0;
-uint32_t debug_time = 0, debug_diff = 0, debug_diff_2 = 0;
-uint32_t degraded=0;
-uint8_t state_good=0;
-boolean_T retransmit_seen_in_cycle = false;
-uint32_t count_retransmit=0;
 
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim4;
@@ -130,7 +102,6 @@ extern I2C_HandleTypeDef hi2c1;
 
 extern UART_HandleTypeDef huart3;
 
-boolean_T deadline = 0;
 /* USER CODE END Variables */
 /* Definitions for readSonar */
 osThreadId_t readSonarHandle;
@@ -293,11 +264,10 @@ void readSonarTask(void *argument)
 	const TickType_t xFrequency = pdMS_TO_TICKS(SONAR_SCAN_PERIOD);
 
 	hcsr04_t *dev[SONAR_NUMBER] = { &us_left, &us_center, &us_right };
-
+	uint16_T g_sonar_distances[US_COUNT];
 	// Variabili di stato per la gestione ciclica
-	uint8_t curr_idx = 0;      // Indice del sonar da avviare (Start)
-	bool first_run = true;     // Flag per saltare la lettura al primo avvio assoluto
-
+	uint8_t curr_idx = 0U;      // Indice del sonar da avviare (Start)
+	boolean_T first_run = true;
 
 	for (;;)
 	{
@@ -305,7 +275,7 @@ void readSonarTask(void *argument)
 
 		if (!first_run)
 		{
-			uint8_t prev_idx = (curr_idx == 0) ? (SONAR_NUMBER - 1) : (curr_idx - 1);
+			uint8_t prev_idx = (curr_idx == 0U) ? (SONAR_NUMBER - 1U) : (curr_idx - 1U);
 
 			uint16_T cm = 0;
 
@@ -313,7 +283,7 @@ void readSonarTask(void *argument)
 
 			g_sonar_distances[prev_idx]=cm;
 
-			if (prev_idx == (SONAR_NUMBER - 1))
+			if (prev_idx == (SONAR_NUMBER - 1U))
 			{
 				taskENTER_CRITICAL();
 
@@ -622,99 +592,58 @@ static void supervision_read_inputs(void)
 	    }
 	}
 
-
-    /*
-    Board2_U.controller_x = dbg_controller_x;
-    Board2_U.controller_y = dbg_controller_y;
-
-    Board2_U.B1 = dbg_B1;
-    Board2_U.B2 = dbg_B2;
-    Board2_U.B3 = dbg_B3;
-    Board2_U.B4 = dbg_B4;
-
-    Board2_U.B_r_stick = dbg_B_r_stick;
-    Board2_U.B_l_stick = dbg_B_l_stick;
-
-    Board2_U.controller_battery = dbg_controller_battery;
-    */
 }
 
 void executeSupervision(){
 	do{
-		debug_state = Board2_DW.is_Supervisor;
-		debug_state_degraded = Board2_DW.is_Restablish;
-		if(degraded == 0)
-			state_good = debug_state;
-		debug_count_step++;
 		Board2_step();
-		if(Board2_DW.is_Board_state != Board2_IN_Normal)
-			degraded=degraded+1;
-
-		if(Board2_DW.is_Board_state == Board2_IN_Single_Board)
-			debug_decision = Board2_DW.decision;
-
-		if(Board2_DW.is_Board_state == Board2_IN_Normal && Board2_DW.retransmitted)
-			retransmit_seen_in_cycle = true;
 	}
-	while(Board2_DW.is_Supervisor != Board2_IN_Same_decision &&
-			Board2_DW.is_Single_Board != Board2_IN_Other_board_failure &&
-				Board2_DW.is_Degraded != Board2_IN_Restarting &&
-					Board2_DW.is_Restablish != Boar_IN_Connection_restablished);
-
-	if (retransmit_seen_in_cycle){
-	      count_retransmit++;
-	      retransmit_seen_in_cycle = false;
-	}
-
-	debug_output = Board2_Y.output;
+	while((Board2_DW.is_Supervisor != Board2_IN_Same_decision) &&
+			(Board2_DW.is_Single_Board != Board2_IN_Other_board_failure) &&
+				(Board2_DW.is_Degraded != Board2_IN_Restarting) &&
+					(Board2_DW.is_Restablish != Boar_IN_Connection_restablished));
 }
 
 static void supervision_apply_actuation(void)
 {
-    // Variabili statiche per mantenere lo stato della rampa tra le chiamate
-    static real32_T rif_FA_r = 0;
-    static real32_T rif_FB_r = 0;
-    static real32_T rif_BA_r = 0;
-    static real32_T rif_BB_r = 0;
+    static real32_T rif_FA_r = 0.0;
+    static real32_T rif_FB_r = 0.0;
+    static real32_T rif_BA_r = 0.0;
+    static real32_T rif_BB_r = 0.0;
 
     real32_T rif_FA, rif_FB, rif_BA, rif_BB;
     BRAKING_TYPE braking_mode;
     uint8_T duty_FA, duty_FB, duty_BA, duty_BB;
 
-    // Gestione Relè
+    real32_T calc_duty;
+
     HAL_GPIO_WritePin(RELAY_GPIO_Port, RELAY_Pin,
                       Board2_Y.output.relay ? GPIO_PIN_SET : GPIO_PIN_RESET);
 
-    // Gestione Mux
 	HAL_GPIO_WritePin(SELECT_GPIO_Port, SELECT_Pin,
 					  Board2_Y.output.mux ? GPIO_PIN_SET : GPIO_PIN_RESET);
 
-    // Lettura output modello
     rif_FA = Board2_Y.output.rif_FA;
     rif_FB = Board2_Y.output.rif_FB;
     rif_BA = Board2_Y.output.rif_BA;
     rif_BB = Board2_Y.output.rif_BB;
     braking_mode = Board2_Y.output.brk_mode;
 
-    // Logica Ramping
     if (braking_mode == EMERGENCY &&
-        rif_FA == 0 && rif_FB == 0 && rif_BA == 0 && rif_BB == 0) {
-        // Reset immediato rampe in emergenza
+        rif_FA == 0.0 && rif_FB == 0.0 && rif_BA == 0.0 && rif_BB == 0.0) {
         rif_FA_r = rif_FA;
         rif_FB_r = rif_FB;
         rif_BA_r = rif_BA;
         rif_BB_r = rif_BB;
     }
     else if (braking_mode == NORMAL &&
-             rif_FA == 0 && rif_FB == 0 && rif_BA == 0 && rif_BB == 0) {
-        // Frenata dolce
+             rif_FA == 0.0 && rif_FB == 0.0 && rif_BA == 0.0 && rif_BB == 0.0) {
         rif_FA_r = ramp(rif_FA_r, rif_FA, OPENLOOP_STEP * NORMAL_BRK_COEFF);
         rif_FB_r = ramp(rif_FB_r, rif_FB, OPENLOOP_STEP * NORMAL_BRK_COEFF);
         rif_BA_r = ramp(rif_BA_r, rif_BA, OPENLOOP_STEP * NORMAL_BRK_COEFF);
         rif_BB_r = ramp(rif_BB_r, rif_BB, OPENLOOP_STEP * NORMAL_BRK_COEFF);
     }
     else {
-        // Funzionamento normale
         rif_FA_r = ramp(rif_FA_r, rif_FA, OPENLOOP_STEP);
         rif_FB_r = ramp(rif_FB_r, rif_FB, OPENLOOP_STEP);
         rif_BA_r = ramp(rif_BA_r, rif_BA, OPENLOOP_STEP);
@@ -722,10 +651,17 @@ static void supervision_apply_actuation(void)
     }
 
     /* ====== RPM -> duty % (0-100) ====== */
-    duty_FA = (uint8_T)(abs(rif_FA_r) * MOTOR_MAX_DUTY / MAX_RPM);
-    duty_FB = (uint8_T)(abs(rif_FB_r) * MOTOR_MAX_DUTY / MAX_RPM);
-    duty_BA = (uint8_T)(abs(rif_BA_r) * MOTOR_MAX_DUTY / MAX_RPM);
-    duty_BB = (uint8_T)(abs(rif_BB_r) * MOTOR_MAX_DUTY / MAX_RPM);
+    calc_duty = (fabsf(rif_FA_r) * (real32_T)MOTOR_MAX_DUTY) / (real32_T)MAX_RPM;
+    duty_FA = (uint8_T)calc_duty;
+
+    calc_duty = (fabsf(rif_FB_r) * (real32_T)MOTOR_MAX_DUTY) / (real32_T)MAX_RPM;
+    duty_FB = (uint8_T)calc_duty;
+
+    calc_duty = (fabsf(rif_BA_r) * (real32_T)MOTOR_MAX_DUTY) / (real32_T)MAX_RPM;
+    duty_BA = (uint8_T)calc_duty;
+
+    calc_duty = (fabsf(rif_BB_r) * (real32_T)MOTOR_MAX_DUTY) / (real32_T)MAX_RPM;
+    duty_BB = (uint8_T)calc_duty;
 
     /* ====== SATURAZIONE ====== */
     if (duty_FA > MOTOR_MAX_DUTY) duty_FA = MOTOR_MAX_DUTY;
@@ -735,24 +671,29 @@ static void supervision_apply_actuation(void)
 
     /* ====== COMANDO MOTORI ====== */
     if (motor_set(&motor_FA_openLoop, duty_FA,
-                  (rif_FA_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
+                  (rif_FA_r >= 0.0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
     	safety_stop_and_halt();
     }
 
     if (motor_set(&motor_FB_openLoop, duty_FB,
-                  (rif_FB_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
+                  (rif_FB_r >= 0.0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
     	safety_stop_and_halt();
     }
 
     if (motor_set(&motor_BA_openLoop, duty_BA,
-                  (rif_BA_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
+                  (rif_BA_r >= 0.0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
     	safety_stop_and_halt();
     }
 
     if (motor_set(&motor_BB_openLoop, duty_BB,
-                  (rif_BB_r >= 0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
+                  (rif_BB_r >= 0.0) ? CLOCKWISE : COUNTERCLOCKWISE) != MOTOR_OK) {
     	safety_stop_and_halt();
     }
+}
+
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
+{
+    safety_stop_and_halt();
 }
 
 void safety_stop_and_halt(){

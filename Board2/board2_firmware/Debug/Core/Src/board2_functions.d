@@ -1,5 +1,5 @@
 Core/Src/board2_functions.o: ../Core/Src/board2_functions.c \
- ../Core/Inc/board_functions.h ../Core/Inc/Board2_types.h \
+ ../Core/Inc/board2_functions.h ../Core/Inc/Board2_types.h \
  ../Core/Inc/rtwtypes.h ../Core/Inc/main.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h \
  ../Core/Inc/stm32g4xx_hal_conf.h \
@@ -45,7 +45,7 @@ Core/Src/board2_functions.o: ../Core/Src/board2_functions.c \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h
-../Core/Inc/board_functions.h:
+../Core/Inc/board2_functions.h:
 ../Core/Inc/Board2_types.h:
 ../Core/Inc/rtwtypes.h:
 ../Core/Inc/main.h:

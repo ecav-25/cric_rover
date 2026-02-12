@@ -9,7 +9,7 @@ typedef enum {
 } MPU60X0_StatusTypeDef;
 
 
-#define MPU60X0_ADDRESS				  	(0x68 << 1)
+#define MPU60X0_ADDRESS 				(0x68U << 1U)
 #define PWR_MGMT_1_DEFAULT_STATUS     	64U
 #define MPU6050_DEFAULT_DLPF_CFG       	3U
 #define DEFAULT_SMPLRT_DIV				19U

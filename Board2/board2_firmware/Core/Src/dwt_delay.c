@@ -1,64 +1,103 @@
 #include "dwt_delay.h"
 
-static uint8_t s_ready = 0;
+static uint8_t s_ready = 0U;
 
 dwt_status_t DWT_Delay_Init(void)
 {
+    dwt_status_t status = DWT_ERR_UNSUPPORTED;
+
 #if defined(DWT) && defined(CoreDebug) && defined(CoreDebug_DEMCR_TRCENA_Msk) && defined(DWT_CTRL_CYCCNTENA_Msk)
-    /* abilita trace */
+    uint32_t before;
+    uint32_t after;
+    volatile int32_t i;
+
     CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
 
-    /* reset + enable cycle counter */
-    DWT->CYCCNT = 0;
+    DWT->CYCCNT = 0U;
     DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 
-    /* verifica: su alcuni target potrebbe essere bloccato */
-    uint32_t before = DWT->CYCCNT;
-    for (volatile int i = 0; i < 64; i++) { __NOP(); }
-    uint32_t after = DWT->CYCCNT;
+    before = DWT->CYCCNT;
+    for (i = 0; i < 64; i++)
+    {
+        __NOP();
+    }
+    after = DWT->CYCCNT;
 
-    s_ready = (after != before) ? 1U : 0U;
-    return s_ready ? DWT_OK : DWT_ERR_UNSUPPORTED;
-#else
-    (void)0;
-    return DWT_ERR_UNSUPPORTED;
+    if (after != before)
+    {
+        s_ready = 1U;
+        status = DWT_OK;
+    }
+    else
+    {
+        s_ready = 0U;
+        status = DWT_ERR_UNSUPPORTED;
+    }
 #endif
+
+    return status;
 }
 
 uint8_t DWT_Delay_IsReady(void)
 {
+    uint8_t ready_flag = 0U;
+
 #if defined(DWT) && defined(DWT_CTRL_CYCCNTENA_Msk)
-    return (uint8_t)(s_ready && (DWT->CTRL & DWT_CTRL_CYCCNTENA_Msk));
-#else
-    return 0;
+    if ((s_ready != 0U) && ((DWT->CTRL & DWT_CTRL_CYCCNTENA_Msk) != 0U))
+    {
+        ready_flag = 1U;
+    }
 #endif
+
+    return ready_flag;
 }
 
 static inline void dwt_delay_cycles(uint32_t cycles)
 {
     uint32_t start = DWT->CYCCNT;
-    while ((uint32_t)(DWT->CYCCNT - start) < cycles) { }
+
+    while ((DWT->CYCCNT - start) < cycles)
+    {
+
+    }
 }
 
 dwt_status_t DWT_Delay_us(uint32_t us)
 {
-    if (!DWT_Delay_IsReady()) return DWT_ERR_NOT_READY;
+    dwt_status_t status = DWT_ERR_NOT_READY;
+    uint64_t cycles;
 
-    /* evita overflow in moltiplicazione: usa 64-bit */
-    uint64_t cycles = ((uint64_t)SystemCoreClock * (uint64_t)us) / 1000000ULL;
-    if (cycles == 0) cycles = 1;
+    if (DWT_Delay_IsReady() != 0U)
+    {
 
-    dwt_delay_cycles((uint32_t)cycles);
-    return DWT_OK;
+        cycles = ((uint64_t)SystemCoreClock * (uint64_t)us) / 1000000ULL;
+
+        if (cycles == 0ULL)
+        {
+            cycles = 1ULL;
+        }
+
+        dwt_delay_cycles((uint32_t)cycles);
+        status = DWT_OK;
+    }
+
+    return status;
 }
 
 dwt_status_t DWT_Delay_ms(uint32_t ms)
 {
-    if (!DWT_Delay_IsReady()) return DWT_ERR_NOT_READY;
+    dwt_status_t status = DWT_ERR_NOT_READY;
+    uint32_t ms_count = ms;
 
-    /* spezza in chunk per evitare overflow */
-    while (ms--) {
-        (void)DWT_Delay_us(1000);
+    if (DWT_Delay_IsReady() != 0U)
+    {
+        while (ms_count > 0U)
+        {
+            (void)DWT_Delay_us(1000U);
+            ms_count--;
+        }
+        status = DWT_OK;
     }
-    return DWT_OK;
+
+    return status;
 }

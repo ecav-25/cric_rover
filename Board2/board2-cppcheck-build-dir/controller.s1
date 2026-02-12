@@ -1,0 +1,26 @@
+get_telecontrol_bx
+get_telecontrol_ay
+get_telecontrol_button_btn1
+get_telecontrol_button_btn2
+get_telecontrol_button_btn3
+get_telecontrol_button_btn4
+get_telecontrol_b_btn
+get_telecontrol_a_btn
+get_telecontrol_percentage
+crc8_le
+telecontrol_init
+telecontrol_read call:[HAL_I2C_Master_Receive,crc8_le,sizeof]
+telecontrol_send_telemetry call:[HAL_I2C_Master_Transmit,sizeof]
+telemetry_init
+telemetry_set_light_mode
+telemetry_set_operating_mode
+telemetry_set_backward_mode
+telemetry_set_driving_mode
+telemetry_set_obstacle_avoidance_mode
+telemetry_set_battery
+telemetry_set_temperature
+telemetry_set_rpm
+telemetry_set_max_velocity
+telemetry_set_sonars
+telemetry_set_gyro_status
+telemetry_set_traction_health

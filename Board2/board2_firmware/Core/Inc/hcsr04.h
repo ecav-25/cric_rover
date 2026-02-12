@@ -1,7 +1,7 @@
 #ifndef HCSR04_H
 #define HCSR04_H
 
-#define HCSR04_MAX_DISTANCE 400
+#define HCSR04_MAX_DISTANCE 400U
 
 #include <stdint.h>
 #include <stdbool.h>
