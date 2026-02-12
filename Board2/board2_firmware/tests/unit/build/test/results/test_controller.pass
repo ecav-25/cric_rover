@@ -1,0 +1,43 @@
+---
+:source:
+  :file: test/test_controller.c
+  :dirname: test
+  :basename: test_controller.c
+:successes:
+- :test: test_telecontrol_init_should_reset_data
+  :line: 43
+  :message: ''
+  :unity_test_time: 0
+- :test: test_telecontrol_read_success_with_valid_crc
+  :line: 61
+  :message: ''
+  :unity_test_time: 0
+- :test: test_telecontrol_read_comm_error
+  :line: 80
+  :message: ''
+  :unity_test_time: 0
+- :test: test_telecontrol_send_telemetry_success
+  :line: 100
+  :message: ''
+  :unity_test_time: 0
+- :test: test_telemetry_setters
+  :line: 115
+  :message: ''
+  :unity_test_time: 0
+- :test: test_controller_null_pointers
+  :line: 129
+  :message: ''
+  :unity_test_time: 0
+- :test: test_telecontrol_read_fallback_on_failure
+  :line: 139
+  :message: ''
+  :unity_test_time: 0
+:failures: []
+:ignores: []
+:counts:
+  :total: 7
+  :passed: 7
+  :failed: 0
+  :ignored: 0
+:stdout: []
+:time: 0.633351600728929

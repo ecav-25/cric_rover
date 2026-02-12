@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Board2'.
  *
- * Model version                  : 1.2532
+ * Model version                  : 1.2540
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Tue Feb 10 12:44:45 2026
+ * C/C++ source code generated on : Thu Feb 12 10:55:53 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -23,7 +23,7 @@
 #include <math.h>
 
 /* Named constants for Chart: '<Root>/Board2' */
-#define Bo_GLOBAL_STATE_RECEIVE_TIMEOUT (5500U)
+#define Bo_GLOBAL_STATE_RECEIVE_TIMEOUT (5900U)
 #define Board2_BUTTON_TIMEOUT          (700U)
 #define Board2_BYTE_RECEIVE_TIMEOUT    (1000U)
 #define Board2_BYTE_SEND_TIMEOUT       (500U)
@@ -31,9 +31,9 @@
 #define Board2_CENTER                  (255.0F)
 #define Board2_CONTROLLER_ZERO         ((uint16_T)255U)
 #define Board2_CRITICAL_VOLTAGE        (9.0F)
-#define Board2_DECISION_RECEIVE_TIMEOUT (3400U)
-#define Board2_DECISION_SEND_TIMEOUT   (2900U)
-#define Board2_HIGH_TEMPERATURE        (60.0F)
+#define Board2_DECISION_RECEIVE_TIMEOUT (3500U)
+#define Board2_DECISION_SEND_TIMEOUT   (3000U)
+#define Board2_HIGH_TEMPERATURE        (100.0F)
 #define Board2_IMM_DISTANCE            ((uint16_T)70U)
 #define Board2_INITIAL_TIMEOUT         (1500U)
 #define Board2_INIT_COUNTER            ((uint8_T)35U)
@@ -46,14 +46,14 @@
 #define Board2_MIN_DISTANCE            ((uint16_T)150U)
 #define Board2_MIN_RPM                 ((uint8_T)50U)
 #define Board2_MIN_TURN_SCALE_EVASIVE  (0.2F)
-#define Board2_OBS_TIMEOUT             (5000U)
+#define Board2_OBS_TIMEOUT             (1000U)
 #define Board2_PERIOD                  (0.06F)
 #define Board2_PROTECTION_DISTANCE     ((uint16_T)40U)
 #define Board2_PURE_TURN_EPS           (0.01F)
-#define Board2_STATE_RECEIVE_TIMEOUT   (2700U)
-#define Board2_STATE_SEND_TIMEOUT      (3300U)
+#define Board2_STATE_RECEIVE_TIMEOUT   (3100U)
+#define Board2_STATE_SEND_TIMEOUT      (3000U)
 #define Board2_STOP_THRESHOLD          ((uint16_T)1U)
-#define Board2_TEMP_TIMEOUT            (15000U)
+#define Board2_TEMP_TIMEOUT            (10000U)
 #define Board2_TURN_ANGLE              (45.0F)
 #define Board2_TURN_BACK_ANGLE         (180.0F)
 #define Board2_TURN_BACK_LIMIT_COUNT   ((uint8_T)50U)
@@ -65,7 +65,7 @@
 #define Board2_VEL_CHANGE              ((uint8_T)10U)
 #define Board2_WAIT_TIMEOUT            (500U)
 #define Board2_event_STEP              (1750)
-#define Board_GLOBAL_STATE_SEND_TIMEOUT (5000U)
+#define Board_GLOBAL_STATE_SEND_TIMEOUT (5400U)
 
 /* Block states (default storage) */
 DW_Board2_T Board2_DW;
@@ -1577,10 +1577,8 @@ static void Board2_Special_retro_routine(void)
     } else {
       switch (Board2_DW.is_Special_retro_routine) {
        case Board2_IN_Stop_back_rotation:
-        if ((Board2_DW.global_state.stateB2.controller_y >=
-             Board2_CONTROLLER_ZERO) ||
-            (Board2_DW.global_state.stateB2.controller_x !=
-             Board2_CONTROLLER_ZERO)) {
+        if (Board2_DW.global_state.stateB2.controller_y >=
+            Board2_CONTROLLER_ZERO) {
           Board2_DW.is_Special_retro_routine = Board2_IN_NO_ACTIVE_CHILD;
           Board2_DW.special_retro_rotating = false;
           Board2_DW.is_Normal_routine = Board2_IN_Select_routine;
