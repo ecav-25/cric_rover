@@ -1,9 +1,0 @@
-tim_to_active
-pulse_ticks call:[__HAL_TIM_GET_AUTORELOAD]
-ticks_to_us call:[return]
-us_to_cm call:[return]
-trigger_pulse_10us call:[HAL_GPIO_WritePin,delay_us] noreturn:[HAL_GPIO_WritePin]
-HCSR04_Init global:[ic_map] call:[HAL_TIM_IC_Start_IT,__HAL_TIM_SET_CAPTUREPOLARITY,tim_to_active]
-HCSR04_Start call:[__HAL_TIM_SET_CAPTUREPOLARITY,trigger_pulse_10us]
-HCSR04_GetDistanceCm call:[__HAL_TIM_SET_CAPTUREPOLARITY,pulse_ticks,ticks_to_us,us_to_cm] noreturn:[us_to_cm]
-HCSR04_IC_Callback global:[ic_map] call:[HAL_TIM_ReadCapturedValue,__HAL_TIM_SET_CAPTUREPOLARITY] noreturn:[__HAL_TIM_SET_CAPTUREPOLARITY]
