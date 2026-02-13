@@ -1,0 +1,12 @@
+\_form#0:$ t_{fall} \ge t_{rise} $
+\_form#1:$ \Delta t = t_{fall} - t_{rise} $
+\_form#2:$ t_{fall} < t_{rise} $
+\_form#3:$ \Delta t = (ARR + 1 - t_{rise}) + t_{fall} $
+\_form#4:$ Distanza_{cm} = \frac{Tempo_{\mu s}}{58} $
+\_form#5:\[ u[k] = a_1 \cdot u[k-1] + b_0 \cdot e[k] + b_1 \cdot e[k-1] \]
+\_form#6:$ e[0]=1, u[0] = (0.1 \cdot 0) + (1 \cdot 1) + (0.5 \cdot 0) = 1.0 $
+\_form#7:$ e[1]=1, u[1] = (0.1 \cdot 1.0) + (1 \cdot 1) + (0.5 \cdot 1) = 1.6 $
+\_form#8:$ a_1 \cdot u_{prev} $
+\_form#9:$ |a_1| < 1 $
+\_form#10:$ a_1 = 0.8 $
+\_form#11:$ 10 \cdot 0.8^{25} \approx 0.037 $

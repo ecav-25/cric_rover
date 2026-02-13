@@ -1,0 +1,9 @@
+var searchData=
+[
+  ['hal_5fmodule_5fenabled_0',['HAL_MODULE_ENABLED',['../_board1_2board1__firmware_2_core_2_inc_2stm32g4xx__hal__conf_8h.html#a877ae99e8c47a609ea97c888912bf75f',1,'HAL_MODULE_ENABLED:&#160;stm32g4xx_hal_conf.h'],['../_board2_2board2__firmware_2_core_2_inc_2stm32g4xx__hal__conf_8h.html#a877ae99e8c47a609ea97c888912bf75f',1,'HAL_MODULE_ENABLED:&#160;stm32g4xx_hal_conf.h']]],
+  ['hcsr04_5fmax_5fdistance_1',['HCSR04_MAX_DISTANCE',['../hcsr04_8h.html#a137409dd8c8534a7511101ecb0d28274',1,'hcsr04.h']]],
+  ['hse_5fstartup_5ftimeout_2',['HSE_STARTUP_TIMEOUT',['../_board1_2board1__firmware_2_core_2_inc_2stm32g4xx__hal__conf_8h.html#a68ecbc9b0a1a40a1ec9d18d5e9747c4f',1,'HSE_STARTUP_TIMEOUT:&#160;stm32g4xx_hal_conf.h'],['../_board2_2board2__firmware_2_core_2_inc_2stm32g4xx__hal__conf_8h.html#a68ecbc9b0a1a40a1ec9d18d5e9747c4f',1,'HSE_STARTUP_TIMEOUT:&#160;stm32g4xx_hal_conf.h']]],
+  ['hse_5fvalue_3',['HSE_VALUE',['../_board1_2board1__firmware_2_core_2_inc_2stm32g4xx__hal__conf_8h.html#aeafcff4f57440c60e64812dddd13e7cb',1,'HSE_VALUE:&#160;stm32g4xx_hal_conf.h'],['../_board2_2board2__firmware_2_core_2_inc_2stm32g4xx__hal__conf_8h.html#aeafcff4f57440c60e64812dddd13e7cb',1,'HSE_VALUE:&#160;stm32g4xx_hal_conf.h']]],
+  ['hsi48_5fvalue_4',['HSI48_VALUE',['../_board1_2board1__firmware_2_core_2_inc_2stm32g4xx__hal__conf_8h.html#a47f01e5e3f2edfa94bf74c08835f3875',1,'HSI48_VALUE:&#160;stm32g4xx_hal_conf.h'],['../_board2_2board2__firmware_2_core_2_inc_2stm32g4xx__hal__conf_8h.html#a47f01e5e3f2edfa94bf74c08835f3875',1,'HSI48_VALUE:&#160;stm32g4xx_hal_conf.h']]],
+  ['hsi_5fvalue_5',['HSI_VALUE',['../_board1_2board1__firmware_2_core_2_inc_2stm32g4xx__hal__conf_8h.html#aaa8c76e274d0f6dd2cefb5d0b17fbc37',1,'HSI_VALUE:&#160;stm32g4xx_hal_conf.h'],['../_board2_2board2__firmware_2_core_2_inc_2stm32g4xx__hal__conf_8h.html#aaa8c76e274d0f6dd2cefb5d0b17fbc37',1,'HSI_VALUE:&#160;stm32g4xx_hal_conf.h']]]
+];

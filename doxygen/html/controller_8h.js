@@ -1,0 +1,36 @@
+var controller_8h =
+[
+    [ "Controller_t", "struct_controller__t.html", "struct_controller__t" ],
+    [ "CONTROLLER_MAX_CRC_ERRORS", "controller_8h.html#a78022d9214da3cf1d52784c5bb74449b", null ],
+    [ "CONTROLLERZERO", "controller_8h.html#a3f5a9b2264f95cd8b0c65a1bf83efcee", null ],
+    [ "BackwardMode", "controller_8h.html#afa9635dd046c9fb05882fc90519fcd9a", null ],
+    [ "DrivingMode", "controller_8h.html#a6c8f3a7bd77ad2957d39a40ac797819a", null ],
+    [ "GyroAvailability", "controller_8h.html#a6f81b3bc93e5e5601aaaa79049755f80", null ],
+    [ "LightOperatingMode", "controller_8h.html#ae2f3ac65d474106244c31fefadd3c009", null ],
+    [ "ObstacleAvoidanceMode", "controller_8h.html#a0812d1db22c732ca226c777f86f98684", null ],
+    [ "OperatingMode", "controller_8h.html#aca43da028af702dfc93be51140510fe8", null ],
+    [ "Traction_Health", "controller_8h.html#a69a8a0d0ce95e0794e4686392adb8fc6", null ],
+    [ "ControllerStatus_t", "controller_8h.html#a3cb3b542f46399f2a4acb74c881af9f1", [
+      [ "CONTROLLER_OK", "controller_8h.html#a3cb3b542f46399f2a4acb74c881af9f1a3bbcf9697aad6edcbd7f28e3220bd230", null ],
+      [ "CONTROLLER_ERR", "controller_8h.html#a3cb3b542f46399f2a4acb74c881af9f1a930fe2267d15254ec98a5d8ff2a66b0f", null ],
+      [ "CONTROLLER_ERR_COMM", "controller_8h.html#a3cb3b542f46399f2a4acb74c881af9f1ae3005104572e8902ab34024ce1dec5b3", null ],
+      [ "CONTROLLER_ERR_CRC", "controller_8h.html#a3cb3b542f46399f2a4acb74c881af9f1a0f06e0ce761d10f98f7f3bab51449197", null ]
+    ] ],
+    [ "__attribute__", "controller_8h.html#ab898071398b359603a35c202e9c65f3b", null ],
+    [ "telecontrol_init", "controller_8h.html#a085bfff89ad9b276d814b929074bf73e", null ],
+    [ "telecontrol_read", "controller_8h.html#a0111587c92c54de415741ec8227502f9", null ],
+    [ "telecontrol_send_telemetry", "controller_8h.html#a06dcb12db58f24d7e6dca2b7e26b98f0", null ],
+    [ "telemetry_init", "controller_8h.html#aa14bf6cae77d96eef6d05040af1bbffa", null ],
+    [ "telemetry_set_backward_mode", "controller_8h.html#a3e6d8e392bc0ba9f6e96ef3341978a67", null ],
+    [ "telemetry_set_battery", "controller_8h.html#a953ab17ceec54aa1cb99920293646394", null ],
+    [ "telemetry_set_driving_mode", "controller_8h.html#a5a613900d11d19ed36cfc8b146ec2339", null ],
+    [ "telemetry_set_gyro_status", "controller_8h.html#aa6b6a8f0721cafea17edbd949a331dfd", null ],
+    [ "telemetry_set_light_mode", "controller_8h.html#affd8f8accdc9550d9e05fcf4c52acb42", null ],
+    [ "telemetry_set_max_velocity", "controller_8h.html#ad963605751e528742fa020cae1a614b9", null ],
+    [ "telemetry_set_obstacle_avoidance_mode", "controller_8h.html#ad479cb7921abb1882b9e12519ce64a7c", null ],
+    [ "telemetry_set_operating_mode", "controller_8h.html#afa74bc5a6c6e38be1c3cd79cd832c4b0", null ],
+    [ "telemetry_set_rpm", "controller_8h.html#a62ca3b0993aa94dc00f56896c48b9011", null ],
+    [ "telemetry_set_sonars", "controller_8h.html#a3aa0f6b53d90b3620cc06548edc89a67", null ],
+    [ "telemetry_set_temperature", "controller_8h.html#a46fb39572ae5c02710a613da238650ac", null ],
+    [ "telemetry_set_traction_health", "controller_8h.html#aca8bf5ad1d5115c98b2f8a3e40f76758", null ]
+];

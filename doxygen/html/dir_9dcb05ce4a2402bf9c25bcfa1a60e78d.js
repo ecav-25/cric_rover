@@ -1,0 +1,27 @@
+var dir_9dcb05ce4a2402bf9c25bcfa1a60e78d =
+[
+    [ "adc.c", "adc_8c.html", "adc_8c" ],
+    [ "batt.c", "batt_8c.html", "batt_8c" ],
+    [ "board1_functions.c", "board1__functions_8c.html", "board1__functions_8c" ],
+    [ "crc.c", "_board1_2board1__firmware_2_core_2_src_2crc_8c.html", "_board1_2board1__firmware_2_core_2_src_2crc_8c" ],
+    [ "deadline_watchdog.c", "_board1_2board1__firmware_2_core_2_src_2deadline__watchdog_8c.html", "_board1_2board1__firmware_2_core_2_src_2deadline__watchdog_8c" ],
+    [ "dma.c", "_board1_2board1__firmware_2_core_2_src_2dma_8c.html", "_board1_2board1__firmware_2_core_2_src_2dma_8c" ],
+    [ "encoder.c", "encoder_8c.html", "encoder_8c" ],
+    [ "gpio.c", "_board1_2board1__firmware_2_core_2_src_2gpio_8c.html", "_board1_2board1__firmware_2_core_2_src_2gpio_8c" ],
+    [ "hw_config.c", "_board1_2board1__firmware_2_core_2_src_2hw__config_8c.html", "_board1_2board1__firmware_2_core_2_src_2hw__config_8c" ],
+    [ "led.c", "led_8c.html", "led_8c" ],
+    [ "led_stripes.c", "led__stripes_8c.html", "led__stripes_8c" ],
+    [ "main.c", "_board1_2board1__firmware_2_core_2_src_2main_8c.html", "_board1_2board1__firmware_2_core_2_src_2main_8c" ],
+    [ "motor.c", "_board1_2board1__firmware_2_core_2_src_2motor_8c.html", "_board1_2board1__firmware_2_core_2_src_2motor_8c" ],
+    [ "motor_diagnostic.c", "motor__diagnostic_8c.html", "motor__diagnostic_8c" ],
+    [ "pid_law.c", "pid__law_8c.html", "pid__law_8c" ],
+    [ "stm32g4xx_hal_msp.c", "_board1_2board1__firmware_2_core_2_src_2stm32g4xx__hal__msp_8c.html", "_board1_2board1__firmware_2_core_2_src_2stm32g4xx__hal__msp_8c" ],
+    [ "stm32g4xx_hal_timebase_tim.c", "_board1_2board1__firmware_2_core_2_src_2stm32g4xx__hal__timebase__tim_8c.html", "_board1_2board1__firmware_2_core_2_src_2stm32g4xx__hal__timebase__tim_8c" ],
+    [ "stm32g4xx_it.c", "_board1_2board1__firmware_2_core_2_src_2stm32g4xx__it_8c.html", "_board1_2board1__firmware_2_core_2_src_2stm32g4xx__it_8c" ],
+    [ "syscalls.c", "_board1_2board1__firmware_2_core_2_src_2syscalls_8c.html", null ],
+    [ "sysmem.c", "_board1_2board1__firmware_2_core_2_src_2sysmem_8c.html", "_board1_2board1__firmware_2_core_2_src_2sysmem_8c" ],
+    [ "system_stm32g4xx.c", "_board1_2board1__firmware_2_core_2_src_2system__stm32g4xx_8c.html", "_board1_2board1__firmware_2_core_2_src_2system__stm32g4xx_8c" ],
+    [ "temp.c", "temp_8c.html", "temp_8c" ],
+    [ "tim.c", "_board1_2board1__firmware_2_core_2_src_2tim_8c.html", "_board1_2board1__firmware_2_core_2_src_2tim_8c" ],
+    [ "usart.c", "_board1_2board1__firmware_2_core_2_src_2usart_8c.html", "_board1_2board1__firmware_2_core_2_src_2usart_8c" ]
+];

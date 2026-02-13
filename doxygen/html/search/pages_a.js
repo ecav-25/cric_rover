@@ -1,0 +1,9 @@
+var searchData=
+[
+  ['pll_5fm_201_0',['PLL_M 1',['../_board1_2board1__firmware_2_core_2_src_2system__stm32g4xx_8c.html#autotoc_md7',1,'PLL_M | 1'],['../_board2_2board2__firmware_2_core_2_src_2system__stm32g4xx_8c.html#autotoc_md20',1,'PLL_M | 1']]],
+  ['pll_5fn_2016_1',['PLL_N 16',['../_board1_2board1__firmware_2_core_2_src_2system__stm32g4xx_8c.html#autotoc_md8',1,'PLL_N | 16'],['../_board2_2board2__firmware_2_core_2_src_2system__stm32g4xx_8c.html#autotoc_md21',1,'PLL_N | 16']]],
+  ['pll_5fp_207_2',['PLL_P 7',['../_board1_2board1__firmware_2_core_2_src_2system__stm32g4xx_8c.html#autotoc_md9',1,'PLL_P | 7'],['../_board2_2board2__firmware_2_core_2_src_2system__stm32g4xx_8c.html#autotoc_md22',1,'PLL_P | 7']]],
+  ['pll_5fq_202_3',['PLL_Q 2',['../_board1_2board1__firmware_2_core_2_src_2system__stm32g4xx_8c.html#autotoc_md10',1,'PLL_Q | 2'],['../_board2_2board2__firmware_2_core_2_src_2system__stm32g4xx_8c.html#autotoc_md23',1,'PLL_Q | 2']]],
+  ['pll_5fr_202_4',['PLL_R 2',['../_board1_2board1__firmware_2_core_2_src_2system__stm32g4xx_8c.html#autotoc_md11',1,'PLL_R | 2'],['../_board2_2board2__firmware_2_core_2_src_2system__stm32g4xx_8c.html#autotoc_md24',1,'PLL_R | 2']]],
+  ['prescaler_201_5',['Prescaler 1',['../_board1_2board1__firmware_2_core_2_src_2system__stm32g4xx_8c.html#autotoc_md4',1,'AHB Prescaler | 1'],['../_board2_2board2__firmware_2_core_2_src_2system__stm32g4xx_8c.html#autotoc_md17',1,'AHB Prescaler | 1'],['../_board1_2board1__firmware_2_core_2_src_2system__stm32g4xx_8c.html#autotoc_md5',1,'APB1 Prescaler | 1'],['../_board2_2board2__firmware_2_core_2_src_2system__stm32g4xx_8c.html#autotoc_md18',1,'APB1 Prescaler | 1'],['../_board1_2board1__firmware_2_core_2_src_2system__stm32g4xx_8c.html#autotoc_md6',1,'APB2 Prescaler | 1'],['../_board2_2board2__firmware_2_core_2_src_2system__stm32g4xx_8c.html#autotoc_md19',1,'APB2 Prescaler | 1']]]
+];

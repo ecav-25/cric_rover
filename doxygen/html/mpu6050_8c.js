@@ -1,0 +1,26 @@
+var mpu6050_8c =
+[
+    [ "MPU6050_I2C_TIMEOUT_MS", "mpu6050_8c.html#a1c31295f043b24185dae8e4c5a14e2a4", null ],
+    [ "mpu6050_get_accel_fs", "mpu6050_8c.html#a26853cf468c132f48abe691409dc6228", null ],
+    [ "mpu6050_get_accel_value", "mpu6050_8c.html#a3d5bd48d50f15c0d9763050530d99762", null ],
+    [ "mpu6050_get_accel_x", "mpu6050_8c.html#af49b4f54accd7251a58890a33241a6c2", null ],
+    [ "mpu6050_get_accel_y", "mpu6050_8c.html#ad960d16bc591ec6174dbb5f718c6ff45", null ],
+    [ "mpu6050_get_accel_z", "mpu6050_8c.html#adaf081cbf2695375690f218c523da661", null ],
+    [ "mpu6050_get_dlpf", "mpu6050_8c.html#ad5fed00ae41220e51e102a530735a5a3", null ],
+    [ "mpu6050_get_gyro_fs", "mpu6050_8c.html#addcae76a2b299920e47be1ac26defca4", null ],
+    [ "mpu6050_get_gyro_value", "mpu6050_8c.html#a9ad28e5ac07c021b07f5382f8fbc8d7f", null ],
+    [ "mpu6050_get_gyro_x", "mpu6050_8c.html#a8c85235ffb2d1878b7041012ffaf8064", null ],
+    [ "mpu6050_get_gyro_y", "mpu6050_8c.html#aa27ee835475b315802fd1a779f4c22b7", null ],
+    [ "mpu6050_get_gyro_z", "mpu6050_8c.html#a6293f465c332821f96c1b1ab2476a879", null ],
+    [ "mpu6050_get_interrupt_mask", "mpu6050_8c.html#aaba1756055c5b8f19eb4d72f7d04aa31", null ],
+    [ "mpu6050_get_sample_div", "mpu6050_8c.html#aa216d897a9001d9fd33781237893764f", null ],
+    [ "mpu6050_init", "mpu6050_8c.html#a3e1c0596eb6e22f285e3e0e25055bfd1", null ],
+    [ "mpu6050_recovery_init", "mpu6050_8c.html#a233c35a469622ea3f148d207fec97e47", null ],
+    [ "mpu6050_set_accel_fs", "mpu6050_8c.html#aac8b0bd124dc1b883fe40101033597ee", null ],
+    [ "mpu6050_set_dlpf", "mpu6050_8c.html#a8c2db5eeff074c717c3238658ca04ed7", null ],
+    [ "mpu6050_set_gyro_fs", "mpu6050_8c.html#a8708c80ae2407c4dcbac3989fd8f4157", null ],
+    [ "mpu6050_set_interrupt_mask", "mpu6050_8c.html#a68f6d89de913ba5195deafbed478dfb1", null ],
+    [ "mpu6050_set_sample_div", "mpu6050_8c.html#a3f40543976406dfc8419ba265555d651", null ],
+    [ "mpu6050_signal_path_reset", "mpu6050_8c.html#ad3d15ac390d64a674ef8806f548e2679", null ],
+    [ "mpu6050_who_am_i", "mpu6050_8c.html#a2afbc369425150ccaa54c6f7a11c0b4e", null ]
+];
