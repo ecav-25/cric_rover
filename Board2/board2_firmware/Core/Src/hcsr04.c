@@ -1,12 +1,35 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+/**
+ * @file    hcsr04.c
+ * @author  Gruppo 2
+ * @brief   Driver per il sensore a ultrasuoni HC-SR04.
+ * @details Implementa la logica di misurazione della distanza tramite Input Capture.
+ * Gestisce la generazione del trigger, la cattura dei fronti di salita/discesa del
+ * segnale di eco e la conversione temporale considerando la frequenza del timer.
+ *
+ * @copyright Copyright (c) 2026 Gruppo 2.
+ * Rilasciato sotto licenza GPLv3 (consultare il file LICENSE per i dettagli).
+ */
+
 #include "hcsr04.h"
 
-
+/** @brief Timeout massimo in microsecondi basato sulla distanza massima supportata (58us/cm). */
 #define MAX_ECHO_US  (HCSR04_MAX_DISTANCE * 58U)
 
+/** * @brief Mappa di lookup per associare i canali attivi del Timer alle istanze del sensore.
+ * @note  La dimensione 16 copre le bitmask di HAL_TIM_ACTIVE_CHANNEL_x (1, 2, 4, 8).
+ */
 static hcsr04_t *ic_map[16];
 
+/* ========================================================================== */
+/* STATIC HELPER FUNCTIONS                                                    */
+/* ========================================================================== */
 
-
+/**
+ * @brief Converte la costante del canale TIM generico nella bitmask del canale attivo HAL.
+ * @param ch Canale del timer
+ * @return uint32_t Bitmask del canale attivo
+ */
 static uint32_t tim_to_active(uint32_t ch)
 {
     uint32_t active;
@@ -33,6 +56,19 @@ static uint32_t tim_to_active(uint32_t ch)
     return active;
 }
 
+/**
+ * @brief Calcola la durata dell'impulso in tick del timer.
+ * @details Gestisce correttamente il caso di **Timer Rollover** (overflow)
+ * nel caso in cui il contatore (CNT) riparta da zero tra il fronte di salita
+ * e quello di discesa.
+ * * Se \f$ t_{fall} \ge t_{rise} \f$:
+ * \f$ \Delta t = t_{fall} - t_{rise} \f$
+ * * Se \f$ t_{fall} < t_{rise} \f$ (Rollover):
+ * \f$ \Delta t = (ARR + 1 - t_{rise}) + t_{fall} \f$
+ *
+ * @param s Puntatore all'handle del sensore.
+ * @return uint32_t Durata in tick.
+ */
 static inline uint32_t pulse_ticks(const hcsr04_t *s)
 {
     uint32_t ticks;
@@ -51,18 +87,34 @@ static inline uint32_t pulse_ticks(const hcsr04_t *s)
     return ticks;
 }
 
+/**
+ * @brief Converte i tick del timer in microsecondi.
+ * @param s Puntatore all'handle del sensore.
+ * @param ticks Numero di tick misurati.
+ * @return uint32_t Tempo in microsecondi.
+ */
 static inline uint32_t ticks_to_us(const hcsr04_t *s, uint32_t ticks)
 {
-
     return (uint32_t)((uint64_t)ticks * 1000000ULL / (uint64_t)s->cfg.timer_hz);
 }
 
+/**
+ * @brief Converte i microsecondi in centimetri.
+ * @details Assume la velocità del suono nell'aria a ~20°C (343 m/s).
+ * La formula usata è:
+ * \f$ Distanza_{cm} = \frac{Tempo_{\mu s}}{58} \f$
+ * * @param us Tempo di volo in microsecondi.
+ * @return uint16_t Distanza in cm.
+ */
 static inline uint16_t us_to_cm(uint32_t us)
 {
-
-    return (uint16_t)((us + 29U) / 58U);
+    return (uint16_t)((us + 29U) / 58U); /* +29 per arrotondamento */
 }
 
+/**
+ * @brief Genera l'impulso di Trigger di 10us via GPIO.
+ * @param s Puntatore all'handle del sensore.
+ */
 static inline void trigger_pulse_10us(const hcsr04_t *s)
 {
     HAL_GPIO_WritePin(s->cfg.trig_port, s->cfg.trig_pin, GPIO_PIN_SET);
@@ -70,8 +122,18 @@ static inline void trigger_pulse_10us(const hcsr04_t *s)
     HAL_GPIO_WritePin(s->cfg.trig_port, s->cfg.trig_pin, GPIO_PIN_RESET);
 }
 
+/* ========================================================================== */
+/* PUBLIC API                                                                 */
+/* ========================================================================== */
 
-
+/**
+ * @brief Inizializza il driver HC-SR04 e configura l'Input Capture.
+ * @details Registra l'istanza nella mappa statica `ic_map` per la gestione
+ * delle callback interrupt e configura la polarità iniziale (Rising Edge).
+ * @param s Puntatore all'handle del sensore.
+ * @param cfg Configurazione hardware.
+ * @return hcsr04_status_t HCSR04_OK se inizializzazione riuscita.
+ */
 hcsr04_status_t HCSR04_Init(hcsr04_t *s, const hcsr04_cfg_t *cfg)
 {
     hcsr04_status_t status = HCSR04_ERR_BAD_PARAM;
@@ -101,6 +163,13 @@ hcsr04_status_t HCSR04_Init(hcsr04_t *s, const hcsr04_cfg_t *cfg)
     return status;
 }
 
+/**
+ * @brief Avvia una nuova misurazione.
+ * @details Genera il segnale di Trigger e imposta la macchina a stati in attesa
+ * del fronte di salita dell'Eco.
+ * @param s Puntatore all'handle del sensore.
+ * @return hcsr04_status_t HCSR04_OK se il trigger è stato inviato.
+ */
 hcsr04_status_t HCSR04_Start(hcsr04_t *s)
 {
     hcsr04_status_t status = HCSR04_ERR_BAD_PARAM;
@@ -126,6 +195,14 @@ hcsr04_status_t HCSR04_Start(hcsr04_t *s)
     return status;
 }
 
+/**
+ * @brief Calcola e restituisce la distanza misurata.
+ * @details Se la misura è completata (IDLE e stato OK), converte i tempi acquisiti in cm.
+ * Se chiamata mentre il sensore è in timeout o errore, restituisce codici di errore.
+ * @param s Puntatore all'handle del sensore.
+ * @param cm Puntatore alla variabile di destinazione.
+ * @return hcsr04_status_t Esito del calcolo.
+ */
 hcsr04_status_t HCSR04_GetDistanceCm(hcsr04_t *s, uint16_t *cm)
 {
     hcsr04_status_t status = HCSR04_ERR_BAD_PARAM;
@@ -167,7 +244,13 @@ hcsr04_status_t HCSR04_GetDistanceCm(hcsr04_t *s, uint16_t *cm)
     return status;
 }
 
-
+/**
+ * @brief Callback dell'interrupt Input Capture.
+ * @details Implementa la macchina a stati:
+ * 1. HCSR04_WAIT_RISE: Cattura t_rise, cambia polarità in Falling.
+ * 2. HCSR04_WAIT_FALL: Cattura t_fall, torna a IDLE, ripristina polarità Rising.
+ * @param htim Handle del timer chiamante.
+ */
 void HCSR04_IC_Callback(TIM_HandleTypeDef *htim)
 {
     if (htim != NULL)
@@ -192,7 +275,7 @@ void HCSR04_IC_Callback(TIM_HandleTypeDef *htim)
             }
             else
             {
-                /*MISRA Default case*/
+                /* MISRA Default case*/
             }
         }
     }

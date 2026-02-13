@@ -1,15 +1,18 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /**
- * @file motor_diag.h
+ * @file motor_diagnostic.h
  * @author Gruppo 2
  * @brief Modulo di diagnostica per il monitoraggio della salute dei motori.
+ * @copyright Copyright (c) 2026 Gruppo 2.
+ * Rilasciato sotto licenza GPLv3 (consultare il file LICENSE per i dettagli).
  *
  * Il modulo confronta il setpoint (riferimento) con la velocità misurata (encoder)
  * utilizzando un buffer circolare. Calcola l'errore cumulativo (area) per rilevare
  * discrepanze che indicano malfunzionamenti o guasti hardware.
  */
 
-#ifndef INC_MOTOR_DIAG_H_
-#define INC_MOTOR_DIAG_H_
+#ifndef INC_MOTOR_DIAGNOSTIC_H_
+#define INC_MOTOR_DIAGNOSTIC_H_
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -86,4 +89,4 @@ MotorDiag_Status_t motor_diag_record(MotorDiag_Handle_t* hdiag, float ref_val, f
  */
 MotorDiag_Status_t motor_diag_process(MotorDiag_Handle_t* hdiag);
 
-#endif /* INC_MOTOR_DIAG_H_ */
+#endif /* INC_MOTOR_DIAGNOSTIC_H_ */

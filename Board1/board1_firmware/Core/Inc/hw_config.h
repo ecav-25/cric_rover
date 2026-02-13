@@ -1,10 +1,15 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /**
  * @file hw_config.h
  * @author Gruppo 2
  * @brief Definizione della mappatura hardware e delle strutture di configurazione.
- * * Questo file centralizza la configurazione di tutti i componenti hardware del rover:
+ *
+ * Questo file centralizza la configurazione di tutti i componenti hardware del rover:
  * motori, encoder, canali ADC e LED. Definisce le costanti che verranno poi implementate
  * nel file sorgente per collegare gli oggetti software ai relativi timer e pin del microcontrollore.
+ *
+ * @copyright Copyright (c) 2026 Gruppo 2.
+ * Rilasciato sotto licenza GPLv3 (consultare il file LICENSE per i dettagli).
  */
 
 #ifndef INC_HW_CONFIG_H_

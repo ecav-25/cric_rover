@@ -1,9 +1,12 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /**
-  ******************************************************************************
-  * @file    deadline_watchdog.h
-  * @brief   Driver per Deadline Watchdog basato su Timer Hardware.
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file    deadline_watchdog.h
+ * * @copyright Copyright (c) 2026 Gruppo 2.
+ * Rilasciato sotto licenza GPLv3 (consultare il file LICENSE per i dettagli).
+ * @brief   Driver per Deadline Watchdog basato su Timer Hardware.
+ ******************************************************************************
+ */
 
 #ifndef DEADLINE_WATCHDOG_H
 #define DEADLINE_WATCHDOG_H
@@ -17,10 +20,10 @@ typedef void (*DWD_Callback_t)(void);
  * @brief Struttura "Oggetto" del Deadline Watchdog.
  */
 typedef struct {
-    TIM_HandleTypeDef *htim;
-    uint32_t target_mask;
-    volatile uint32_t current_mask;
-    DWD_Callback_t on_deadline_cb;
+	TIM_HandleTypeDef *htim;
+	uint32_t target_mask;
+	volatile uint32_t current_mask;
+	DWD_Callback_t on_deadline_cb;
 } Deadline_Watchdog_t;
 
 

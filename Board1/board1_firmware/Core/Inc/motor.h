@@ -1,11 +1,13 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /**
- * @file motor.h
- * @author Gruppo 2
- * @brief Driver per il controllo dei motori DC tramite segnali PWM.
- *
- * Questo modulo permette di pilotare i motori del rover gestendo la direzione
+ * @file    motor.h
+ * @author  Gruppo 2
+ * @brief   Driver per il controllo dei motori DC tramite segnali PWM.
+ * @details Questo modulo permette di pilotare i motori del rover gestendo la direzione
  * di rotazione e la potenza. Utilizza i parametri di calibrazione
  * per compensare le differenze hardware tra i vari motori (punti di stop e scale).
+ * @copyright Copyright (c) 2026 Gruppo 2.
+ * Rilasciato sotto licenza GPLv3 (consultare il file LICENSE per i dettagli).
  */
 
 #ifndef INC_MOTOR_H_
@@ -38,8 +40,7 @@ typedef enum {
 
 /**
  * @brief Parametri di calibrazione specifici per ogni motore.
- *
- * Questi valori permettono di linearizzare la risposta dei motori, definendo
+ * @details Questi valori permettono di linearizzare la risposta dei motori, definendo
  * il punto di neutro (stop) e i guadagni per le due direzioni.
  */
 typedef struct {
@@ -57,11 +58,12 @@ typedef struct {
     Motor_Calibration_t calib;     /**< Parametri di calibrazione hardware */
 } Motor_t;
 
-/* ================== API ================== */
+/* ========================================================================== */
+/* API                                                                        */
+/* ========================================================================== */
 
 /**
  * @brief Inizializza l'oggetto motore e avvia la generazione del segnale PWM.
- *
  * @param motor Puntatore alla struttura Motor_t.
  * @param htim Puntatore all'handle del timer HAL.
  * @param channel Canale del timer PWM.
@@ -72,9 +74,8 @@ Motor_Status_t motor_init(Motor_t* motor, TIM_HandleTypeDef* htim, uint32_t chan
 
 /**
  * @brief Imposta la velocità e la direzione del motore.
- *
- * La funzione calcola il valore reale da scrivere nel registro del timer (CCR)
- *
+ * @details La funzione calcola il valore reale da scrivere nel registro del timer (CCR)
+ * basandosi sulla percentuale richiesta e sulla calibrazione.
  * @param motor Puntatore alla struttura motore.
  * @param duty Valore di potenza da 0 a 100.
  * @param dir Direzione di rotazione (CLOCKWISE o COUNTERCLOCKWISE).

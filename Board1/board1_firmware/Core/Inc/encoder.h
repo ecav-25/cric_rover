@@ -1,6 +1,10 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /**
  * @file encoder.h
  * @author Gruppo 2
+ * * @copyright Copyright (c) 2026 Gruppo 2.
+ * Rilasciato sotto licenza GPLv3 (consultare il file LICENSE per i dettagli).
+
  * @brief Gestione della lettura di velocità tramite encoder rotativo.
  * * Il modulo utilizza un timer in modalità Encoder Interface per calcolare
  * la velocità angolare (RPM) di un motore o albero, gestendo il gear ratio

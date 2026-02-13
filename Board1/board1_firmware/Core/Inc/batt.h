@@ -1,9 +1,13 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /**
  * @file batt.h
+ * @copyright Copyright (c) 2026 Gruppo 2.
+ * Rilasciato sotto licenza GPLv3 (consultare il file LICENSE per i dettagli).
  * @author Gruppo 2
  * @brief Gestione della lettura batteria tramite ADC per STM32G4.
  * * Questo modulo fornisce le astrazioni per leggere il valore grezzo dell'ADC
  * e convertirlo in tensione reale tenendo conto del partitore resistivo.
+ *
  */
 
 #ifndef INC_BATT_H_
@@ -19,6 +23,7 @@ extern "C" {
 /* ================== RETURN CODES ================== */
 
 /**
+ * @enum Batt_Status_t
  * @brief Codici di ritorno per le funzioni del modulo batteria.
  */
 typedef enum {
@@ -38,6 +43,7 @@ typedef enum {
 /* ================== OBJECT ================== */
 
 /**
+ * @struct batt_t
  * @brief Struttura di gestione del modulo batteria.
  */
 typedef struct
@@ -53,30 +59,29 @@ typedef struct
 
 /**
  * @brief Inizializza l'oggetto batteria.
- * * @param b Puntatore alla struttura della batteria.
- * @param hadc Puntatore all'handle ADC HAL.
- * @param channel_cfg Configurazione del canale ADC.
- * @param timeout_ms Timeout per le operazioni di polling.
+ * * @param[out] b Puntatore alla struttura della batteria.
+ * @param[in] hadc Puntatore all'handle ADC HAL.
+ * @param[in] channel_cfg Configurazione del canale ADC.
+ * @param[in] timeout_ms Timeout per le operazioni di polling.
  * @return Batt_Status_t BATT_OK se l'inizializzazione ha successo.
  */
 Batt_Status_t batt_init(batt_t *b, ADC_HandleTypeDef *hadc, const ADC_ChannelConfTypeDef *channel_cfg, uint32_t timeout_ms);
 
 /**
  * @brief Esegue una lettura ADC grezza singola.
- * * @param b Puntatore alla struttura della batteria.
- * @param raw Puntatore dove verrà salvato il valore grezzo (0-4095).
+ * * @param[in,out] b Puntatore alla struttura della batteria.
+ * @param[out] raw Puntatore dove verrà salvato il valore grezzo (0-4095).
  * @return Batt_Status_t BATT_OK se la lettura è corretta, BATT_ERR_COMM in caso di timeout.
  */
 Batt_Status_t batt_read_raw_once(batt_t *b, uint32_t *raw);
 
 /**
  * @brief Calcola la tensione della batteria (Volt) tramite una lettura singola.
- * * @param b Puntatore alla struttura della batteria.
- * @param volt Puntatore dove verrà salvato il valore in Volt calcolato.
+ * * @param[in,out] b Puntatore alla struttura della batteria.
+ * @param[out] volt Puntatore dove verrà salvato il valore in Volt calcolato.
  * @return Batt_Status_t BATT_OK se il calcolo è avvenuto con successo.
  */
 Batt_Status_t batt_get_voltage_once(batt_t *b, float *volt);
-
 
 #ifdef __cplusplus
 }

@@ -1,7 +1,11 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /**
  * @file led.h
+ * @copyright Copyright (c) 2026 Gruppo 2.
+ * Rilasciato sotto licenza GPLv3 (consultare il file LICENSE per i dettagli).
  * @author Gruppo 2
  * @brief Gestione dei LED di stato onboard tramite GPIO.
+
  * * Questo modulo fornisce un'astrazione per il controllo di LED standard (ON/OFF)
  * e supporta una gestione a stati (step) per implementare lampeggi o sequenze
  * senza bloccare l'esecuzione del codice principale.

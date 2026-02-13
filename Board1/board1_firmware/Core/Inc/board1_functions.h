@@ -1,14 +1,17 @@
-#ifndef BOARD1_FUNCTIONS_H_
-#define BOARD1_FUNCTIONS_H_
-
+// SPDX-License-Identifier: GPL-3.0-or-later
 /**
  * @file board_functions.h
+ * * @copyright Copyright (c) 2026 Gruppo 2.
+ * Rilasciato sotto licenza GPLv3 (consultare il file LICENSE per i dettagli).
  * @brief Hardware Abstraction Layer (HAL) & Stub Interface per Board 1.
  *
  * Questo file definisce i prototipi per l'interazione con l'hardware a basso livello
  * (UART, GPIO, Timer) e le primitive di sincronizzazione utilizzate dal codice
  * generato da Simulink/Embedded Coder.
  */
+
+#ifndef BOARD1_FUNCTIONS_H_
+#define BOARD1_FUNCTIONS_H_
 
 #include <stdint.h>
 #include <stddef.h>

@@ -1,9 +1,13 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /**
- * @file board_functions.c
- * @brief Implementazione del Hardware Abstraction Layer (HAL) per Board 2 (Master).
- *
- * Include l'implementazione delle funzioni di comunicazione UART via DMA,
+ * @file    board_functions.c
+ * @author  Gruppo 2
+ * @brief   Implementazione del Hardware Abstraction Layer (HAL) per Board 2 (Master).
+ * @details Include l'implementazione delle funzioni di comunicazione UART via DMA,
  * calcolo CRC-32, gestione GPIO (Master Control) e primitive di sistema.
+ *
+ * @copyright Copyright (c) 2026 Gruppo 2.
+ * Rilasciato sotto licenza GPLv3 (consultare il file LICENSE per i dettagli).
  */
 
 #include "board2_functions.h"

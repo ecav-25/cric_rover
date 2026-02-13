@@ -1,10 +1,14 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /**
  * @file hw_calibration.h
  * @author Gruppo 2
  * @brief Definizioni dei parametri di calibrazione hardware per motori ed encoder.
- * * Contiene i valori di offset PWM (punti di arresto) e i fattori di scala per la
+ *
+ * Contiene i valori di offset PWM (punti di arresto) e i fattori di scala per la
  * linearizzazione del movimento dei motori, oltre ai dati costanti dell'hardware
  * degli encoder.
+ * * @copyright Copyright (c) 2026 Gruppo 2.
+ * Rilasciato sotto licenza GPLv3 (consultare il file LICENSE per i dettagli).
  */
 
 #ifndef INC_HW_CALIBRATION_H_
