@@ -20,20 +20,11 @@ public:
     TelemetryManager();
     ~TelemetryManager();
     
-    /**
-     * Aggiorna i dati telemetria dal rover
-     */
     void update(const RoverTelemetry& telemetry);
     
-    /**
-     * Legge uno snapshot thread-safe della telemetria
-     */
+
     RoverTelemetry getSnapshot();
-    
-    /**
-     * Attende che nuovi dati di telemetria siano disponibili
-     * Blocca il task finché non arrivano dati
-     */
+
     void waitDataReady();
     
 

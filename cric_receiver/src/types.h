@@ -23,6 +23,7 @@ typedef struct __attribute__((packed)) {
     uint8_t alive;
     uint8_t battery;
     ControllerData data;
+    uint8_t crc_value;
 } ControllerStatus;
 
 // ============================================================================
@@ -62,6 +63,17 @@ enum {
     MINIMAL
 };
 
+typedef uint8_t GyroAvailability;
+enum {
+	GYRO_STATUS_DEGRADED = 0,
+    GYRO_STATUS_READY
+};
+
+typedef uint8_t Traction_Health;
+enum {
+	T_UNHEALTHY = 0,
+    T_HEALTHY
+};
 
 typedef struct __attribute__((packed)) {
 	uint16_t sonar_l;
@@ -73,11 +85,6 @@ typedef struct __attribute__((packed)) {
     int16_t rpm_rl;
     int16_t rpm_rr;
 
-    int16_t target_fl;
-    int16_t target_fr;
-    int16_t target_rl;
-    int16_t target_rr;
-
     uint8_t max_velocity;
 
     uint8_t battery_percent;
@@ -88,26 +95,12 @@ typedef struct __attribute__((packed)) {
     LightOperatingMode light_mode;
     DrivingMode driving_mode;
     ObstacleAvoidanceMode obstacle_mode;
+    GyroAvailability gyro_status;
+    Traction_Health traction_status;
 } RoverTelemetry;
 
 
-// ============================================================================
-// AI TELEMETRY
-// ============================================================================
 
-typedef struct __attribute__((packed)) {
-    float mse;           
-    uint8_t alarm;       
-} AITelemetry;
-
-// ============================================================================
-// FULL TELEMETRY PACKET 
-// ============================================================================
-
-typedef struct __attribute__((packed)) {
-    RoverTelemetry rover;
-    AITelemetry ai;
-} FullTelemetry;
 
 // ============================================================================
 // ESP-NOW PACKET

@@ -9,7 +9,6 @@
 #include "types.h"
 #include "ControllerManager.h"
 #include "TelemetryManager.h"
-#include "AIEngine.h"
 
 // ============================================================================
 // I2C COMMUNICATION MANAGER
@@ -54,10 +53,9 @@ private:
 class UARTComm {
 private:
     TelemetryManager& telemetryMgr;
-    AIEngine& aiEngine;
 
 public:
-    UARTComm(TelemetryManager& t, AIEngine& a);
+    UARTComm(TelemetryManager& t);
     
     /**
      * Inizializza seriale UART per telemetria
@@ -67,7 +65,7 @@ public:
     /**
      * Trasmette pacchetto telemetria completo via UART
      */
-    void sendPacket(const FullTelemetry& packet);
+    void sendPacket(const RoverTelemetry& packet);
 
 private:
     
@@ -80,14 +78,9 @@ private:
 public:
     WirelessComm(ControllerManager& c);
     
-    /**
-     * Inizializza WiFi e ESP-NOW
-     */
     void begin();
-    void sendTelemetry(const FullTelemetry& packet);
-    /**
-     * Callback statica per ricezione dati ESP-NOW
-     */
+    void sendTelemetry(const RoverTelemetry& packet);
+
     static void onDataRecv(const uint8_t* mac, const uint8_t* data, int len);
 
 private:

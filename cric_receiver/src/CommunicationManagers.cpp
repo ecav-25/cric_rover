@@ -6,6 +6,7 @@
 #include <WiFi.h>
 #include <esp_now.h>
 #include <esp_wifi.h> 
+#include "esp_rom_crc.h"
 #include <Wire.h>
 #include "CommunicationManagers.h"
 
@@ -37,10 +38,13 @@ void I2CComm::onRequest() {
     ControllerData data;
     uint8_t battery, alive;
     controllerMgr.getSnapshot(data, battery, alive);
-    
-    ControllerStatus packet = {alive, battery, data};
+    uint8_t crc=0;
+    crc=esp_rom_crc8_le(crc,(uint8_t*)&data,sizeof(ControllerData));
+    crc=esp_rom_crc8_le(crc,(uint8_t*)&battery,sizeof(uint8_t));
+    crc=esp_rom_crc8_le(crc,(uint8_t*)&alive,sizeof(uint8_t));
+
+    ControllerStatus packet = {alive, battery, data,crc};
     Wire.write((const uint8_t*)&packet, sizeof(ControllerStatus));
-    
 }
 
 void I2CComm::onReceiveHandler(int len) {
@@ -63,9 +67,7 @@ void I2CComm::onReceive(int len) {
         *ptr++ = Wire.read();
     }
     
-    // Scarta eventuali byte extra
     while (Wire.available()) Wire.read();
-
     telemetryMgr.update(temp);
     DEBUG_PRINT("I2C received telemetry: sonar_c=%u, rpm_fl=%d", 
                 temp.sonar_c, temp.rpm_fl);
@@ -75,8 +77,8 @@ void I2CComm::onReceive(int len) {
 // UART COMMUNICATION
 // ============================================================================
 
-UARTComm::UARTComm(TelemetryManager& t, AIEngine& a)
-    : telemetryMgr(t), aiEngine(a) {}
+UARTComm::UARTComm(TelemetryManager& t)
+    : telemetryMgr(t) {}
 
 void UARTComm::begin() {
     Serial2.begin(
@@ -88,10 +90,10 @@ void UARTComm::begin() {
     COMM_DEBUG("UART initialized (baudrate=%lu)", HardwareConfig::UART_BAUDRATE);
 }
 
-void UARTComm::sendPacket(const FullTelemetry& packet) {
+void UARTComm::sendPacket(const RoverTelemetry& packet) {
     Serial2.write(CommProtocol::UART_MAGIC_BYTE_1);
     Serial2.write(CommProtocol::UART_MAGIC_BYTE_2);
-    Serial2.write((const uint8_t*)&packet, sizeof(FullTelemetry));
+    Serial2.write((const uint8_t*)&packet, sizeof(RoverTelemetry));
 }
 
 
@@ -124,8 +126,8 @@ void WirelessComm::begin() {
     esp_now_register_recv_cb(onDataRecv); // Gira su Core 1
 }
 
-void WirelessComm::sendTelemetry(const FullTelemetry& packet) {
-    esp_now_send(HardwareConfig::CONTROLLER_MAC, (uint8_t*)&packet, sizeof(FullTelemetry));
+void WirelessComm::sendTelemetry(const RoverTelemetry& packet) {
+    esp_now_send(HardwareConfig::CONTROLLER_MAC, (uint8_t*)&packet, sizeof(RoverTelemetry));
 }
 
 void WirelessComm::onDataRecv(const uint8_t* mac, const uint8_t* data, int len) {

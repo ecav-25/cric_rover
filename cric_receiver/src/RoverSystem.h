@@ -8,7 +8,6 @@
 #include "config.h"
 #include "ControllerManager.h"
 #include "TelemetryManager.h"
-#include "AIEngine.h"
 #include "CommunicationManagers.h"
 
 /**
@@ -23,7 +22,6 @@ private:
 
     ControllerManager controller;
     TelemetryManager telemetry;
-    AIEngine aiEngine;
     
 
     I2CComm i2cComm;
@@ -39,37 +37,21 @@ private:
 public:
     RoverSystem();
     
-    /**
-     * Inizializza tutti i sottosistemi
-     */
     void initialize();
     
-    /**
-     * Aggiorna il sistema (da chiamare nel loop principale)
-     * Esegue watchdog del controller
-     */
+
     void update();
     
-    /**
-     * Legge stato del sistema
-     */
+
     bool isSystemReady() const { return isInitialized; }
-    
-    /**
-     * Task Pipeline di gestione delle telemetrie
-     */
+
     void processSystemPipeline();
     
 
 private:
-    /**
-     * Wrapper statici per FreeRTOS tasks
-     */
+
     static void pipelineTaskWrapper(void* param);
 
-    /**
-     * Stampa diagnostic info
-     */
     void printSystemStatus();
 };
 
